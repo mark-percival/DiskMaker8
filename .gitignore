@@ -1,3 +1,5 @@
 *.o
 *.lst
 *.map
+DM8.dsk
+DiskMaker8

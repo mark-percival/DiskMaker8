@@ -17,11 +17,10 @@
 
 ;           List Off
 
-;          Global Variables
+;          Global Constants
 
            .include "ORCA2ca65.s"
-           .include "GlobalVars.s"
-           .include "Menu1Vars.s"
+           .include "GlobalConst.s"
 
 ;          Main Line
            .include "Main.s"
@@ -89,3 +88,8 @@
 
            .include "Mouse.s"
            .include "ProcessMouse.s"
+
+;          Global Variable Data
+
+           .include "GlobalVars.s"
+           .include "Menu1Vars.s"
