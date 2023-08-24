@@ -35,7 +35,9 @@
 ;          Menu1
 
            .include "Menu1.s"
-;          .include "Menu1Vars.s"
+;             .include "Menu1a.s"
+;             .include "Menu1b.s"
+;             .include "Menu1Vars.s"
            .include "Menu1UI.s"
 
            .include "PaintMenu1.s"
@@ -59,6 +61,8 @@
 ;          Making the disk image
 
            .include "ProcessImage.s"
+;             .include "ProcessImage1.s"
+;             .include "ProcessImage2.s"
            .include "Hyperformat.s"
 
 ;          Standard MLI Calls
@@ -81,6 +85,8 @@
 ;          .include "Pause.s"
            .include "Beep.s"
            .include "MessageBox.s"
+;             .include "MessageBox1.s"
+;             .include "MessageBox2.s"
            .include "Divide16Bit.s"
            .include "COUT.s"
 

@@ -284,7 +284,7 @@ OpenReq0:
 
            jsr  AnimateBtn            ; Do button animation.
 
-           lda  LineCount             ; Are there files listed in this
+           lda  M1LineCount           ; Are there files listed in this
            bne  OpenReq0a             ;  directory?
 
            jmp  BadFileName           ; No, so beep the user to let him know.
