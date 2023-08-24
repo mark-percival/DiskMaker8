@@ -1,4 +1,5 @@
 .segment "CODE"
+.org $2000
 
 Main:
 
@@ -19,5 +20,3 @@ Main:
 Exit:
 
            jmp  MLIQuit
-
-
