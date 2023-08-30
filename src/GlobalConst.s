@@ -41,7 +41,7 @@ Normal     = $0E
 
 ;          Standard ROM Entry Points
 
-;cout      = $FDED                 ; Standard character print routine
+cout_orig  = $FDED                 ; Standard character print routine
 Home       = $FC58                 ; Clear screen routine
 PrByte     = $FDDA                 ; Print a hexadecimal byte.
 PrHex      = $FDE3                 ; Print a hexadecimal digit.
@@ -64,7 +64,7 @@ setMarkRef = $08F0 ; - $08F0       ; Set mark reference number
 setMarkPos = $08F1 ; - $08F3       ; 3 byte value of mark position.
 geteofEOF  = $08F4 ; - $08F6       ; 3 byte value of file size.
 onlineUnit = $08F7 ; - $08F7       ; 1 byte Unit Number for OnLine call
-readRes    = $08F8 ; - $08F9       ; Number of bytes to read
+readRequest = $08F8 ; - $08F9       ; Number of bytes to read
 readTrans  = $08FA ; - $08FB       ; Number of bytes actually read
 openRef1   = $08FC ; - $08FC       ; File open reference number
 readRef    = $08FD ; - $08FD       ; File read reference number

@@ -18,48 +18,48 @@ PrtSameSize:
            jsr  SetVTab
 
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
 
-           lda  TabIndex2
+           lda  TabIndex_M2
            cmp  #SameSize
            beq  Selected
 
-           lda  blnSize
+           lda  blnSize_M2
            beq  UnSelOff
 
 UnSelOn:
 
            lda  #SizeOn
-           jsr  cout
+           jsr  cout_mark
            bra  PrtExit
 
 UnSelOff:
 
            lda  #SizeOff
-           jsr  cout
+           jsr  cout_mark
            bra  PrtExit
 
 Selected:
 
-           lda  blnSize
+           lda  blnSize_M2
            beq  SelOff
 
 SelOn:
 
            lda  #SizeOnSel
-           jsr  cout
+           jsr  cout_mark
            bra  PrtExit
 
 SelOff:
 
            lda  #SizeOffSel
-           jsr  cout
+           jsr  cout_mark
            bra  PrtExit
 
 PrtExit:
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
@@ -69,17 +69,17 @@ PrtExit:
 
 ToggleSize:
 
-           lda  blnSize
+           lda  blnSize_M2
            beq  TurnOn
 
 TurnOff:
 
-           stz  blnSize
+           stz  blnSize_M2
            bra  ToggleExit
 
 TurnOn:
 
-           inc  blnSize
+           inc  blnSize_M2
            bra  ToggleExit
 
 ToggleExit:

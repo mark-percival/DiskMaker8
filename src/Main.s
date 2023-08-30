@@ -9,7 +9,7 @@ Main:
            txs                        ; Reset stack
 
            jsr  SystemCheck
-           bcs  Exit
+           bcs  MainExit
 
            jsr  Initialize
 
@@ -17,6 +17,6 @@ Main:
 
            jsr  Cleanup
 
-Exit:
+MainExit:
 
            jmp  MLIQuit

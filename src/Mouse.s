@@ -35,8 +35,6 @@ Cn:        .res   1                   ; X-reg operand byte
 n0:        .res   1                   ; Y-reg operand byte
 MouseSlot: .res   1                   ; Mouse slot number
 
-cout_monitor =  $FDED                 ; Standard character output routine
-
 ; FindMouse - Find mouse base address
 
 FindMouse:
@@ -147,7 +145,7 @@ SetMousErr:
 SMLoop1:
 
            lda  SetMousMsg,y
-           jsr  cout_monitor
+           jsr  cout_orig
            iny
            dex
            bne SMLoop1

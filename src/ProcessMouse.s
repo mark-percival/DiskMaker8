@@ -2,7 +2,7 @@ ProcMouse:
 
 ;
 ; Processing the mouse
-;
+; - uses Menu1Vars
 
 SaveChar:  .byte   1                  ; Saved character at X, Y
 MousePosX: .byte   1                  ; X position
@@ -135,7 +135,7 @@ DontSave:
 
 PMButtonDown:
 
-           stz  blnDblClick           ; Reset double click indicator.
+           stz  blnDblClick_M1        ; Reset double click indicator.
            lda  MouseStat             ; Button is down but make sure he has also
            bit  #PrevButton           ; released it and is not holding it down.
            beq  PMNotHeld
@@ -172,9 +172,9 @@ OnDisksBtn:
            cmp  #59-1
            bcs  OnOpenBtn
 
-           stz  TabIndex              ; Move TabIndex to Disks button.
+           stz  TabIndex_M1              ; Move TabIndex_M1 to Disks button.
            lda  #TabOnly
-           sta  RC
+           sta  RC_M1
 
            rts
 
@@ -192,10 +192,10 @@ OnOpenBtn:
            cmp  #59-1
            bcs  OnCloseBtn
 
-           lda  #OpenBtn              ; Move TabIndex to Open button.
-           sta  TabIndex
+           lda  #OpenBtn              ; Move TabIndex_M1 to Open button.
+           sta  TabIndex_M1
            lda  #TabOnly
-           sta  RC
+           sta  RC_M1
 
            rts
 
@@ -213,10 +213,10 @@ OnCloseBtn:
            cmp  #59-1
            bcs  OnCancelBtn
 
-           lda  #CloseBtn             ; Move TabIndex to Close button.
-           sta  TabIndex
+           lda  #CloseBtn             ; Move TabIndex_M1 to Close button.
+           sta  TabIndex_M1
            lda  #TabOnly
-           sta  RC
+           sta  RC_M1
 
            rts
 
@@ -234,10 +234,10 @@ OnCancelBtn:
            cmp  #59-1
            bcs  OnFileList
 
-           lda  #CancelBtn            ; Move TabIndex to Cancel button.
-           sta  TabIndex
+           lda  #CancelBtn            ; Move TabIndex_M1 to Cancel button.
+           sta  TabIndex_M1
            lda  #TabOnly
-           sta  RC
+           sta  RC_M1
 
            rts
 
@@ -264,11 +264,11 @@ OnFileList:
            sbc  #9                    ; taking the mouse position and subtract
            sta  Requested             ; 9 for a 1-8 line number.
 
-           lda  FileCount+1           ; Check here to see if the line he is
+           lda  FileCount_M1+1        ; Check here to see if the line he is
            bne  LineOk                ; asking for exists on the screen.
 
            lda  Requested
-           cmp  FileCount
+           cmp  FileCount_M1
            bcc  LineOk
            beq  LineOk
 
@@ -277,26 +277,26 @@ OnFileList:
 LineOk:
 
            lda  Requested             ; Good line so check to see if he is
-           cmp  SelectLine            ; double clicking on a already selected
+           cmp  SelectLine_M1            ; double clicking on a already selected
            beq  DoDblClick            ; line.
 
-           sta  SelectLine            ; No, so select this line and refresh.
+           sta  SelectLine_M1            ; No, so select this line and refresh.
 
            lda  #NoDirChange
-           sta  RC
+           sta  RC_M1
 
            rts
 
 DoDblClick:
 
-           lda  #OpenBtn              ; Double clicking so set TabIndex to Open
-           sta  TabIndex              ; and try opening it.
+           lda  #OpenBtn              ; Double clicking so set TabIndex_M1 to Open
+           sta  TabIndex_M1              ; and try opening it.
 
            lda  #1
-           sta  blnDblClick           ; Tell MENU1UI that we're double clicking
+           sta  blnDblClick_M1        ; Tell MENU1UI that we're double clicking
 
            lda  #DirChange
-           sta  RC
+           sta  RC_M1
 
            rts
 
@@ -316,30 +316,30 @@ PMScrollDown:
            cmp  #46-1
            bne  PMScrollUp
 
-           lda  SelectLine
+           lda  SelectLine_M1
            cmp  #8                    ; At bottom of window?
            beq  SD01                  ; Yes.
 
-           lda  FileCount+1
+           lda  FileCount_M1+1
            bne  SD02
 
-           lda  FileCount
-           cmp  SelectLine
+           lda  FileCount_M1
+           cmp  SelectLine_M1
            beq  PMNoMoreBelow
            bra  SD02
 
 SD01:
 
-           lda  LinesBelow+1
-           ora  LinesBelow
+           lda  LinesBelow_M1+1
+           ora  LinesBelow_M1
            beq  PMNoMoreBelow
 
 SD02:
 
-           inc  SelectLine
+           inc  SelectLine_M1
 
            lda  #NoDirChange
-           sta  RC
+           sta  RC_M1
 
 PMNoMoreBelow:
 
@@ -355,20 +355,20 @@ PMScrollUp:
            cmp  #46-1
            bne  OnPathDDL
 
-           lda  SelectLine
+           lda  SelectLine_M1
            cmp  #1
            bne  SU01
 
-           lda  LinesAbove+1
-           ora  LinesAbove
+           lda  LinesAbove_M1+1
+           ora  LinesAbove_M1
            beq  PMNoMoreAbove
 
 SU01:
 
-           dec  SelectLine
+           dec  SelectLine_M1
 
            lda  #NoDirChange
-           sta  RC
+           sta  RC_M1
 
 PMNoMoreAbove:
 
@@ -391,7 +391,7 @@ OnPathDDL:
            bcs  PMOnNoWhere
 
            lda  #VolDirPull
-           sta  TabIndex
+           sta  TabIndex_M1
 
            jsr  M1RefreshBtn ; I guess... there are multiple RefreshBtn routines
 
@@ -422,11 +422,11 @@ AtDisksBtn:
            cmp  #59-1
            bcs  AtOpenBtn
 
-           lda  TabIndex
+           lda  TabIndex_M1
            bne  AtDisksExit
 
            lda  #DirChange
-           sta  RC
+           sta  RC_M1
 
 AtDisksExit:
 
@@ -444,12 +444,12 @@ AtOpenBtn:
            cmp  #59-1
            bcs  AtCloseBtn
 
-           lda  TabIndex
+           lda  TabIndex_M1
            cmp  #OpenBtn
            bne  AtOpenExit
 
            lda  #DirChange
-           sta  RC
+           sta  RC_M1
 
 AtOpenExit:
 
@@ -467,12 +467,12 @@ AtCloseBtn:
            cmp  #59-1
            bcs  AtCancelBtn
 
-           lda  TabIndex
+           lda  TabIndex_M1
            cmp  #CloseBtn
            bne  AtCloseExit
 
            lda  #DirChange
-           sta  RC
+           sta  RC_M1
 
 AtCloseExit:
 
@@ -490,12 +490,12 @@ AtCancelBtn:
            cmp  #59-1
            bcs  AtNoBtn
 
-           lda  TabIndex
+           lda  TabIndex_M1
            cmp  #CancelBtn
            bne  AtCancelExit
 
            lda  #Quit
-           sta  RC
+           sta  RC_M1
 
 AtCancelExit:
 

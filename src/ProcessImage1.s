@@ -9,12 +9,12 @@
            bne  Canceled              ; format if necessary.
 
            sec
-           lda  EndBlock              ; Subtract 1 from EndBlock since block
+           lda  EndBlock_M2           ; Subtract 1 from EndBlock_M2 since block
            sbc  #$01                  ;  numbers are zero based.
-           sta  EndBlock
-           lda  EndBlock+1
+           sta  EndBlock_M2
+           lda  EndBlock_M2+1
            sbc  #$00
-           sta  EndBlock+1
+           sta  EndBlock_M2+1
 
            jsr  WriteImage
 
@@ -24,9 +24,9 @@ Canceled:
 
 InitVars:
 
-           lda  SelAddr
+           lda  SelAddr_M2
            sta  Ptr1
-           lda  SelAddr+1
+           lda  SelAddr_M2+1
            sta  Ptr1+1
 
            ldy  #oUnitNo
@@ -56,13 +56,13 @@ Volume:    .byte   $00
 
 CheckSize:
 
-           lda  ImageSize             ; Take current image size as default
-           sta  EndBlock              ; number of blocks to write.
-           lda  ImageSize+1
-           sta  EndBlock+1
+           lda  ImageSize_M2             ; Take current image size as default
+           sta  EndBlock_M2              ; number of blocks to write.
+           lda  ImageSize_M2+1
+           sta  EndBlock_M2+1
 
            lda  TargetSize+1
-           cmp  ImageSize+1
+           cmp  ImageSize_M2+1
            bcc  TooSmall
            beq  PISameSize
 
@@ -75,7 +75,7 @@ TooSmall:  jsr  SmallBox
            bra  CheckExit
 
 PISameSize: lda  TargetSize
-           cmp  ImageSize
+           cmp  ImageSize_M2
            bcc  TooSmall
            beq  CheckExit
            bra  TooBig
@@ -102,10 +102,10 @@ MsgBig:    asccr "The destination disk is bigger than necessary."
 
 SmallBox:
 
-           lda  TargetSize            ; Default size is set yo ImageSize at this
-           sta  EndBlock              ; point and since the device we're writing
+           lda  TargetSize            ; Default size is set yo ImageSize_M2 at this
+           sta  EndBlock_M2              ; point and since the device we're writing
            lda  TargetSize+1          ; to isn't big enough, wen need to fall
-           sta  EndBlock+1            ; short of writing the entire image.
+           sta  EndBlock_M2+1            ; short of writing the entire image.
 
            lda  #<MsgSmall
            sta  MsgPtr
@@ -222,7 +222,7 @@ MsgWhere:  asccr "Error atempting to boot disk"
 PaintBox:
 
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
 
 ; First line
 
@@ -235,19 +235,19 @@ PaintBox:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #27
            lda  #'L'
 
 BP01:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  BP01
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Second line
 
@@ -258,10 +258,10 @@ BP01:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            ldy  #0
            ldx  #9
@@ -269,7 +269,7 @@ BP01:
 BP02:
 
            lda  Text1,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  BP02
@@ -282,12 +282,12 @@ BP03:
            iny
            lda  Path,y
            ora  #$80
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  BP03
 
            lda  #'''+$80
-           jsr  cout
+           jsr  cout_mark
 
            sec
            lda  #15
@@ -299,12 +299,12 @@ BP03:
 
 BP04:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  BP04
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Third line
 
@@ -315,25 +315,25 @@ BP04:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #25
            lda  #'_'+$80
 
 BP05:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  BP05
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Fourth line
 
@@ -344,21 +344,21 @@ BP05:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
-           jsr  cout
+           jsr  cout_mark
+           jsr  cout_mark
 
            ldx  #25
            lda  #' '+$80
 
 BP06:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  BP06
 
            lda  #'_'
-           jsr  cout
-           jsr  cout
+           jsr  cout_mark
+           jsr  cout_mark
 
 ; Fifth line
 
@@ -369,28 +369,28 @@ BP06:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'+$80
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #25
            lda  #'\'
 
 BP07:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  BP07
 
            lda  #'_'+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
@@ -416,7 +416,7 @@ CB01:
 
 CB02:
 
-           jsr  cout
+           jsr  cout_mark
            dey
            bne  CB02
 
@@ -440,22 +440,22 @@ ShowFormat:
            jsr  SetVTab
 
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #16
            lda  #'L'
 
 SF01:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  SF01
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Second line
 
@@ -465,12 +465,12 @@ SF01:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #3
            lda  #' '+$80
 
-SF02:      jsr  cout
+SF02:      jsr  cout_mark
            dex
            bne  SF02
 
@@ -480,7 +480,7 @@ SF02:      jsr  cout
 SF03:
 
            lda  FmtMsg,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  SF03
@@ -490,12 +490,12 @@ SF03:
 
 SF04:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  SF04
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Third line
 
@@ -506,22 +506,22 @@ SF04:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #16
            lda  #'_'+$80
 
 SF05:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  SF05
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
@@ -547,7 +547,7 @@ CF01:
 
 CF02:
 
-           jsr  cout
+           jsr  cout_mark
            dey
            bne  CF02
 
@@ -569,41 +569,41 @@ CF02:
 ;          jsr  SetVTab
 ;
 ;          lda  #'S'+$80
-;          jsr  cout
+;          jsr  cout_mark
 ;
 ;          lda  #'='+$80
-;          jsr  cout
+;          jsr  cout_mark
 ;
 ;          lda  #'$'+$80
-;          jsr  cout
+;          jsr  cout_mark
 ;
-;          lda  ImageSize+1
+;          lda  ImageSize_M2+1
 ;          jsr  PrByte
 ;
-;          lda  ImageSize
+;          lda  ImageSize_M2
 ;          jsr  PrByte
 ;
 ;          lda  #' '+$80
-;          jsr  cout
-;          jsr  cout
+;          jsr  cout_mark
+;          jsr  cout_mark
 ;
 ;          lda  #'T'+$80
-;          jsr  cout
+;          jsr  cout_mark
 ;
 ;          lda  #'='+$80
-;          jsr  cout
+;          jsr  cout_mark
 ;
 ;          lda  #'$'+$80
-;          jsr  cout
+;          jsr  cout_mark
 ;
 ;          lda  TargetUnit
 ;          jsr  PrByte
 ;
 ;          lda  #' '+$80
-;          jsr  cout
+;          jsr  cout_mark
 ;
 ;          lda  #'$'+$80
-;          jsr  cout
+;          jsr  cout_mark
 ;
 ;          lda  TargetSize+1
 ;          jsr  PrByte
@@ -611,7 +611,7 @@ CF02:
 ;          jsr  PrByte
 ;
 ;          lda  #' '+$80
-;          jsr  cout
+;          jsr  cout_mark
 ;
 ;          lda  PIDevType
 ;          jsr  PrHex

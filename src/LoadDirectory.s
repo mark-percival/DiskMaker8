@@ -179,9 +179,9 @@ SpaceLoop:
 
 Convert:
 
-           inc  FileCount             ; Count this entry as good.
+           inc  FileCount_M1          ; Count this entry as good.
            bne  FC2
-           inc  FileCount+1
+           inc  FileCount_M1+1
 
 FC2:
 
@@ -378,8 +378,8 @@ ZeroOut2:                             ; Zero out second 256 bytes
            sta  LDEntPerBlk
 
            lda  #0                    ; Entry counter
-           sta  FileCount
-           sta  FileCount+1
+           sta  FileCount_M1
+           sta  FileCount_M1+1
 
            lda  #<onlineBuf            ; Ptr2 for scanning online's buffer
            sta  Ptr2
@@ -402,7 +402,7 @@ NextEntry:
            ora  #$F0                  ; Set it as a volume entry
            sta  (Ptr1)                ; Set storage type / length
 
-           inc  FileCount             ; Count this one.
+           inc  FileCount_M1             ; Count this one.
 
 SaveName:
 
@@ -462,11 +462,11 @@ NextVolume:
            dex
            bne  NextEntry             ; Process next entry
 
-           lda  FileCount             ; Save Entries counted to buffer.
+           lda  FileCount_M1             ; Save Entries counted to buffer.
            ldy  #oFileCount
            sta  readBuf,y
 
-           lda  FileCount+1
+           lda  FileCount_M1+1
            iny
            sta  readBuf,y
 

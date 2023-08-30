@@ -16,7 +16,7 @@ About:
 ShowAbout:
 
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
 
 ; Line 1
 
@@ -28,33 +28,33 @@ ShowAbout:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'L'
            ldx  #59
 
 L1A:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L1A
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Line 2
 
            jsr  ANextLine
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
            ldx  #22
 
 L2A:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L2A
 
@@ -64,7 +64,7 @@ L2B:
 
            lda  Line2Text,x
            beq  L2C
-           jsr  cout
+           jsr  cout_mark
            inx
            bra  L2B
 
@@ -75,26 +75,26 @@ L2C:
 
 L2D:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L2D
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Line 3
 
            jsr  ANextLine
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
            ldx  #14
 
 L3A:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L3A
 
@@ -104,7 +104,7 @@ L3B:
 
            lda  Line3Text,x
            beq  L3C
-           jsr  cout
+           jsr  cout_mark
            inx
            bra  L3B
 
@@ -115,12 +115,12 @@ L3C:
 
 L3D:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L3D
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 
 ; Line 4
@@ -128,29 +128,29 @@ L3D:
            jsr  ANextLine
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
            ldx  #59
 
 L4A:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L4A
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Line 5
 
            jsr  ANextLine
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #0
 
@@ -158,7 +158,7 @@ L5A:
 
            lda  Line5Text,x
            beq  L5B
-           jsr  cout
+           jsr  cout_mark
            inx
            bra  L5A
 
@@ -169,22 +169,22 @@ L5B:
 
 L5C:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L5C
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Line 6
 
            jsr  ANextLine
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #0
 
@@ -192,7 +192,7 @@ L6A:
 
            lda  Line6Text,x
            beq  L6B
-           jsr  cout
+           jsr  cout_mark
            inx
            bra  L6A
 
@@ -203,22 +203,22 @@ L6B:
 
 L6C:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L6C
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Line 7
 
            jsr  ANextLine
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #0
 
@@ -226,7 +226,7 @@ L7A:
 
            lda  Line7Text,x
            beq  L7B
-           jsr  cout
+           jsr  cout_mark
            inx
            bra  L7A
 
@@ -237,22 +237,22 @@ L7B:
 
 L7C:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L7C
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Line 8
 
            jsr  ANextLine
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #0
 
@@ -260,7 +260,7 @@ L8A:
 
            lda  Line8Text,x
            beq  L8B
-           jsr  cout
+           jsr  cout_mark
            inx
            bra  L8A
 
@@ -271,26 +271,26 @@ L8B:
 
 L8C:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L8C
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Line 9
 
            jsr  ANextLine
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
            ldx  #25
 
 L9A:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L9A
 
@@ -299,7 +299,7 @@ L9A:
 
 L9B:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L9B
 
@@ -308,40 +308,40 @@ L9B:
 
 L9C:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L9C
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Line 10
 
            jsr  ANextLine
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
            ldx  #24
 
 L10A:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L10A
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '
-           jsr  cout
+           jsr  cout_mark
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #0
 
@@ -349,49 +349,49 @@ L10B:
 
            lda  OkText,x
            beq  L10C
-           jsr  cout
+           jsr  cout_mark
            inx
            bra  L10B
 
 L10C:
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '
-           jsr  cout
+           jsr  cout_mark
 
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
            ldx  #23
 
 L10D:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L10D
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Line 11
 
            jsr  ANextLine
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'+$80
            ldx  #25
 
 L11A:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L11A
 
@@ -400,7 +400,7 @@ L11A:
 
 L11B:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L11B
 
@@ -409,17 +409,17 @@ L11B:
 
 L11C:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  L11C
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; Exit
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
@@ -542,7 +542,7 @@ AboutUI:
 @AnimateBtn:
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            lda  #17-1
            sta  VTab
@@ -557,7 +557,7 @@ AboutUI:
 AB01:
 
            lda  OkText,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  AB01
@@ -566,7 +566,7 @@ AB01:
            jsr  Wait
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
            lda  #17-1
            sta  VTab
@@ -581,7 +581,7 @@ AB01:
 AB02:
 
            lda  OkText,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  AB02
@@ -590,7 +590,7 @@ AB02:
            jsr  Wait
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
@@ -695,11 +695,11 @@ AStartRtn:
 
            inc  Ptr2+1
 
-@NoOF:                                 ; No overflow
+@NoOF:                                ; No overflow
 
            iny
            cpy  AEndHTab              ; If y <= AEndHTab, @SSLoop2 to continue
-           bcc  @SSLoop2               ;  saving this line
+           bcc  @SSLoop2              ;  saving this line
            beq  @SSLoop2
 
            inc  ACurrLine             ; Move to next line

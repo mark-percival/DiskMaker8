@@ -26,6 +26,3 @@ TextLine20: .addr $0650
 TextLine21: .addr $06D0
 TextLine22: .addr $0750
 TextLine23: .addr $07D0
-
-; MLI Read Request - everyone uses these locations, but no one defined them...
-readRequest:  .res 2
