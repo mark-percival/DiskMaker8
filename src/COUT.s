@@ -1,4 +1,4 @@
-cout:
+cout_mark:
 
 ;
 ; Custom COUT - Mark Percival
@@ -152,10 +152,10 @@ SetVTab:
 SetInv:
 
            lda  #SetInverse
-           jmp  cout
+           jmp  cout_mark
 
 
 SetNorm:
 
            lda  #SetNormal
-           jmp  cout
+           jmp  cout_mark

@@ -7,9 +7,9 @@ PaintMenu1:
 ;          L i n e   6
 
            lda  #Inverse              ; Setup for mousetext
-           jsr  cout
+           jsr  cout_mark
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
 
            lda  #6-1                  ; Set to line 6
            sta  VTab
@@ -19,19 +19,19 @@ PaintMenu1:
            jsr  SetVTab
 
            lda  #'Z'                  ; Left side |
-           jsr cout
+           jsr cout_mark
 
            ldx  #40                   ; 40 characters
            lda  #'L'                  ; Top _ of box
 
 PM_Line6_1:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  PM_Line6_1
 
            lda  #'_'                  ; Right side |
-           jsr cout
+           jsr cout_mark
 
 ;          L i n e   7
 
@@ -43,13 +43,13 @@ PM_Line6_1:
            jsr  SetVTab
 
            lda  #'Z'                  ; Left side |
-           jsr  cout
+           jsr  cout_mark
 
            lda  #61-1
            sta  HTab
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ;          L i n e   8
 
@@ -61,13 +61,13 @@ PM_Line6_1:
            jsr  SetVTab
 
            lda  #'Z'                  ; Left side |
-           jsr  cout
+           jsr  cout_mark
 
            lda  #61-1
            sta  HTab                  ; HTab 61
 
            lda  #'_'                  ; Right side |
-           jsr  cout
+           jsr  cout_mark
 
 ;          L i n e   9
 
@@ -79,13 +79,13 @@ PM_Line6_1:
            jsr  SetVTab
 
            lda  #'Z'                  ; Left side |
-           jsr  cout
+           jsr  cout_mark
 
            lda  #61-1
            sta  HTab
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ;          L i n e   1 0
 
@@ -97,7 +97,7 @@ PM_Line6_1:
            jsr  SetVTab
 
            lda  #'Z'                  ; Left side |
-           jsr  cout
+           jsr  cout_mark
 
            lda  #22-1
            sta  HTab                  ; HTab 22
@@ -109,7 +109,7 @@ PM_Line6_1:
 
 PM_Lin10_1:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  PM_Lin10_1
 
@@ -121,7 +121,7 @@ PM_Lin10_1:
 
 PM_Lin10_2:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  PM_Lin10_2
 
@@ -131,7 +131,7 @@ PM_Lin10_2:
            sta  HTab
 
            lda  #'_'                  ; Right side |
-           jsr  cout
+           jsr  cout_mark
 
 ;          L i n e   1 1
 
@@ -143,32 +143,32 @@ PM_Lin10_2:
            jsr  SetVTab
 
            lda  #'Z'                  ; Left side |
-           jsr  cout
-           jsr  cout                  ; x 2
+           jsr  cout_mark
+           jsr  cout_mark             ; x 2
 
            lda  #45-1
            sta  HTab                  ; HTab 45
 
            lda  #'Z'
-           jsr  cout                  ; |
+           jsr  cout_mark             ; |
 
            lda  #'R'
-           jsr  cout                  ; Up scroll arrow
+           jsr  cout_mark             ; Up scroll arrow
 
            lda  #48-1
            sta  HTab                  ;  HTab 47
 
            lda  #'Z'
-           jsr  cout                  ;  |
+           jsr  cout_mark             ;  |
 
            lda  #StdText
-           jsr  cout                  ;  Normal text
+           jsr  cout_mark             ;  Normal text
 
            lda  #' '+$80
-           jsr  cout                  ;  Inverse block
+           jsr  cout_mark             ;  Inverse block
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #DisksTextE-DisksText
            ldy  #$00
@@ -176,32 +176,32 @@ PM_Lin10_2:
 PM_Line11_1:
 
            lda  DisksText,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  PM_Line11_1
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
            lda  #MouseText            ; Mousetext back on
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout                  ; Inverse block
+           jsr  cout_mark             ; Inverse block
 
            lda  #MouseText            ; Mousetext back on
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            pha                        ; Save character to print
            lda  #61-1
            sta  HTab                  ; HTab 61
 
            pla                        ; Restore character
-           jsr  cout
+           jsr  cout_mark
 
 ;          L i n e   1 2
 
@@ -213,18 +213,18 @@ PM_Line11_1:
            jsr  SetVTab
 
            lda  #'Z'                  ; Left side |
-           jsr  cout
-           jsr  cout                  ; x2
+           jsr  cout_mark
+           jsr  cout_mark             ; x2
            pha                        ; Save character
 
            lda  #45-1
            sta  HTab                  ; HTab 45
 
            pla                        ; Restore character
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'V'                  ; Checkerboard
-           jsr  cout
+           jsr  cout_mark
 
            lda  #49-1
            sta  HTab                  ; HTab 49
@@ -234,7 +234,7 @@ PM_Line11_1:
 
 PM_Lin12_1:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  PM_Lin12_1
 
@@ -242,7 +242,7 @@ PM_Lin12_1:
            sta  HTab
 
            lda  #'_'                  ; Right side |
-           jsr  cout
+           jsr  cout_mark
 
 ;          L i n e   1 3
 
@@ -254,18 +254,18 @@ PM_Lin12_1:
            jsr  SetVTab
 
            lda  #'Z'                  ; Left side |
-           jsr  cout
-           jsr  cout                  ; x2
+           jsr  cout_mark
+           jsr  cout_mark             ; x2
            pha                        ; Save character
 
            lda  #45-1
            sta  HTab                  ; HTab 45
 
            pla                        ; Restore character
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'V'                  ; Checkerboard
-           jsr  cout
+           jsr  cout_mark
 
            lda  #49-1
            sta  HTab                  ; HTab 49
@@ -276,7 +276,7 @@ PM_Lin12_1:
 
 PM_Lin13_1:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  PM_Lin13_1
 
@@ -286,7 +286,7 @@ PM_Lin13_1:
            sta  HTab
 
            lda  #'_'                  ; Right side |
-           jsr  cout
+           jsr  cout_mark
 
 ;          L i n e   1 4
 
@@ -298,30 +298,30 @@ PM_Lin13_1:
            jsr  SetVTab
 
            lda  #'Z'                  ; Left side |
-           jsr  cout
-           jsr  cout                  ; x2
+           jsr  cout_mark
+           jsr  cout_mark             ; x2
            pha                        ; Save character
 
            lda  #45-1
            sta  HTab                  ; HTab 45
 
            pla                        ; Restore character
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'V'                  ; Checkerboard
-           jsr  cout
+           jsr  cout_mark
 
            lda  #48-1
            sta  HTab                  ; HTab 48
 
            lda  #'Z'
-           jsr  cout                  ; |
+           jsr  cout_mark             ; |
 
            lda  #StdText
-           jsr  cout                  ; Normal text
+           jsr  cout_mark             ; Normal text
 
            lda  #' '+$80
-           jsr  cout                  ; Inverse block
+           jsr  cout_mark             ; Inverse block
 
            ldx  #OpenTextE-OpenText
            ldy  #$00
@@ -329,28 +329,28 @@ PM_Lin13_1:
 PM_Line14_1:
 
            lda  OpenText,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  PM_Line14_1
 
            lda  #MouseText            ; Mousetext back on
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout                  ; Inverse block
+           jsr  cout_mark             ; Inverse block
 
            lda  #MouseText            ; Mousetext back on
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #61-1
            sta  HTab
 
            lda  #'_'                  ; Right side |
-           jsr  cout
+           jsr  cout_mark
 
 ;          L i n e   1 5
 
@@ -362,18 +362,18 @@ PM_Line14_1:
            jsr  SetVTab
 
            lda  #'Z'                  ; Left side |
-           jsr  cout
-           jsr  cout                  ; x2
+           jsr  cout_mark
+           jsr  cout_mark             ; x2
            pha                        ; Save character
 
            lda  #45-1
            sta  HTab                  ; HTab 45
 
            pla                        ; Restore character
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'V'                  ; Checkerboard
-           jsr  cout
+           jsr  cout_mark
 
            lda  #49-1
            sta  HTab                  ; HTab 49
@@ -384,7 +384,7 @@ PM_Line14_1:
 
 PM_Lin15_1:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  PM_Lin15_1
 
@@ -392,7 +392,7 @@ PM_Lin15_1:
            sta  HTab
 
            lda  #'_'                  ; Right side |
-           jsr  cout
+           jsr  cout_mark
 
 ;          L i n e   1 6
 
@@ -404,35 +404,35 @@ PM_Lin15_1:
            jsr  SetVTab
 
            lda  #'Z'                  ; Left side |
-           jsr  cout
-           jsr  cout                  ; x2
+           jsr  cout_mark
+           jsr  cout_mark             ; x2
            pha                        ; Save character
 
            lda  #45-1
            sta  HTab                  ; HTab 45
 
            pla                        ; Restore character
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'V'                  ; Checkerboard
-           jsr  cout
+           jsr  cout_mark
 
            lda  #48-1
            sta  HTab                  ; HTab 48
 
            lda  #'Z'
-           jsr  cout                  ; |
+           jsr  cout_mark             ; |
 
            lda  #StdText
-           jsr  cout                  ; Normal text
+           jsr  cout_mark             ; Normal text
 
            jsr  SetInv
 
            lda  #' '+$80
-           jsr  cout                  ; Inverse block
+           jsr  cout_mark             ; Inverse block
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #CloseTextE-CloseText
            ldy  #$00
@@ -440,28 +440,28 @@ PM_Lin15_1:
 PM_Line16_1:
 
            lda  CloseText,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  PM_Line16_1
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
            lda  #MouseText            ; Mousetext back on
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout                  ; Inverse block
+           jsr  cout_mark             ; Inverse block
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #61-1
            sta  HTab
 
            lda  #'_'                  ; Right side |
-           jsr  cout
+           jsr  cout_mark
 
 ;          L i n e   1 7
 
@@ -473,18 +473,18 @@ PM_Line16_1:
            jsr  SetVTab
 
            lda  #'Z'                  ; Left side |
-           jsr  cout
-           jsr  cout                  ; x2
+           jsr  cout_mark
+           jsr  cout_mark             ; x2
            pha                        ; Save character
 
            lda  #45-1
            sta  HTab                  ; HTab 45
 
            pla                        ; Restore character
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'V'                  ; Checkerboard
-           jsr  cout
+           jsr  cout_mark
 
            lda  #49-1
            sta  HTab                  ; HTab 49
@@ -495,7 +495,7 @@ PM_Line16_1:
 
 PM_Lin17_1:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  PM_Lin17_1
 
@@ -503,7 +503,7 @@ PM_Lin17_1:
            sta  HTab
 
            lda  #'_'                  ; Right side |
-           jsr  cout
+           jsr  cout_mark
 
 ;          L i n e   1 8
 
@@ -515,34 +515,34 @@ PM_Lin17_1:
            jsr  SetVTab
 
            lda  #'Z'                  ; Left side |
-           jsr  cout
-           jsr  cout                  ; x 2
+           jsr  cout_mark
+           jsr  cout_mark             ; x 2
 
            lda  #45-1
            sta  HTab                  ; HTab 45
 
            lda  #'Z'
-           jsr  cout                  ; |
+           jsr  cout_mark             ; |
 
            lda  #'Q'
-           jsr  cout                  ; Down scroll arrow
+           jsr  cout_mark             ; Down scroll arrow
 
            lda  #48-1
            sta  HTab                  ; HTab 48
 
            lda  #'Z'
-           jsr  cout                  ; |
+           jsr  cout_mark             ; |
 
            lda  #StdText
-           jsr  cout                  ; Normal text
+           jsr  cout_mark             ; Normal text
 
            jsr  SetInv
 
            lda  #' '+$80
-           jsr  cout                  ; Inverse block
+           jsr  cout_mark             ; Inverse block
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #CanclTextE-CanclText
            ldy  #$00
@@ -550,29 +550,29 @@ PM_Lin17_1:
 PM_Line18_1:
 
            lda  CanclText,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  PM_Line18_1
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout                  ; Inverse block
+           jsr  cout_mark             ; Inverse block
 
            lda  #MouseText            ; Mousetext back on
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            pha                        ; Save character to print
            lda  #61-1
            sta  HTab                  ; HTab 61
 
            pla                        ; Restore character
-           jsr  cout
+           jsr  cout_mark
 
 ;          L i n e   1 9
 
@@ -586,39 +586,39 @@ PM_Line18_1:
            jsr  SetNorm
 
            lda  #'Z'                  ; Left side |
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'+$80
-           jsr  cout                  ; HTab 22
+           jsr  cout_mark             ; HTab 22
 
            ldx  #25
            lda  #'\'                  ; 25 underscores
 
 PM_Lin19_1:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  PM_Lin19_1
 
            lda  #'_'+$80
-           jsr  cout
-           jsr  cout
+           jsr  cout_mark
+           jsr  cout_mark
 
            ldx  #10
            lda  #'\'                  ; 10 underscores
 
 PM_Lin19_2:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  PM_Lin19_2
 
            lda  #'_'+$80
-           jsr  cout
-           jsr  cout
+           jsr  cout_mark
+           jsr  cout_mark
 
            lda  #'_'                  ; Right side |
-           jsr  cout
+           jsr  cout_mark
 
            jsr  SetNorm
            rts
@@ -669,7 +669,7 @@ NextLine:
 
 @NextChar:
 
-           jsr  cout                  ; Print space
+           jsr  cout_mark             ; Print space
            dex                        ; Count space printed
            bne  @NextChar             ; More?
 

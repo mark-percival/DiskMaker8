@@ -9,7 +9,7 @@ LoadDevs:
            lda  #>Buffer8K
            sta  Ptr1+1
 
-           stz  DevEntCnt
+           stz  DevEntCnt_M2
 
            lda  #7                    ; 7 slots to scan
            sta  Slot
@@ -41,20 +41,20 @@ NextDrive:
            ora  DevSize+1
            beq  Skip
 
-           lda  blnSize               ; See if Same Size checkbox is on
+           lda  blnSize_M2            ; See if Same Size checkbox is on
            beq  SizeOk                ; No, so process save device info.
 
-           lda  ImageSize+1           ; Check to see if the device size
+           lda  ImageSize_M2+1           ; Check to see if the device size
            cmp  DevSize+1             ; matches the image size we have.
            bne  Skip
 
-           lda  ImageSize
+           lda  ImageSize_M2
            cmp  DevSize
            bne  Skip
 
 SizeOk:
 
-           inc  DevEntCnt             ; Valid device, count it.
+           inc  DevEntCnt_M2             ; Valid device, count it.
            jsr  SaveDevInfo           ; Save device data to buffer.
 
 Skip:

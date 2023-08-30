@@ -12,7 +12,7 @@ SetImgType:
 ; $E0 / $0121 = ProDOS order image
 
            lda  #Type_PO              ; Default type
-           sta  ImageType
+           sta  ImageType_M2
 
            lda  FileType
            cmp  #$E0
@@ -28,7 +28,7 @@ Next00:
            bne  Next01
 
            lda  #Type_DC
-           sta  ImageType
+           sta  ImageType_M2
            jmp  TryExtension
 
 Next01:
@@ -41,7 +41,7 @@ Next01:
            bne  Next02
 
            lda  #Type_2IMG
-           sta  ImageType
+           sta  ImageType_M2
            jmp  TryExtension
 
 Next02:
@@ -54,7 +54,7 @@ Next02:
            bne  Next03
 
            lda  #Type_DC6
-           sta  ImageType
+           sta  ImageType_M2
            jmp  TryExtension
 
 Next03:
@@ -67,7 +67,7 @@ Next03:
            bne  Next04
 
            lda  #Type_PO
-           sta  ImageType
+           sta  ImageType_M2
            jmp  TryExtension
 
 Next04:
@@ -125,7 +125,7 @@ OkExt:
            bne  TryIMG
 
            lda  #Type_DC
-           sta  ImageType
+           sta  ImageType_M2
            jmp  CheckHeader
 
 TryIMG:
@@ -148,7 +148,7 @@ TryIMG:
            bne  TryDC6
 
            lda  #Type_DC
-           sta  ImageType
+           sta  ImageType_M2
            jmp  CheckHeader
 
 TryDC6:
@@ -171,7 +171,7 @@ TryDC6:
            bne  TryDMG
 
            lda  #Type_DC6
-           sta  ImageType
+           sta  ImageType_M2
            jmp  CheckHeader
 
 TryDMG:
@@ -194,7 +194,7 @@ TryDMG:
            bne  Try2MG
 
            lda  #Type_DC6
-           sta  ImageType
+           sta  ImageType_M2
            jmp  CheckHeader
 
 Try2MG:
@@ -217,7 +217,7 @@ Try2MG:
            bne  TryPO
 
            lda  #Type_2IMG
-           sta  ImageType
+           sta  ImageType_M2
            jmp  CheckHeader
 
 TryPO:
@@ -236,7 +236,7 @@ TryPO:
            bne  TryDSK
 
            lda  #Type_PO
-           sta  ImageType
+           sta  ImageType_M2
            jmp  CheckHeader
 
 
@@ -260,7 +260,7 @@ TryDSK:
            bne  TryDO
 
            lda  #Type_DO
-           sta  ImageType
+           sta  ImageType_M2
            jmp  CheckHeader
 
 TryDO:
@@ -279,7 +279,7 @@ TryDO:
            bne  TryUnk
 
            lda  #Type_DO
-           sta  ImageType
+           sta  ImageType_M2
            jmp  CheckHeader
 
 TryUnk:                               ; Unknown extension
@@ -319,7 +319,7 @@ Try2IMG:
            bne  ExitRtn
 
            lda  #Type_2IMG
-           sta  ImageType
+           sta  ImageType_M2
            bra  ExitRtn
 
 TryGMI2:
@@ -341,7 +341,7 @@ TryGMI2:
            bne  ExitRtn
 
            lda  #Type_2IMG
-           sta  ImageType
+           sta  ImageType_M2
 
 ExitRtn:
 

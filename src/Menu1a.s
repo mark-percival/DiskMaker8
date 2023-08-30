@@ -6,21 +6,21 @@ oNextBlock =  $02 ; -> $03            Next block number (0 = last block)
 
 ;          Storage declarations
 
-EntLength: .byte   $00                   ; Length of file entry
-EntPerBlk: .byte   $00                   ; Number of file entries per block
+EntLength: .byte   $00                ; Length of file entry
+EntPerBlk: .byte   $00                ; Number of file entries per block
 
-FirstPage: .byte   $00                   ; Aux page number of first line entry
-FirstAddr: .addr   $0000                 ; Address of first line entry
-FstEntCnt: .byte   $00                   ; Remaining entries in blk at first line
+FirstPage: .byte   $00                ; Aux page number of first line entry
+FirstAddr: .addr   $0000              ; Address of first line entry
+FstEntCnt: .byte   $00                ; Remaining entries in blk at first line
 
-EntRemain: .byte   $00                   ; Entries remaining in current block
+EntRemain: .byte   $00                ; Entries remaining in current block
 
 M1Start:
 
            jsr  PaintMenu1            ; Paint menu1 frame
 
            lda  #OpenBtn
-           sta  TabIndex              ; Initialize tabindex to open button.
+           sta  TabIndex_M1           ; Initialize tabindex to open button.
 
 Menu01:
 
@@ -28,7 +28,7 @@ Menu01:
 
            jsr  LoadDirectory         ; Load current directory into memory
 
-           jsr  M1Initialize            ; Initialize variables
+           jsr  M1Initialize          ; Initialize variables
 
            jsr  SaveVolHeader         ; Save volume header info
 
@@ -43,19 +43,19 @@ Menu03:
            jsr  Menu1UI               ; Menu 1 User Interface
 
            lda  #DirChange            ; *** Directory Refresh ***
-           bit  RC
+           bit  RC_M1
            bne  Menu01
 
            lda  #NoDirChange          ; *** No Directory Refresh ***
-           bit  RC
+           bit  RC_M1
            bne  Menu02
 
            lda  #TabOnly              ; *** Tab Key Button Focus Change ***
-           bit  RC
+           bit  RC_M1
            bne  Menu03
 
            lda  #Quit                 ; *** Quit Code ***
-           bit  RC
+           bit  RC_M1
            bne  Menu99
 
            jsr  ClearMenu1            ; Remove menu1 data from screen
@@ -70,7 +70,7 @@ M1Initialize:
 
            lda  #$08
            sta  FirstPage             ; Set initial first aux page number
-           sta  CurrPage              ; Set page to load
+           sta  CurrPage_M1           ; Set page to load
 
            jsr  GetBlock              ; Get block from aux memory
 
@@ -82,25 +82,25 @@ M1Initialize:
            sta  FstEntCnt             ; First line entries remaining.
 
            lda  readBuf+oFileCount    ; Get number of active files
-           sta  FileCount
+           sta  FileCount_M1
            lda  readBuf+oFileCount+1
-           sta  FileCount+1
+           sta  FileCount_M1+1
 
-           stz  LinesAbove            ; Since we're starting, lines above
-           stz  LinesAbove+1          ;  top is zero.
+           stz  LinesAbove_M1         ; Since we're starting, lines above
+           stz  LinesAbove_M1+1       ;  top is zero.
 
            sec                        ; Calculcate lines below
-           lda  FileCount
+           lda  FileCount_M1
            sbc  #8
-           sta  LinesBelow            ; LinesBelow = FileCount - 8
-           lda  FileCount+1
+           sta  LinesBelow_M1         ; LinesBelow_M1 = FileCount_M1 - 8
+           lda  FileCount_M1+1
            sbc  #0
-           sta  LinesBelow+1
+           sta  LinesBelow_M1+1
 
            bpl  Init01
 
-           stz  LinesBelow            ; If LinesBelow is less than our
-           stz  LinesBelow+1          ; total FileCount, zero it out.
+           stz  LinesBelow_M1         ; If LinesBelow_M1 is less than our
+           stz  LinesBelow_M1+1       ; total FileCount_M1, zero it out.
 
 Init01:
 
@@ -112,8 +112,8 @@ Init01:
            lda  Prefix                ; Don't attempt to move past header
            beq  Init02                ; for volume listing
 
-           lda  FileCount             ; Don't bother finding the first entry
-           ora  FileCount+1           ; if there is none.
+           lda  FileCount_M1          ; Don't bother finding the first entry
+           ora  FileCount_M1+1        ; if there is none.
            beq  Init02
 
            jsr  FindFstEnt            ; Move past Vol/Dir header
@@ -124,7 +124,7 @@ Init02:
            sta  TextMode
 
            lda  #1                    ; Default line selected
-           sta  SelectLine
+           sta  SelectLine_M1
 
            rts
 
@@ -138,7 +138,7 @@ ListFiles:
            sta  VTab                  ; VTab 11 to start
            jsr  SetVTab
 
-           lda  SelectLine
+           lda  SelectLine_M1
            bne  NotUp
 
            jsr  ScrollUp
@@ -159,14 +159,14 @@ NoScrollDn:
            sta  Ptr1+1
 
            lda  FirstPage             ; Set up first line source aux page
-           sta  CurrPage              ; number.
+           sta  CurrPage_M1              ; number.
 
            lda  FstEntCnt             ; Set up remaining entries from first
            sta  EntRemain             ; line.
 
            jsr  GetBlock              ; Get block from aux memory
 
-           stz  M1LineCount             ; Zero out lines printed counter.
+           stz  LineCount_M1          ; Zero out lines printed counter.
 
 ListFile01:
 
@@ -181,20 +181,20 @@ ListFile01:
 
 ListFile02:
 
-           inc  M1LineCount             ; We're printing this line so count it
-           lda  M1LineCount
-           cmp  SelectLine            ; Is this the line selected?
+           inc  LineCount_M1          ; We're printing this line so count it
+           lda  LineCount_M1
+           cmp  SelectLine_M1         ; Is this the line selected?
            bne  ListFile03            ; No
 
            lda  #Inverse              ; Selected line so set TextMode to inverse
            sta  TextMode              ; to display as selected.
 
-           lda  CurrPage              ; Also save the aux page number and
-           sta  SelectPage            ; address in that page that the selected
+           lda  CurrPage_M1           ; Also save the aux page number and
+           sta  SelectPage_M1         ; address in that page that the selected
            lda  Ptr1                  ; entry appears on.
-           sta  SelectAddr
+           sta  SelectAddr_M1
            lda  Ptr1+1
-           sta  SelectAddr+1
+           sta  SelectAddr_M1+1
 
 ListFile03:
 
@@ -207,14 +207,14 @@ ListFile03:
 
 ListFile90:
 
-           lda  M1LineCount
+           lda  LineCount_M1
            cmp  #$08
            beq  ListFile99            ; 8 lines printed so exit
 
-           lda  FileCount+1           ; Check to see if we're at the end of the
+           lda  FileCount_M1+1        ; Check to see if we're at the end of the
            bne  ListFile95            ; filelist when we have less than 8 files
-           lda  FileCount             ; total to display.
-           cmp  M1LineCount
+           lda  FileCount_M1          ; total to display.
+           cmp  LineCount_M1
            beq  ListFile96
 
 ListFile95:
@@ -241,7 +241,7 @@ ListFile96:                           ; Clear entries on a short list
 
            sec                        ; Calculate number of blank lines required
            lda  #$08
-           sbc  M1LineCount
+           sbc  LineCount_M1
            tax                        ; x = number of blank lines
 
 ListFile97:
@@ -251,7 +251,7 @@ ListFile97:
 
 ListFile98:
 
-           jsr  cout                  ; Print space
+           jsr  cout_mark             ; Print space
            dey
            bne  ListFile98            ; Finished this line?
 
@@ -268,8 +268,8 @@ ListFile99:
 
 GetNextBlk:
 
-           inc  CurrPage              ; Move current page pointer up by
-           inc  CurrPage              ; 1 block (512 bytes)
+           inc  CurrPage_M1           ; Move current page pointer up by
+           inc  CurrPage_M1           ; 1 block (512 bytes)
 
            lda  EntPerBlk             ; Reinitialize entries remaining
            sta  EntRemain             ; in block.
@@ -283,11 +283,11 @@ GetBlock:
 
 ;          Get directory block from aux memory
 
-           lda  CurrPage
+           lda  CurrPage_M1
            sta  A1H                   ; Source starting - high byte
            lda  #$00
            sta  A1L                   ; Source starting - low byte
-           lda  CurrPage
+           lda  CurrPage_M1
            ina
            sta  A2H                   ; Source ending   -  high byte
            lda  #$FF
@@ -311,7 +311,7 @@ SaveVolHeader:
 SVH01:
 
            lda  readBuf+4,x           ; Get byte
-           sta  VolHeader,x           ; Save byte
+           sta  VolHeader_M1,x        ; Save byte
            dex                        ; Move index
            bpl  SVH01                 ; Done?
 

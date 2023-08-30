@@ -9,20 +9,20 @@ SetBackGrnd:
            jsr  SetInv                ; Inverse text
 
            lda  #MouseText
-           jsr  cout                  ; Turn on mousetext
+           jsr  cout_mark             ; Turn on mousetext
 
            lda  #'Z'
-           jsr  cout                  ; Print left |
+           jsr  cout_mark             ; Print left |
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80              ; Set space to print
            ldx  #15                   ; Index 14 spaces
 
 PrintNext1:
 
-           jsr  cout                  ; print space
+           jsr  cout_mark             ; print space
            dex                        ; count space
            bne  PrintNext1            ; Branch if more to print
 
@@ -32,7 +32,7 @@ PrintNext1:
 PrintNext2:
 
            lda  Header,y              ; Load header character
-           jsr  cout                  ; Print it
+           jsr  cout_mark             ; Print it
            iny                        ; increment index
            dex                        ; count character printed
            bne  PrintNext2            ; more to print, get next character
@@ -42,14 +42,14 @@ PrintNext2:
 
 PrintNext3:
 
-           jsr  cout                  ; Print space
+           jsr  cout_mark             ; Print space
            dex                        ; count it
            bne  PrintNext3            ; More?
            lda  #MouseText
-           jsr  cout                  ; Turn on mousetext
+           jsr  cout_mark             ; Turn on mousetext
 
            lda  #'_'
-           jsr  cout                  ; print right |
+           jsr  cout_mark             ; print right |
 
 ;          L i n e   2   t h r o u g h   23
 
@@ -61,13 +61,13 @@ PrintNext4:
            sta  HTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #80-1
            sta  HTab
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            dex
            bne  PrintNext4
@@ -78,10 +78,10 @@ PrintNext4:
            sta  HTab                  ; Tab 1st column
 
            lda  #'Z'
-           jsr cout
+           jsr  cout_mark
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
            jsr  SetNorm
 
@@ -91,7 +91,7 @@ PrintNext4:
 
 PrintNext5:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  PrintNext5
 

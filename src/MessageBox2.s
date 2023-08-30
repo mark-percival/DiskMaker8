@@ -4,7 +4,7 @@
 
 UI:
 
-           stz  RC                    ; Reset return code
+           stz  MBRC                  ; Reset return code
            stz  ClearKbd              ; Clear keyboard strobe
 
 @PollDev:
@@ -80,27 +80,27 @@ MB2PollDevLoop:
 
 @TabDown:
 
-           inc  TabIndex
-           lda  TabIndex
+           inc  MBTabIndex
+           lda  MBTabIndex
            cmp  NumButts
            bcc  @TabReq1
 
-           stz  TabIndex
+           stz  MBTabIndex
            bra  @TabReq1
 
 @TabUp:
 
-           dec  TabIndex
+           dec  MBTabIndex
            bpl  @TabReq1
 
            lda  NumButts
            dec  a
-           sta  TabIndex
+           sta  MBTabIndex
 
 @TabReq1:
 
            lda  #TabOnly
-           sta  RC
+           sta  MBRC
            jmp  MB2Exit
 
 @NextKey01:
@@ -117,7 +117,7 @@ MB2PollDevLoop:
 
 MB2EnterReq:
 
-           lda  TabIndex
+           lda  MBTabIndex
            cmp  #Button1
            bne  @Enter01
            jmp  Button1Req
@@ -135,8 +135,8 @@ MB2EnterReq:
 Button1Req:
 
            lda  #Button1
-           cmp  TabIndex
-           sta  TabIndex
+           cmp  MBTabIndex
+           sta  MBTabIndex
            beq  B1Req01
 
            jsr  MBRefreshBtn
@@ -146,14 +146,14 @@ B1Req01:
            jsr  MB2AnimateBtn
 
            lda  #MBCROnly
-           sta  RC
-           jmp  Exit
+           sta  MBRC
+           jmp  MB2Exit
 
 Button2Req:
 
            lda  #Button2
-           cmp  TabIndex
-           sta  TabIndex
+           cmp  MBTabIndex
+           sta  MBTabIndex
            beq  B2Req01
 
            jsr  MBRefreshBtn
@@ -163,8 +163,8 @@ B2Req01:
            jsr  MB2AnimateBtn
 
            lda  #MBCROnly
-           sta  RC
-           jmp  Exit
+           sta  MBRC
+           jmp  MB2Exit
 
 InvalidKey:
 
@@ -186,9 +186,9 @@ MB2AnimateBtn:
            jsr  SetVTab
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
-           lda  TabIndex
+           lda  MBTabIndex
            cmp  #Button1
            beq  AnimateB1
 
@@ -205,7 +205,7 @@ AnimateB1:
            sta  Ptr1+1
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            lda  B1HTabS
            sta  HTab
@@ -216,7 +216,7 @@ AnimateB1:
            jsr  Wait
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
            lda  B1HTabS
            sta  HTab
@@ -227,7 +227,7 @@ AnimateB1:
            jsr  Wait
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
@@ -239,7 +239,7 @@ AnimateB2:
            sta  Ptr1+1
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            lda  B2HTabS
            sta  HTab
@@ -250,7 +250,7 @@ AnimateB2:
            jsr  Wait
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
            lda  B2HTabS
            sta  HTab
@@ -261,7 +261,7 @@ AnimateB2:
            jsr  Wait
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
@@ -271,7 +271,7 @@ PtrButton:
            ldy  #0
 
 @PB01:     lda  (Ptr1),y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  @PB01
@@ -306,11 +306,11 @@ RightRow:
 
 ; Button 1 click
 
-           stz  TabIndex
+           stz  MBTabIndex
 
            lda  #TabOnly
-           sta  RC
-           jmp  Exit
+           sta  MBRC
+           jmp  MB2Exit
 
 TestForB2:
 
@@ -330,11 +330,11 @@ CheckForB2:
 ; Button 2 click
 
            lda  #1
-           sta  TabIndex
+           sta  MBTabIndex
 
            lda  #TabOnly
-           sta  RC
-           jmp  Exit
+           sta  MBRC
+           jmp  MB2Exit
 
 TestForB3:
 
@@ -357,7 +357,7 @@ ButtonRelease:
 
 GoodRow:
 
-           lda  TabIndex
+           lda  MBTabIndex
            bne  B2Release
 
 B1Release:

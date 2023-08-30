@@ -10,7 +10,7 @@ Menu2:
            jsr  PaintMenu2            ; Paint basic screen frame
 
            lda  #1
-           sta  TabIndex2             ; Start with "Skip" as default.
+           sta  TabIndex_M2          ; Start with "Skip" as default.
 
 Menu2_01:
 
@@ -28,7 +28,7 @@ Menu2_03:
 
            jsr  Menu2UI               ; Menu 2 user interface
 
-           lda  RC2
+           lda  RC_M2
            cmp  #Quit2
            beq  Menu2Exit
 
@@ -44,7 +44,7 @@ Menu2_03:
            jsr  ClearMenu2
            jsr  ProcessImg            ; He's making a disk!
 
-           lda  RC2
+           lda  RC_M2
            cmp  #Quit2
            beq  Menu2Exit
 
@@ -64,28 +64,28 @@ Init2:
 
            lda  #<Buffer8K
            sta  Ptr1
-           sta  FstAddr
+           sta  FstAddr_M2
            lda  #>Buffer8K
            sta  Ptr1+1
-           sta  FstAddr+1
+           sta  FstAddr_M2+1
 
-           stz  Above
+           stz  Above_M2
 
            sec
-           lda  DevEntCnt
+           lda  DevEntCnt_M2
            sbc  #5
-           sta  Below
+           sta  Below_M2
            bpl  GT5
 
-           stz  Below
+           stz  Below_M2
 
 GT5:
 
            lda  #1
-           sta  M2SelLine
+           sta  SelLine_M2
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
@@ -103,7 +103,7 @@ ListDevs:
            sta  VTab
            jsr  SetVTab
 
-           lda  M2SelLine
+           lda  SelLine_M2
            bne  @NotUp
 
            jsr  M2ScrollUp
@@ -118,14 +118,14 @@ ListDevs:
 
 @NoScrollDn:
 
-           lda  FstAddr               ; Setup first line address
+           lda  FstAddr_M2               ; Setup first line address
            sta  Ptr1
-           lda  FstAddr+1
+           lda  FstAddr_M2+1
            sta  Ptr1+1
 
            stz  M2LineCount
 
-           lda  DevEntCnt             ; See if there are any lines to print.
+           lda  DevEntCnt_M2             ; See if there are any lines to print.
            bne  ListDev01
 
            jmp  ListDev90             ; Nope, so exit.
@@ -134,30 +134,30 @@ ListDev01:
 
            inc  M2LineCount
            lda  M2LineCount
-           cmp  M2SelLine
+           cmp  SelLine_M2
            bne  ListDev02
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
            lda  Ptr1
-           sta  SelAddr
+           sta  SelAddr_M2
            lda  Ptr1+1
-           sta  SelAddr+1
+           sta  SelAddr_M2+1
 
 ListDev02:
 
            ldy  #oSlot
            lda  (Ptr1),y
-           jsr  cout
+           jsr  cout_mark
            lda  #','+$80
-           jsr  cout
+           jsr  cout_mark
            ldy  #oDrive
            lda  (Ptr1),y
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #15
            ldy  #oVolume
@@ -165,13 +165,13 @@ ListDev02:
 ListDev03:
 
            lda  (Ptr1),y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  ListDev03
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #4
            ldy  #oSize
@@ -179,20 +179,20 @@ ListDev03:
 ListDev04:
 
            lda  (Ptr1),y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  ListDev04
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            ldy  #oUnit
            lda  (Ptr1),y
-           jsr  cout
+           jsr  cout_mark
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            lda  #19-1
            sta  HTab
@@ -202,7 +202,7 @@ ListDev04:
            lda  M2LineCount
            cmp  #5                    ; 5 lines max per screen
            beq  ListDev99
-           cmp  DevEntCnt             ; End of screen with < 5 lines?
+           cmp  DevEntCnt_M2             ; End of screen with < 5 lines?
            beq  ListDev90
 
            clc
@@ -229,7 +229,7 @@ ListDev92:                            ; Each line
 
 ListDev94:                            ; Each character in line
 
-           jsr  cout
+           jsr  cout_mark
            dey
            bne  ListDev94
 
@@ -252,18 +252,18 @@ ListDev99:
 M2ScrollDown:
 
            lda  #5
-           sta  M2SelLine
+           sta  SelLine_M2
 
-           inc  Above
-           dec  Below
+           inc  Above_M2
+           dec  Below_M2
 
            clc
-           lda  FstAddr
+           lda  FstAddr_M2
            adc  #oEntryLen
-           sta  FstAddr
-           lda  FstAddr+1
+           sta  FstAddr_M2
+           lda  FstAddr_M2+1
            adc  #0
-           sta  FstAddr+1
+           sta  FstAddr_M2+1
 
            rts
 
@@ -274,23 +274,23 @@ M2ScrollDown:
 M2ScrollUp:
 
            lda  #1
-           sta  M2SelLine
+           sta  SelLine_M2
 
-           dec  Above
-           inc  Below
+           dec  Above_M2
+           inc  Below_M2
 
            sec
-           lda  FstAddr
+           lda  FstAddr_M2
            sbc  #oEntryLen
-           sta  FstAddr
-           lda  FstAddr+1
+           sta  FstAddr_M2
+           lda  FstAddr_M2+1
            sbc  #0
-           sta  FstAddr+1
+           sta  FstAddr_M2+1
 
            rts
 
 ;
-; Refresh command buttons based on TabIndex2 setting
+; Refresh command buttons based on TabIndex_M2 setting
 ;
 
 Refresh2Btn:
@@ -301,19 +301,19 @@ Refresh2Btn:
            sta  Ptr1+1
 
            lda  #Normal               ; Make sure inverse is off
-           jsr  cout
+           jsr  cout_mark
            lda  #StdText              ; Mousetext off
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #0                    ; Index
 
 @Refresh01:
 
-           cpx  TabIndex2             ; Is this our active button?
+           cpx  TabIndex_M2             ; Is this our active button?
            bne  @Refresh02             ; No so print it normal
 
            lda  #Inverse              ; Inverse button
-           jsr  cout
+           jsr  cout_mark
 
 @Refresh02:
 
@@ -331,13 +331,13 @@ Refresh2Btn:
 @Refresh03:
 
            lda  (Ptr1),y              ; Get character
-           jsr  cout                  ; Print
+           jsr  cout_mark                  ; Print
            iny                        ; Move to next character
            dex                        ; Count it as printed
            bne  @Refresh03             ; More?
 
            lda  #Normal               ; Reset to normal text
-           jsr  cout
+           jsr  cout_mark
 
            plx                        ; Get index from stack
            inx                        ; Move to next button
@@ -355,11 +355,11 @@ Refresh2Btn:
 
 @Refresh05:
 
-           cpx  TabIndex2
+           cpx  TabIndex_M2
            bne  @Refresh06
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
 @Refresh06:
 
@@ -368,7 +368,7 @@ Refresh2Btn:
            jsr  SetVTab
            jsr  PrtImgType
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
 @Refresh07:
 
@@ -384,10 +384,10 @@ Refresh2Btn:
 
 GetImgSize:
 
-           stz  ImageSize
-           stz  ImageSize+1
+           stz  ImageSize_M2
+           stz  ImageSize_M2+1
 
-           lda  ImageType
+           lda  ImageType_M2
 
            cmp  #Type_2IMG            ; 2IMG check.
            beq  T_2Img
@@ -429,9 +429,9 @@ T_2Img:                               ; 2IMG image
            jsr  MLIClose
 
            lda  readBuf
-           sta  ImageSize
+           sta  ImageSize_M2
            lda  readBuf+1
-           sta  ImageSize+1
+           sta  ImageSize_M2+1
 
            rts
 
@@ -463,12 +463,12 @@ T_DC:                                 ; Diskcopy 4.2 image
 ;          Convert from image size in bytes to blocks.
 
            lda  readBuf+2
-           sta  ImageSize
+           sta  ImageSize_M2
            lda  readBuf+1
-           sta  ImageSize+1
+           sta  ImageSize_M2+1
 
-           lsr  ImageSize+1
-           ror  ImageSize
+           lsr  ImageSize_M2+1
+           ror  ImageSize_M2
 
            rts
 
@@ -508,11 +508,11 @@ GetFileSize:
            jsr  MLIClose
 
            lda  geteofEOF+1
-           sta  ImageSize
+           sta  ImageSize_M2
            lda  geteofEOF+2
-           sta  ImageSize+1
+           sta  ImageSize_M2+1
 
-           lsr  ImageSize
-           ror  ImageSize+1
+           lsr  ImageSize_M2
+           ror  ImageSize_M2+1
 
            rts

@@ -51,13 +51,13 @@ Start:
 PrtFile01:
 
            lda  #MouseText            ; Mousetext on
-           jsr  cout
+           jsr  cout_mark
            lda  #'Z'
-           jsr  cout                  ; |
+           jsr  cout_mark             ; |
            lda  #'\'
-           jsr  cout                  ; Two horizontal lines
+           jsr  cout_mark             ; Two horizontal lines
            lda  #'^'
-           jsr  cout                  ; Box with dot
+           jsr  cout_mark             ; Box with dot
            bra  PrtFile06             ; Print file name
 
 PrtFile02:
@@ -76,13 +76,13 @@ PrtFile02:
            sta  (Ptr1),y
 
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
            lda  #'X'
-           jsr  cout                  ; Left half of folder
+           jsr  cout_mark             ; Left half of folder
            lda  #'Y'
-           jsr  cout                  ; Right half of folder
+           jsr  cout_mark             ; Right half of folder
            bra  PrtFile06             ; Print file name
 
 PrtFile03:
@@ -109,13 +109,13 @@ PrtFile04:
 ;          Directory file entry
 
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
            lda  #'X'
-           jsr  cout                  ; Left half of folder
+           jsr  cout_mark             ; Left half of folder
            lda  #'Y'
-           jsr  cout                  ; Right half of folder
+           jsr  cout_mark             ; Right half of folder
            bra  PrtFile06             ; Print file name
 
 PrtFile05:
@@ -123,14 +123,14 @@ PrtFile05:
 ;          Regular file entry
 
            lda  #' '+$80
-           jsr  cout
-           jsr  cout                  ; Print three spaces
-           jsr  cout
+           jsr  cout_mark
+           jsr  cout_mark             ; Print three spaces
+           jsr  cout_mark
 
 PrtFile06:
 
            lda  #StdText              ; Normal text
-           jsr  cout
+           jsr  cout_mark
 
            ldy  #oFileName            ; Get file type
            lda  (Ptr1),y
@@ -141,18 +141,18 @@ PrtFile06:
            bcs  PtrFile06a            ;  a directory header
 
            lda  #'+'+$80              ; At here we have a non-ProDOS 8 file
-           jsr  cout                  ;  of some sort.
+           jsr  cout_mark             ;  of some sort.
            bra  PtrFile06b
 
 PtrFile06a:
 
            lda  #' '+$80              ; Space
-           jsr  cout                  ; Print space
+           jsr  cout_mark             ; Print space
 
 PtrFile06b:
 
            lda  TextMode              ; Set selected/not selected entry
-           jsr  cout
+           jsr  cout_mark
            lda  #Normal               ; Set default TextMode to Normal text
            sta  TextMode
 
@@ -178,7 +178,7 @@ PrtFile07:
 PrtFile08:
 
            ora  #$80                  ; Set high bit on
-           jsr  cout                  ; Print character
+           jsr  cout_mark             ; Print character
 
            iny                        ; Move index to next character
            cpy  #oFileName+8          ; Check to see if we need the 2nd set of
@@ -205,24 +205,24 @@ PrtFile09:
 
 PrtFile10:
 
-           jsr  cout                  ; Print space
+           jsr  cout_mark             ; Print space
            dex
            bne  PrtFile10
 
 PrtFile11:
 
            lda  Ptr1
-           cmp  #<VolHeader
+           cmp  #<VolHeader_M1
            bne  PrtFile12
            lda  Ptr1+1
-           cmp  #>VolHeader
+           cmp  #>VolHeader_M1
            bne  PrtFile12
            bra  PrtFile14
 
 PrtFile12:
 
            lda  #' '+$80
-           jsr  cout                  ; Print a space
+           jsr  cout_mark             ; Print a space
 
            ldx  #3
            ldy  #oFileTypeA
@@ -231,7 +231,7 @@ PrtFile13:                            ; Print file type loop
 
            lda  (Ptr1),y
            ora  #$80
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  PrtFile13
@@ -239,6 +239,6 @@ PrtFile13:                            ; Print file type loop
 PrtFile14:
 
            lda  #Normal               ; Make sure Normal text mode.
-           jsr  cout
+           jsr  cout_mark
 
            rts

@@ -6,14 +6,14 @@ WriteImage:
 
            jsr  InitProgBar           ; Initialize progressbar variables
 
-           stz  CurrBlock             ; Start at writing at block zero.
-           stz  CurrBlock+1
+           stz  CurrBlock_M2          ; Start at writing at block zero.
+           stz  CurrBlock_M2+1
 
            ldx  #$07
 
            jsr  InitMarker
 
-           lda  ImageType
+           lda  ImageType_M2
            cmp  #Type_DO
            bne  StdImage
 
@@ -84,9 +84,9 @@ ShiftRight: lsr  a
            iny
            bne  @Loop2
 
-           lda  CurrBlock
+           lda  CurrBlock_M2
            sta  wrblkBlockNum
-           lda  CurrBlock+1
+           lda  CurrBlock_M2+1
            sta  wrblkBlockNum+1
 
            jsr  MLIWriteBlk
@@ -112,16 +112,16 @@ GoodWrite:
 
 CheckForEnd:
 
-           lda  CurrBlock+1
-           cmp  EndBlock+1
+           lda  CurrBlock_M2+1
+           cmp  EndBlock_M2+1
            bne  NextBlock
-           lda  CurrBlock
-           cmp  EndBlock
+           lda  CurrBlock_M2
+           cmp  EndBlock_M2
            beq  Success
 
-NextBlock: inc  CurrBlock
+NextBlock: inc  CurrBlock_M2
            bne  NB01
-           inc  CurrBlock+1
+           inc  CurrBlock_M2+1
 
 NB01:      inx
            cpx  #$08
@@ -135,7 +135,7 @@ Success:
 
            jsr  SuccessBox
            lda  #Quit2                ; Allows for exiting back to image
-           sta  RC2                   ;  selection screen.
+           sta  RC_M2                ;  selection screen.
 
 Done:      jsr  ClearBox
 
@@ -229,9 +229,9 @@ SectorTable: .res 8
 
 InitProgBar:
 
-           lda  EndBlock
+           lda  EndBlock_M2
            sta  acc
-           lda  EndBlock+1
+           lda  EndBlock_M2+1
            sta  acc+1
            lda  #25
            sta  aux
@@ -273,7 +273,7 @@ MoveProgBar:
            jsr  SetVTab
 
            lda  #' '
-           jsr  cout
+           jsr  cout_mark
 
            lda  BlkPerInd
            sta  counter
@@ -288,7 +288,7 @@ InitMarker:                           ; Initalize beginning of image marker
            stz  setMarkPos+1
            stz  setMarkPos+2
 
-           lda  ImageType
+           lda  ImageType_M2
            cmp  #Type_2IMG            ; 2mg file header offset
            bne  NextCheck1
 
@@ -317,7 +317,7 @@ GetVolNum:                            ; Get DOS 3.3 volume number
            cmp  #DiskIIDev            ; Is this a Disk ][?
            bne  NotDOS33
 
-           lda  ImageSize+1           ; Image too small?
+           lda  ImageSize_M2+1           ; Image too small?
            beq  NotDOS33
 
            jsr  InitMarker

@@ -11,10 +11,10 @@ DisplayBox:
            jsr  SetVTab
 
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  BoxWidth
            dec  a
@@ -25,12 +25,12 @@ DisplayBox:
 
 Line10a:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line10a
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; VTab 11
 
@@ -40,7 +40,7 @@ Line10a:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  BoxWidth
            dec  a
@@ -51,12 +51,12 @@ Line10a:
 
 Line11a:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line11a
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; VTab 12
 
@@ -66,20 +66,20 @@ Line11a:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'='+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'\'+$80
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #3
            lda  #' '+$80
 
 Line12a:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line12a
 
@@ -88,13 +88,13 @@ Line12a:
 
 Line12b:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line12b
 
            lda  #' '+$80
-           jsr  cout
-           jsr  cout
+           jsr  cout_mark
+           jsr  cout_mark
 
            ldy  #0                    ; Message index
            ldx  #0
@@ -106,7 +106,7 @@ Line12c:
            cmp  #$0D
            beq  Line12d
            ora  #$80
-           jsr  cout
+           jsr  cout_mark
            iny
            inx
            bra  Line12c
@@ -125,12 +125,12 @@ Line12d:
 
 Line12e:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line12e
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; VTab 13
 
@@ -140,33 +140,33 @@ Line12e:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'o'+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
-           jsr  cout
+           jsr  cout_mark
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'?'+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
-           jsr  cout
+           jsr  cout_mark
+           jsr  cout_mark
 
            ldx  #0
            lda  (MsgPtr),y
@@ -182,7 +182,7 @@ Line13a:
            beq  Line13a1
 
            ora  #$80
-           jsr  cout
+           jsr  cout_mark
            inx
 
 Line13a1:
@@ -204,12 +204,12 @@ Line13b:
 
 Line13c:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line13c
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; VTab 14
 
@@ -219,31 +219,31 @@ Line13c:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'I'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'Y'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'/'+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'!'+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            sec                        ; Setup for subtraction
            lda  MsgWidth              ; A = MsgWidth - MinMsg  (= extra chars)
@@ -259,7 +259,7 @@ Line14a:
 
 Line14b:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line14b
 
@@ -268,7 +268,7 @@ Line14b:
 
 Line14c:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line14c
 
@@ -281,7 +281,7 @@ Line14c:
 
 Line14d:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line14d
 
@@ -290,7 +290,7 @@ Line14d:
 
 Line14e:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line14e
 
@@ -316,12 +316,12 @@ Line14h:
 
 Line14i:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line14i
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; HTab 15
 
@@ -331,24 +331,24 @@ Line14i:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'M'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
-           jsr  cout
+           jsr  cout_mark
+           jsr  cout_mark
 
            ldx  #4
            lda  #'L'
 
 Line15a:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line15a
 
@@ -375,15 +375,15 @@ Line15a:
 
 Line15b:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line15b
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #8
            ldy  #0
@@ -391,29 +391,29 @@ Line15b:
 Line15c:
 
            lda  B1Text,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  Line15c
 
            lda  #' '
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            ldx  Mode
            cpx  #ModeOk
            beq  Line15d1
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #8
            ldy  #0
@@ -421,16 +421,16 @@ Line15c:
 Line15d:
 
            lda  B2Text,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  Line15d
 
            lda  #' '
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 Line15d1:
 
@@ -450,12 +450,12 @@ Line15e:
 
 Line15f:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line15f
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 ; HTab 16
 
@@ -465,7 +465,7 @@ Line15f:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            sec
            lda  MsgWidth
@@ -478,7 +478,7 @@ Line15f:
 
 Line16a:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line16a
 
@@ -487,7 +487,7 @@ Line16a:
 
 Line16b:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line16b
 
@@ -500,7 +500,7 @@ Line16b:
 
 Line16c:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line16c
 
@@ -509,7 +509,7 @@ Line16c:
 
 Line16d:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line16d
 
@@ -532,24 +532,24 @@ Line16e:
 
 Line16f:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  Line16f
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
-MBTextLine:                           ; Text screen line starting addresses
+TextLineMB:                           ; Text screen line starting addresses
 
-MBTextLine09: .addr $04A8             ; 1st message box line
-MBTextLine10: .addr $0528             ; 2nd message box line
-MBTextLine11: .addr $05A8             ; 3rd message box line
-MBTextLine12: .addr $0628             ; 4th message box line
-MBTextLine13: .addr $06A8             ; 5th message box line
-MBTextLine14: .addr $0728             ; 6th message box line
-MBTextLine15: .addr $07A8             ; 7th message box line
+TextLineMB09: .addr $04A8             ; 1st message box line
+TextLineMB10: .addr $0528             ; 2nd message box line
+TextLineMB11: .addr $05A8             ; 3rd message box line
+TextLineMB12: .addr $0628             ; 4th message box line
+TextLineMB13: .addr $06A8             ; 5th message box line
+TextLineMB14: .addr $0728             ; 6th message box line
+TextLineMB15: .addr $07A8             ; 7th message box line
 
 MBEndHTab: .res   1
 MBSaveRtn: .res   1
@@ -594,10 +594,10 @@ MB1StartRtn:
            dec  a                     ; Subtract one to make it a 0 - 6 number
            asl  a                     ; Multiply by two for address table index
            tay                        ; Move to index
-           lda  MBTextLine,y          ;   Get line number starting address and
+           lda  TextLineMB,y          ;   Get line number starting address and
            sta  Ptr1                  ; put it in Ptr1.
            iny
-           lda  MBTextLine,y
+           lda  TextLineMB,y
            sta  Ptr1+1
 
            ldy  StartHTab
@@ -667,20 +667,20 @@ MBRefreshBtn:
            jsr  SetVTab
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
-           lda  TabIndex
+           lda  TabIndex_M1
            cmp  #Button1
            beq  B1Selected
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
            bra  PrtB1
 
 B1Selected:
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
 PrtB1:
 
@@ -690,7 +690,7 @@ PrtB1:
 PrtLoop1:
 
            lda  B1Text,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  PrtLoop1
@@ -703,18 +703,18 @@ PrtLoop1:
            sta  HTab
            jsr  SetVTab
 
-           lda  TabIndex
+           lda  TabIndex_M1
            cmp  #Button2
            beq  B2Selected
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
            bra  PrtB2
 
 B2Selected:
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
 PrtB2:
 
@@ -724,7 +724,7 @@ PrtB2:
 PrtLoop2:
 
            lda  B2Text,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  PrtLoop2
@@ -732,6 +732,6 @@ PrtLoop2:
 MB1PrtExit:
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            rts

@@ -49,7 +49,6 @@
 ;          Menu2
 
            .include "Menu2.s"
-           .include "Menu2Vars.s"
            .include "SetImageType.s"
            .include "PaintMenu2.s"
            .include "LoadDevs.s"
@@ -99,3 +98,4 @@
 
            .include "GlobalVars.s"
            .include "Menu1Vars.s"
+           .include "Menu2Vars.s"

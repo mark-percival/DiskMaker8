@@ -4,7 +4,7 @@
 
 Menu2UI:
 
-           stz  RC2                   ; Reset return code
+           stz  RC_M2                ; Reset return code
            stz  ClearKbd
 
 @PollDev:
@@ -30,7 +30,7 @@ Menu2UI:
            bit  #PrevButton           ; Button release?
            bne  @MouseDev3            ; Yes, process button release.
 
-           bra  @M2PollDevLoop          ; Check keyboard and mouse again.
+           bra  @M2PollDevLoop        ; Check keyboard and mouse again.
 
 ;
 ; Process mouse movement
@@ -84,8 +84,8 @@ Menu2UI:
 @QuitReq:
 
            lda  #SkipBtn              ; Test here to see of Skip is the
-           cmp  TabIndex2             ;  current displayed button.
-           sta  TabIndex2
+           cmp  TabIndex_M2           ;  current displayed button.
+           sta  TabIndex_M2
            beq  @QuitReq0
            jsr  Refresh2Btn           ; Display Skip as current selected.
 
@@ -94,8 +94,8 @@ Menu2UI:
            jsr  @AnimateBtn
 
            lda  #Quit2
-           sta  RC2
-           jmp  Exit
+           sta  RC_M2
+           jmp  @Exit
 
 ; Down / right arrow keypress logic
 
@@ -110,33 +110,33 @@ Menu2UI:
 
 @DownReq2:
 
-           lda  M2SelLine
+           lda  SelLine_M2
            cmp  #5                    ; At bottom of window?
            beq  @AtBottom
 
-           lda  DevEntCnt             ; If total number of devices = our current
-           cmp  M2SelLine             ;  line number then no more entries.
+           lda  DevEntCnt_M2           ; If total number of devices = our current
+           cmp  SelLine_M2             ;  line number then no more entries.
            beq  @AtBottom
 
 @M2IncSelLine:
 
-           inc  M2SelLine
+           inc  SelLine_M2
            lda  #UpdDevLst
-           sta  RC2
-           jmp  Exit
+           sta  RC_M2
+           jmp  @Exit
 
 @AtBottom:
 
-           lda  Below
+           lda  Below_M2
            beq  @NoMoreBelow
 
-           inc  M2SelLine             ; Should make M2SelLine = 6
+           inc  SelLine_M2             ; Should make SelLine_M2 = 6
 
 @NoMoreBelow:
 
            lda  #UpdDevLst
-           sta  RC2
-           jmp  Exit
+           sta  RC_M2
+           jmp  @Exit
 
 @NextKey02:
 
@@ -151,27 +151,27 @@ Menu2UI:
 
 @UpReq2:
 
-           lda  M2SelLine
+           lda  SelLine_M2
            cmp  #1
            beq  @AtTop
 
-           dec  M2SelLine
+           dec  SelLine_M2
            lda  #UpdDevLst
-           sta  RC2
-           jmp  Exit
+           sta  RC_M2
+           jmp  @Exit
 
 @AtTop:
 
-           lda  Above
+           lda  Above_M2
            beq  @NoMoreAbove
 
-           dec  M2SelLine             ; Should make M2SelLine = 0
+           dec  SelLine_M2             ; Should make SelLine_M2 = 0
 
 @NoMoreAbove:
 
            lda  #UpdDevLst
-           sta  RC2
-           jmp  Exit
+           sta  RC_M2
+           jmp  @Exit
 
 @NextKey03:
 
@@ -189,8 +189,8 @@ Menu2UI:
 @AboutReq:
 
            lda  #AboutBtn
-           cmp  TabIndex2
-           sta  TabIndex2
+           cmp  TabIndex_M2
+           sta  TabIndex_M2
            beq  @AboutReq0
 
            jsr  Refresh2Btn
@@ -202,7 +202,7 @@ Menu2UI:
 @AboutReq1:
 
            lda  #SkipBtn
-           sta  TabIndex2
+           sta  TabIndex_M2
 
 ;          lda  #@AboutMsg
 ;          sta  MsgPtr
@@ -214,8 +214,8 @@ Menu2UI:
            jsr  About
 
            lda  #Nothing
-           sta  RC2
-           jmp  Exit
+           sta  RC_M2
+           jmp  @Exit
 
 @AboutMsg: asccr "       Diskmaker 8"
            ascz  "(c) 2005 by Mark Percival"
@@ -236,8 +236,8 @@ Menu2UI:
 @MakeReq1:
 
            lda  #MakeBtn
-           cmp  TabIndex2
-           sta  TabIndex2
+           cmp  TabIndex_M2
+           sta  TabIndex_M2
            beq  @MakeReq10
 
            jsr  Refresh2Btn
@@ -246,23 +246,23 @@ Menu2UI:
 
            jsr  @AnimateBtn
 
-           lda  DevEntCnt             ; Check to see if there are devices listed
-           bne  @MakeReq11              ;  on the screen.
+           lda  DevEntCnt_M2          ; Check to see if there are devices listed
+           bne  @MakeReq11            ;  on the screen.
 
            jsr  Beep                  ; Nope, so beep him and exit.
 
            lda  #Nothing
-           sta  RC2
-           jmp  Exit
+           sta  RC_M2
+           jmp  @Exit
 
 @MakeReq11:
 
            lda  #SkipBtn
-           sta  TabIndex2
+           sta  TabIndex_M2
 
            lda  #MakingDisk
-           sta  RC2
-           jmp  Exit
+           sta  RC_M2
+           jmp  @Exit
 
 @NextKey05:
 
@@ -280,7 +280,7 @@ Menu2UI:
 
 @TabDown:
 
-           lda  TabIndex2
+           lda  TabIndex_M2
            inc  a
            cmp  #LoopBack2
            bne  @TabReq1
@@ -290,7 +290,7 @@ Menu2UI:
 
 @TabUp:
 
-           lda  TabIndex2
+           lda  TabIndex_M2
            dec  a
            bpl  @TabReq1
 
@@ -298,11 +298,11 @@ Menu2UI:
 
 @TabReq1:
 
-           sta  TabIndex2
+           sta  TabIndex_M2
 
            lda  #Nothing
-           sta  RC2
-           jmp  Exit
+           sta  RC_M2
+           jmp  @Exit
 
 @NextKey06:
 
@@ -317,7 +317,7 @@ Menu2UI:
 
 @M2EnterReq:
 
-           lda  TabIndex2
+           lda  TabIndex_M2
 
            cmp  #AboutBtn
            bne  @Enter01
@@ -342,14 +342,14 @@ Menu2UI:
            jsr  SelImgType
            jsr  GetImgSize
 
-           lda  blnSize               ; Is same-size on?
+           lda  blnSize_M2            ; Is same-size on?
            bne  @Enter03
-           jmp  @M2PollDevLoop         ; No, so just get next keystroke.
+           jmp  @M2PollDevLoop        ; No, so just get next keystroke.
 
 @Enter03a:
 
            lda  #ReloadDevs           ; Same size on and he changed type so
-           sta  RC2                   ; refresh device display.
+           sta  RC_M2                ; refresh device display.
            jmp  @Exit
 
 @Enter04:
@@ -358,8 +358,8 @@ Menu2UI:
            bne  @Enter05
            jsr  ToggleSize
            lda  #ReloadDevs
-           sta  RC2
-           jmp  Exit
+           sta  RC_M2
+           jmp  @Exit
 
 @Enter05:
 
@@ -385,7 +385,7 @@ Menu2UI:
            lda  #>M2BtnText
            sta  Ptr1+1
 
-           ldx  TabIndex2
+           ldx  TabIndex_M2
            beq  @AnimBtn02
 
 @AnimBtn01:
@@ -404,7 +404,7 @@ Menu2UI:
 @AnimBtn02:
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            jsr  @PrtButton
 
@@ -412,7 +412,7 @@ Menu2UI:
            jsr  Wait
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
            jsr  @PrtButton
 
@@ -420,7 +420,7 @@ Menu2UI:
            jsr  Wait
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
@@ -442,7 +442,7 @@ Menu2UI:
 @PrtButt01:
 
            lda  (Ptr1),y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  @PrtButt01
@@ -459,21 +459,21 @@ Menu2UI:
            bit  #PrevButton           ; released it and is not holding it down.
            beq  @BD00
 
-           lda  @HoldCnt               ; Check to see how long he's held down the
+           lda  @HoldCnt              ; Check to see how long he's held down the
            cmp  #$FF                  ; mouse button.
-           beq  @Repeat                ; Long enough so he's repeating.
+           beq  @Repeat               ; Long enough so he's repeating.
 
-           inc  @HoldCnt               ; Hasn't held it long enough to be
+           inc  @HoldCnt              ; Hasn't held it long enough to be
            lda  #$01                  ; considered repeating so count the hold
            jsr  Wait
 
            jmp  @M2PollDevLoop
 
-@HoldCnt:   .byte   $00                ;    Count how long he's holding the button
+@HoldCnt:   .byte   $00               ;    Count how long he's holding the button
 
 @BD00:
 
-           stz  @HoldCnt               ; Zero out counter on first button press.
+           stz  @HoldCnt              ; Zero out counter on first button press.
 
 @Repeat:
 
@@ -491,10 +491,10 @@ Menu2UI:
            bcs  @BD01
 
            lda  #AboutBtn
-           sta  TabIndex2
+           sta  TabIndex_M2
 
            lda  #Nothing
-           sta  RC2
+           sta  RC_M2
            rts
 
 @BD01:
@@ -513,10 +513,10 @@ Menu2UI:
            bcs  @BD02
 
            lda  #SkipBtn
-           sta  TabIndex2
+           sta  TabIndex_M2
 
            lda  #Nothing
-           sta  RC2
+           sta  RC_M2
            rts
 
 @BD02:
@@ -535,10 +535,10 @@ Menu2UI:
            bcs  @BD03
 
            lda  #MakeBtn
-           sta  TabIndex2
+           sta  TabIndex_M2
 
            lda  #Nothing
-           sta  RC2
+           sta  RC_M2
            rts
 
 @BD03:
@@ -557,20 +557,20 @@ Menu2UI:
            bcs  @BD04
 
            lda  #ImgTypeBox
-           sta  TabIndex2
+           sta  TabIndex_M2
 
            jsr  Refresh2Btn
            jsr  SelImgType
            jsr  GetImgSize
 
-           lda  blnSize               ; Is same-size on?
+           lda  blnSize_M2            ; Is same-size on?
            bne  @BD03a
-           jmp  @M2PollDevLoop           ; No, so just get next keystroke.
+           jmp  @M2PollDevLoop        ; No, so just get next keystroke.
 
 @BD03a:
 
            lda  #ReloadDevs           ; Same size on and he changed type so
-           sta  RC2                   ; refresh device display.
+           sta  RC_M2                ; refresh device display.
            rts
 
 @BD04:
@@ -589,10 +589,10 @@ Menu2UI:
            bcs  @BD05
 
            lda  #SameSize
-           sta  TabIndex2
+           sta  TabIndex_M2
 
            lda  #Nothing
-           sta  RC2
+           sta  RC_M2
            rts
 
 @BD05:
@@ -644,21 +644,21 @@ Menu2UI:
            sec
            lda  MouseY
            sbc  #9
-           cmp  M2SelLine             ; Did he click the same line twice?
-           beq  @BD08                  ; Yes so execute double click logic
+           cmp  SelLine_M2            ; Did he click the same line twice?
+           beq  @BD08                 ; Yes so execute double click logic
 
-           sta  M2SelLine             ; No so change selected line pointer.
+           sta  SelLine_M2            ; No so change selected line pointer.
 
            lda  #UpdDevLst
-           sta  RC2
+           sta  RC_M2
            rts
 
-@BD08:                                 ; Double clicked line
+@BD08:                                ; Double clicked line
 
            lda  #MakeBtn              ; Change command to Make Disks
-           sta  TabIndex2
+           sta  TabIndex_M2
 
-           jmp  @M2EnterReq              ; Pretend that he pressed Enter key
+           jmp  @M2EnterReq           ; Pretend that he pressed Enter key
 
 @BD09:
 
@@ -685,7 +685,7 @@ Menu2UI:
            cmp  #62
            bcs  @BU01
 
-           lda  TabIndex2
+           lda  TabIndex_M2
            cmp  #AboutBtn
            bne  @BU01
 
@@ -706,7 +706,7 @@ Menu2UI:
            cmp  #62
            bcs  @BU02
 
-           lda  TabIndex2
+           lda  TabIndex_M2
            cmp  #SkipBtn
            bne  @BU02
 
@@ -727,7 +727,7 @@ Menu2UI:
            cmp  #62
            bcs  @BU03
 
-           lda  TabIndex2
+           lda  TabIndex_M2
            cmp  #MakeBtn
            bne  @BU03
 
@@ -748,7 +748,7 @@ Menu2UI:
            cmp  #63
            bcs  @BU04
 
-           lda  TabIndex2
+           lda  TabIndex_M2
            cmp  #SameSize
            bne  @BU04
 

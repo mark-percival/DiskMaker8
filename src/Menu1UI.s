@@ -9,7 +9,7 @@ Menu1UI:
 oFileType  =  $10 ; - $10
 oAuxType   =  $1F ; - $20
 
-           stz  RC                    ; Reset return code
+           stz  RC_M1                 ; Reset return code
            stz  ClearKbd              ; Clear keyboard strobe
 
 M1PollDev:
@@ -53,10 +53,10 @@ MouseDev1:
 MouseDev2:
 
            jsr  PMButtonDown
-           lda  blnDblClick
+           lda  blnDblClick_M1
            bne  DoOpen                ; should be because I'm double clicking.
 
-           lda  RC
+           lda  RC_M1
            bne  MouseDev2X
            jmp  M1PollDevLoop
 
@@ -71,13 +71,13 @@ MouseDev2X:
 MouseDev3:
 
            jsr  PMButtonUp
-           lda  RC
+           lda  RC_M1
            bne  MouseDev3X
            jmp  M1PollDevLoop
 
 MouseDev3X:
 
-           lda  TabIndex
+           lda  TabIndex_M1
            beq  DoDisks
            cmp  #OpenBtn
            beq  DoOpen
@@ -124,19 +124,19 @@ KeyDev:
 QuitReq:
 
            lda  #CancelBtn            ; Test here to see if Cancel is the
-           cmp  TabIndex              ;   currently displayed button.
-           sta  TabIndex              ; Change TabIndex here.
+           cmp  TabIndex_M1           ;   currently displayed button.
+           sta  TabIndex_M1           ; Change TabIndex_M1 here.
            beq  QuitReq0              ; Yes Cancel is current based on prev test
 
-           jsr  MBRefreshBtn            ; Display Cancel as current selected.
+           jsr  MBRefreshBtn          ; Display Cancel as current selected.
 
 QuitReq0:
 
            jsr  AnimateBtn
 
            lda  #Quit
-           sta  RC
-           jmp  Exit
+           sta  RC_M1
+           jmp  M1Exit
 
 ;          Test for down / right arrow key.
 
@@ -151,37 +151,37 @@ NextKey01:
 
 DownReq:
 
-           lda  SelectLine            ; Check to see if selected line is at the
+           lda  SelectLine_M1         ; Check to see if selected line is at the
            cmp  #8                    ; bottom of the window.
            beq  AtBottom              ; Yes it is.
 
-           lda  FileCount+1           ; No so see if there are more file entries
+           lda  FileCount_M1+1        ; No so see if there are more file entries
            bne  IncSelLine            ; below our selected line.
 
-           lda  FileCount             ; If FileCount = SelectLine then we're
-           cmp  SelectLine            ; at the bottom of the window with less
+           lda  FileCount_M1          ; If FileCount_M1 = SelectLine_M1 then we're
+           cmp  SelectLine_M1         ; at the bottom of the window with less
            beq  AtBottom              ; than 8 file entries in the directory.
 
 IncSelLine:                           ; Increment selected line
 
-           inc  SelectLine            ; Move selected line to next position
+           inc  SelectLine_M1         ; Move selected line to next position
            lda  #NoDirChange
-           sta  RC
-           jmp  Exit
+           sta  RC_M1
+           jmp  M1Exit
 
 AtBottom:
 
-           lda  LinesBelow+1          ; Check to see if we have move lines below
-           ora  LinesBelow            ; this point.  This is a 16 bit number.
+           lda  LinesBelow_M1+1       ; Check to see if we have move lines below
+           ora  LinesBelow_M1         ; this point.  This is a 16 bit number.
            beq  @NoMoreBelow
 
-           inc  SelectLine            ; This should make SelectLine = 9.
+           inc  SelectLine_M1         ; This should make SelectLine_M1 = 9.
 
 @NoMoreBelow:
 
            lda  #NoDirChange
-           sta  RC
-           jmp  Exit
+           sta  RC_M1
+           jmp  M1Exit
 
 ;          Test for up / left arrow key.
 
@@ -196,28 +196,28 @@ NextKey02:
 
 UpReq:
 
-           lda  SelectLine            ; Check to see if we're at top of window
+           lda  SelectLine_M1         ; Check to see if we're at top of window
            cmp  #1
            beq  AtTop
 
-           dec  SelectLine            ; Not at top of window so move line up 1
+           dec  SelectLine_M1         ; Not at top of window so move line up 1
            lda  #NoDirChange
-           sta  RC
-           jmp  Exit
+           sta  RC_M1
+           jmp  M1Exit
 
 AtTop:
 
-           lda  LinesAbove+1          ; Check to see if we have lines above
-           ora  LinesAbove            ; this point.
+           lda  LinesAbove_M1+1       ; Check to see if we have lines above
+           ora  LinesAbove_M1         ; this point.
            beq  NoMoreAbove
 
-           dec  SelectLine            ; This should make SelectLine = 0
+           dec  SelectLine_M1         ; This should make SelectLine_M1 = 0
 
 NoMoreAbove:
 
            lda  #NoDirChange
-           sta  RC
-           jmp  Exit
+           sta  RC_M1
+           jmp  M1Exit
 
 NextKey03:
 
@@ -235,11 +235,11 @@ NextKey03:
 OnlineReq:
 
            lda  #DisksBtn             ; Test here to see if Disks is the
-           cmp  TabIndex              ;   currently displayed button.
-           sta  TabIndex              ; Change TabIndex here.
+           cmp  TabIndex_M1           ;   currently displayed button.
+           sta  TabIndex_M1           ; Change TabIndex_M1 here.
            beq  OnlineReq0            ; Yes Disks is current based on prev test
 
-           jsr  MBRefreshBtn            ; Display Disks as current selected.
+           jsr  MBRefreshBtn          ; Display Disks as current selected.
 
 OnlineReq0:
 
@@ -248,12 +248,12 @@ OnlineReq0:
 OnlineReq1:
 
            lda  #OpenBtn              ; Default to Open after call.
-           sta  TabIndex
+           sta  TabIndex_M1
 
            stz  Prefix
            lda  #DirChange
-           sta  RC
-           jmp  Exit
+           sta  RC_M1
+           jmp  M1Exit
 
 NextKey04:
 
@@ -274,17 +274,17 @@ NextKey05a:
 OpenReq:
 
            lda  #OpenBtn              ; Test here to see if Open is the
-           cmp  TabIndex              ;   currently displayed button.
-           sta  TabIndex              ; Change TabIndex here.
+           cmp  TabIndex_M1           ;   currently displayed button.
+           sta  TabIndex_M1           ; Change TabIndex_M1 here.
            beq  OpenReq0              ; Yes Open is current based on prev test
 
-           jsr  MBRefreshBtn            ; Display Open as current selected.
+           jsr  MBRefreshBtn          ; Display Open as current selected.
 
 OpenReq0:
 
            jsr  AnimateBtn            ; Do button animation.
 
-           lda  M1LineCount           ; Are there files listed in this
+           lda  LineCount_M1           ; Are there files listed in this
            bne  OpenReq0a             ;  directory?
 
            jmp  BadFileName           ; No, so beep the user to let him know.
@@ -301,13 +301,13 @@ OpenReq0a:
 
 OpenReq1:
 
-           lda  SelectPage            ; Make sure proper page is loaded.
-           sta  CurrPage
+           lda  SelectPage_M1         ; Make sure proper page is loaded.
+           sta  CurrPage_M1
            jsr  GetBlock
 
-           lda  SelectAddr            ; Set up pointer to selected file.
+           lda  SelectAddr_M1         ; Set up pointer to selected file.
            sta  Ptr1
-           lda  SelectAddr+1
+           lda  SelectAddr_M1+1
            sta  Ptr1+1
 
            lda  (Ptr1)
@@ -361,8 +361,8 @@ OpenReq2:
 OpenReq99:
 
            lda  #DirChange
-           sta  RC
-           jmp  Exit
+           sta  RC_M1
+           jmp  M1Exit
 
 BadPrefix:                            ; New prefix > 63 characters
 
@@ -376,16 +376,16 @@ BadPrefix:                            ; New prefix > 63 characters
            jsr  MBMsgOk
 
            lda  #NoDirChange
-           sta  RC
-           jmp  Exit
+           sta  RC_M1
+           jmp  M1Exit
 
 BadFileName:
 
            jsr  Beep
 
            lda  #NoDirChange
-           sta  RC
-           jmp  Exit
+           sta  RC_M1
+           jmp  M1Exit
 
 ;
 ; Entered non-directory -- save file name in Path
@@ -399,8 +399,8 @@ OpenFile:
 
            jsr  Beep                  ; Beep to indicate extended file.
            lda  #NoDirChange
-           sta  RC
-           jmp  Exit
+           sta  RC_M1
+           jmp  M1Exit
 
 OpenFile0:
 
@@ -429,8 +429,8 @@ OpenFile1:
            lda  (Ptr1),y
            sta  AuxType+1
 
-           stz  RC                    ; Make sure RC is zero
-           jmp  Exit
+           stz  RC_M1                 ; Make sure RC_M1 is zero
+           jmp  M1Exit
 
 NextKey05:
 
@@ -448,18 +448,18 @@ NextKey05:
 CloseReq:
 
            lda  #CloseBtn             ; Test here to see if Close is the
-           cmp  TabIndex              ;   currently displayed button.
-           sta  TabIndex              ; Change TabIndex here.
+           cmp  TabIndex_M1           ;   currently displayed button.
+           sta  TabIndex_M1           ; Change TabIndex_M1 here.
            beq  CloseReq0             ; Yes Close is current based on prev test
 
-           jsr  MBRefreshBtn            ; Display Close as current selected.
+           jsr  MBRefreshBtn          ; Display Close as current selected.
 
 CloseReq0:
 
            jsr  AnimateBtn
 
            lda  #OpenBtn              ; Default to Open after call.
-           sta  TabIndex
+           sta  TabIndex_M1
 
            lda  Prefix                ; Get prefix length
            bne  CloseReq00
@@ -485,8 +485,8 @@ CloseReq01:
 CloseReq99:
 
            lda  #DirChange
-           sta  RC
-           jmp  Exit
+           sta  RC_M1
+           jmp  M1Exit
 
 NextKey06:
 
@@ -504,7 +504,7 @@ TabReq:
 
 TabDown:
 
-           lda  TabIndex              ; Get current tabindex
+           lda  TabIndex_M1           ; Get current tabindex
            inc  a                     ; Move it to the next button setting
            cmp  #VolDirPull           ; Are we on the vol / dir pulldown?
            bne  TD01                  ; No
@@ -522,7 +522,7 @@ TD01:
 
 TabUp:
 
-           lda  TabIndex
+           lda  TabIndex_M1
            dec  a
            bpl  TabReq1
 
@@ -539,11 +539,11 @@ TabReq1:
 
 TU01:
 
-           sta  TabIndex              ; Save new tabindex setting.
+           sta  TabIndex_M1           ; Save new tabindex setting.
 
            lda  #TabOnly
-           sta  RC
-           jmp  Exit
+           sta  RC_M1
+           jmp  M1Exit
 
 NextKey07:
 
@@ -558,7 +558,7 @@ NextKey07:
 
 EnterReq:
 
-           lda  TabIndex
+           lda  TabIndex_M1
 
            cmp  #DisksBtn
            bne  Enter01
@@ -586,7 +586,7 @@ Enter04:
 
            jsr  PathDDL               ; Requested directory pulldown
 
-           jmp  Exit
+           jmp  M1Exit
 
 NextKey08:
 
@@ -616,7 +616,7 @@ AnimateBtn:
            lda  #>ButtonText
            sta  Ptr1+1
 
-           ldx  TabIndex              ; Move TabIndex to index
+           ldx  TabIndex_M1           ; Move TabIndex_M1 to index
            beq  AnimBtn02             ; Zero?  No need to adjust address
 
 AnimBtn01:
@@ -635,7 +635,7 @@ AnimBtn01:
 AnimBtn02:
 
            lda  #Normal               ; Normal text
-           jsr  cout
+           jsr  cout_mark
 
            jsr  PrtButton             ; Print button text in normal
 
@@ -643,7 +643,7 @@ AnimBtn02:
            jsr  Wait
 
            lda  #Inverse              ; Inverse text
-           jsr  cout
+           jsr  cout_mark
 
            jsr  PrtButton             ; Print button text in inverse
 
@@ -651,7 +651,7 @@ AnimBtn02:
            jsr  Wait
 
            lda  #Normal               ; Return to normal text prio to exit
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
@@ -673,7 +673,7 @@ PrtButton:
 PrtButt01:
 
            lda  (Ptr1),y              ; Get button text character
-           jsr  cout                  ; Print it
+           jsr  cout_mark             ; Print it
            iny                        ; Move index to next character
            dex                        ; Count this as printed
            bne  PrtButt01             ; More?

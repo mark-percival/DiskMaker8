@@ -3,7 +3,7 @@ PrtImgType:
            lda  #19-1                 ; Image type display starts at
            sta  HTab                  ; HTab 19.
 
-           lda  ImageType             ; Setup index for text address retrieval
+           lda  ImageType_M2             ; Setup index for text address retrieval
            asl  a
            tax
            lda  TypeIndex,x           ; Get address of image type text
@@ -18,7 +18,7 @@ IT01:
 
            lda  (Ptr1),y
            beq  IT02
-           jsr  cout
+           jsr  cout_mark
            iny
            bra  IT01
 
@@ -37,7 +37,7 @@ IT02:
 
 IT03:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  IT03
 
@@ -63,7 +63,7 @@ Type4:     ascz  "DOS Order (DSK/DO)"
 
 SelImgType:
 
-           lda  ImageType
+           lda  ImageType_M2
            sta  InitImgType
 
            jsr  ITSaveScreen
@@ -85,12 +85,12 @@ SelImgType:
            jsr  SetVTab
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
            jsr  PrtImgType
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
@@ -102,7 +102,7 @@ ITLastLine:  .byte   $00
 ShowBox:
 
            lda  #MouseText            ; Set mousetext on
-           jsr  cout
+           jsr  cout_mark
 
            lda  #17-1                 ; HTab 17
            sta  HTab
@@ -110,19 +110,19 @@ ShowBox:
            lda  #16-1                 ; VTab 16 base.
            sbc  InitImgType
            sta  ITFirstLine
-           inc  ITFirstLine             ; Save VTab of first line
+           inc  ITFirstLine           ; Save VTab of first line
            sta  VTab
            jsr  SetVTab
 
            clc
            lda  ITFirstLine
            adc  #TypeMax+1
-           sta  ITLastLine              ; Save VTab of last line
+           sta  ITLastLine            ; Save VTab of last line
 
 SB01:
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
 SB02:
 
@@ -134,12 +134,12 @@ SB03:
 
 SB04:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  SB04
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            stz  LineCount
 
@@ -151,44 +151,44 @@ SB05:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
            lda  LineCount
-           cmp  ImageType
+           cmp  ImageType_M2
            bne  SB06
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
 SB06:
 
-           lda  ImageType
+           lda  ImageType_M2
            pha
            lda  LineCount
-           sta  ImageType
+           sta  ImageType_M2
 
            jsr  PrtImgType
 
            pla
-           sta  ImageType
+           sta  ImageType_M2
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            inc  LineCount
            lda  LineCount
@@ -203,7 +203,7 @@ SB06:
 SB07:
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
 SB08:
 
@@ -215,15 +215,15 @@ SB09:
 
 SB10:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  SB10
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
@@ -426,13 +426,13 @@ ChangeType:
            sec
            lda  MouseY
            sbc  ITFirstLine
-           cmp  ImageType
+           cmp  ImageType_M2
            bne  @Changed
            rts
 
 @Changed:
 
-           sta  ImageType
+           sta  ImageType_M2
            jsr  ShowBox
            jsr  PlotMouse
 
@@ -456,11 +456,11 @@ ITKeyDev:
 
 @DA1:
 
-           lda  ImageType
+           lda  ImageType_M2
            cmp  #TypeMax
            bcs  @DA2
 
-           inc  ImageType
+           inc  ImageType_M2
 
 @DA2:
 
@@ -479,10 +479,10 @@ ITKeyDev:
 
 @UA1:
 
-           lda  ImageType
+           lda  ImageType_M2
            beq  @UA2
 
-           dec  ImageType
+           dec  ImageType_M2
 
 @UA2:
 

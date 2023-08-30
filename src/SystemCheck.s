@@ -8,13 +8,7 @@
 
 SystemCheck:
 
-;Keyboard   =  $C000
-;Clear      =  $C010
-;Home       =  $FC58
-;cout       =  $FDED
-;SetVTab    =  $FC22
-
-Ptr        =  $06
+Ptr         =  $06
 ;HTab       =  $24
 ;VTab       =  $25
 
@@ -71,7 +65,7 @@ E1Loop:
 
            lda  Line1,x
            beq  Part2
-           jsr  cout
+           jsr  cout_orig
            inx
            bne  E1Loop                ; Always taken
 
@@ -123,7 +117,7 @@ E2Loop:
 
            lda  (Ptr),y
            beq  SCErrorExit
-           jsr  cout
+           jsr  cout_orig
            iny
            bne  E2Loop
 

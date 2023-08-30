@@ -6,7 +6,7 @@ CurrentDir:
 ;          Headers for volume listing
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            lda  #22-1                 ; Start at HTab 22
            sta  HTab
@@ -19,7 +19,7 @@ CurrentDir:
 
 CurDir01:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  CurDir01
 
@@ -30,7 +30,7 @@ CurDir01:
            sta  HTab
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #22-1
            sta  HTab
@@ -44,7 +44,7 @@ CurDir01:
 CurDir02:
 
            lda  M1Line9Text,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  CurDir02
@@ -57,7 +57,7 @@ CurDir02:
            sta  HTab
 
            lda  #'_'+$80
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
@@ -66,7 +66,7 @@ PrtVolume:
 ;          Headers for directory / file listing
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            lda  #22-1                 ; Start at HTab 22
            sta  HTab
@@ -80,7 +80,7 @@ PrtVolume:
 CurDir03:
 
            lda  M1Line7Text,y
-           jsr  cout
+           jsr  cout_mark
            iny
            dex
            bne  CurDir03
@@ -88,7 +88,7 @@ CurDir03:
 CurDir04:
 
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
 
            lda  #8-1                  ; Start building down arrow box
            sta  VTab
@@ -98,7 +98,7 @@ CurDir04:
            jsr  SetVTab
 
            lda  #'_'+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #9-1
            sta  VTab
@@ -108,13 +108,13 @@ CurDir04:
            sta  HTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'Q'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #10-1
            sta  VTab
@@ -124,7 +124,7 @@ CurDir04:
            sta  HTab
 
            lda  #'\'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #9-1
            sta  VTab
@@ -133,9 +133,9 @@ CurDir04:
 
            jsr  SetVTab
 
-           lda  #<VolHeader            ; Pointer to volume/directory name
+           lda  #<VolHeader_M1        ; Pointer to volume/directory name
            sta  Ptr1
-           lda  #>VolHeader
+           lda  #>VolHeader_M1
            sta  Ptr1+1
 
            jsr  PrtFileName           ; Print volume/directory name
@@ -161,23 +161,23 @@ M1Line9TextE:
 M1ScrollDown:
 
            lda  #8
-           sta  SelectLine
+           sta  SelectLine_M1
 
            clc
-           lda  LinesAbove            ; Add 1 to lines above.
+           lda  LinesAbove_M1         ; Add 1 to lines above.
            adc  #1
-           sta  LinesAbove
-           lda  LinesAbove+1
+           sta  LinesAbove_M1
+           lda  LinesAbove_M1+1
            adc  #0
-           sta  LinesAbove+1
+           sta  LinesAbove_M1+1
 
            sec
-           lda  LinesBelow            ; Subtract 1 from lines below
+           lda  LinesBelow_M1         ; Subtract 1 from lines below
            sbc  #1
-           sta  LinesBelow
-           lda  LinesBelow+1
+           sta  LinesBelow_M1
+           lda  LinesBelow_M1+1
            sbc  #0
-           sta  LinesBelow+1
+           sta  LinesBelow_M1+1
 
 FindFstEnt:
 
@@ -230,7 +230,7 @@ FstNextBlk:
 FstGetBlk:
 
            lda  FirstPage
-           sta  CurrPage
+           sta  CurrPage_M1
            jsr  GetBlock
 
            rts
@@ -243,23 +243,23 @@ FstGetBlk:
 ScrollUp:
 
            lda  #1
-           sta  SelectLine
+           sta  SelectLine_M1
 
            sec
-           lda  LinesAbove            ; Subtract 1 from lines above
+           lda  LinesAbove_M1            ; Subtract 1 from lines above
            sbc  #1
-           sta  LinesAbove
-           lda  LinesAbove+1
+           sta  LinesAbove_M1
+           lda  LinesAbove_M1+1
            sbc  #0
-           sta  LinesAbove+1
+           sta  LinesAbove_M1+1
 
            clc
-           lda  LinesBelow            ; Add 1 to lines below
+           lda  LinesBelow_M1            ; Add 1 to lines below
            adc  #1
-           sta  LinesBelow
-           lda  LinesBelow+1
+           sta  LinesBelow_M1
+           lda  LinesBelow_M1+1
            adc  #0
-           sta  LinesBelow+1
+           sta  LinesBelow_M1+1
 
 FindPrevEnt:
 
@@ -312,21 +312,21 @@ FstPrevBlk:
 FstGetPrev:
 
            lda  FirstPage
-           sta  CurrPage
+           sta  CurrPage_M1
            jsr  GetBlock
 
            rts
 
 ;
-; Refresh command buttons display based on TabIndex setting
+; Refresh command buttons display based on TabIndex_M1 setting
 ;
 
 M1RefreshBtn:
 
            lda  #Normal               ; Make sure inverse text is off.
-           jsr  cout
+           jsr  cout_mark
            lda  #StdText              ; MouseText off.
-           jsr  cout
+           jsr  cout_mark
 
            lda  #<ButtonText           ; Set button text address up in Ptr1
            sta  Ptr1
@@ -337,11 +337,11 @@ M1RefreshBtn:
 
 @Refresh01:
 
-           cpx  TabIndex              ; Is this our active button?
+           cpx  TabIndex_M1           ; Is this our active button?
            bne  @Refresh02            ; No so print it in Normal
 
            lda  #Inverse              ; Yes so change mode to Inverse (selected)
-           jsr  cout
+           jsr  cout_mark
 
 @Refresh02:
 
@@ -359,13 +359,13 @@ M1RefreshBtn:
 @Refresh03:
 
            lda  (Ptr1),y              ; Get character
-           jsr  cout                  ; Print it
+           jsr  cout_mark             ; Print it
            iny                        ; Increment to next character
            dex                        ; count it
            bne  @Refresh03            ; More?
 
            lda  #Normal               ; No more so reset Normal text.
-           jsr  cout
+           jsr  cout_mark
 
            plx                        ; Get tabindex from stack
            inx                        ; Move to next tab index
@@ -383,7 +383,7 @@ M1RefreshBtn:
 
 @Refresh04:
 
-           cpx  TabIndex              ; TabIndex = 5?
+           cpx  TabIndex_M1              ; TabIndex_M1 = 5?
            bne  @Refresh05            ; No so print vol / dir name normal text
 
            lda  #Inverse              ; Yes so print inverse text

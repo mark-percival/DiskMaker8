@@ -13,7 +13,7 @@ PathDDL:
 HavePrefix:
 
            lda  #TabOnly
-           sta  RC
+           sta  RC_M1
            stz  NumLevels
            lda  #1
            sta  DDLSelLine
@@ -35,10 +35,10 @@ Loop:
            beq  NoChange
 
            lda  #OpenBtn
-           sta  TabIndex
+           sta  TabIndex_M1
 
            lda  #DirChange
-           sta  RC
+           sta  RC_M1
 
 NoChange:
 
@@ -105,22 +105,22 @@ ShowDDL:
            jsr  SetVTab
 
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #20
            lda  #'L'
 
 SDDL01:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  SDDL01
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #0
 
@@ -135,7 +135,7 @@ SDDL02:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            ldy  LevelsPosn,x
            iny
@@ -144,40 +144,40 @@ SDDL02:
            beq  SDDL03
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'X'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'Y'
-           jsr  cout
+           jsr  cout_mark
 
            bra  SDDL04
 
 SDDL03:
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'\'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'^'
-           jsr  cout
+           jsr  cout_mark
 
 SDDL04:
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            cpx  DDLSelLine
            bne  SDDL04a
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
 SDDL04a:
 
@@ -192,7 +192,7 @@ SDDL05:
            beq  SDDL06
            ora  #$80
 
-           jsr  cout
+           jsr  cout_mark
 
            iny
            dex
@@ -202,23 +202,23 @@ SDDL05:
 SDDL06:
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  SDDL06
 
 SDDL07:
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            plx
            cpx  NumLevels
@@ -240,39 +240,39 @@ SDDL07a:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'['
-           jsr  cout
-           jsr  cout
+           jsr  cout_mark
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            cpx  DDLSelLine
            bne  SDDL07b
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
            lda  #Inverse
-           jsr  cout
+           jsr  cout_mark
 
 SDDL07b:
 
            lda  #'D'+$80
-           jsr  cout
+           jsr  cout_mark
            lda  #'i'+$80
-           jsr  cout
+           jsr  cout_mark
            lda  #'s'+$80
-           jsr  cout
+           jsr  cout_mark
            lda  #'k'+$80
-           jsr  cout
+           jsr  cout_mark
            lda  #'s'+$80
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #10
 
@@ -280,21 +280,21 @@ SDDL07b:
 
 SDDL08:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  SDDL08
 
            lda  #Normal
-           jsr  cout
+           jsr  cout_mark
 
            lda  #MouseText
-           jsr  cout
+           jsr  cout_mark
 
            lda  #' '+$80
-           jsr  cout
+           jsr  cout_mark
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
 SDDL09:
 
@@ -305,22 +305,22 @@ SDDL09:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout
+           jsr  cout_mark
 
            ldx  #20
            lda  #'_'+$80
 
 SDDL10:
 
-           jsr  cout
+           jsr  cout_mark
            dex
            bne  SDDL10
 
            lda  #'_'
-           jsr  cout
+           jsr  cout_mark
 
            lda  #StdText
-           jsr  cout
+           jsr  cout_mark
 
            rts
 
