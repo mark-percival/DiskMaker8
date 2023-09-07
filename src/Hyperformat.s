@@ -23,36 +23,38 @@
 ;                                 *
 ;**********************************
 
-;           .Align 256
+;          Align 256
 
 HyperFormat:
 
-Buffer   =  $0                        ;Address pointer for FORMAT data
-WAIT     =  $FCA8                     ;Delay routine
-Step0    =  $C080                     ;Drive stepper motor positions
-Step1    =  $C081                     ;  |      |      |       |
-Step2    =  $C082                     ;  |      |      |       |
-Step4    =  $C084                     ;  |      |      |       |
-Step6    =  $C086                     ;  |      |      |       |
-DiskOFF  =  $C088                     ;Drive OFF  softswitch
-DiskON   =  $C089                     ;Drive ON   softswitch
-Select   =  $C08A                     ;Starting offset for target device
-DiskRD   =  $C08C                     ;Disk READ  softswitch
-DiskWR   =  $C08D                     ;Disk WRITE softswitch
-ModeRD   =  $C08E                     ;Mode READ  softswitch
-ModeWR   =  $C08F                     ;Mode WRITE softswitch
+
+
+Buffer    =   $0                        ;Address pointer for FORMAT data
+WAIT      =   $FCA8                     ;Delay routine
+Step0     =   $C080                     ;Drive stepper motor positions
+Step1     =   $C081                     ;  |      |      |       |
+Step2     =   $C082                     ;  |      |      |       |
+Step4     =   $C084                     ;  |      |      |       |
+Step6     =   $C086                     ;  |      |      |       |
+DiskOFF   =   $C088                     ;Drive OFF  softswitch
+DiskON    =   $C089                     ;Drive ON   softswitch
+Select    =   $C08A                     ;Starting offset for target device
+DiskRD    =   $C08C                     ;Disk READ  softswitch
+DiskWR    =   $C08D                     ;Disk WRITE softswitch
+ModeRD    =   $C08E                     ;Mode READ  softswitch
+ModeWR    =   $C08F                     ;Mode WRITE softswitch
 
          jmp   Format
 
 TRKbeg:  .byte $00                      ;Starting track number
 TRKend:  .byte 35                       ;Ending track number
 VolNum:  .byte $FE                      ;Volume number
-HFSlot:    .byte $60                      ;ProDOS unit number
+HF_Slot: .byte $60                      ;ProDOS unit number
 
 Format:
          php
          sei
-         LDA   HFSlot                     ;Fetch target drive SLOTNUM value
+         LDA   HF_Slot                     ;Fetch target drive SLOTNUM value
          PHA                            ;Store it on the stack
          AND   #$70                     ;Mask off bit 7 and the lower 4 bits
          STA   SlotF                    ;Store result in FORMAT slot storage
@@ -92,11 +94,11 @@ MInc:    INC   Track                    ;Add 1 to Track value
          LDA   Track                    ;Is Track > ending track # (TRKend)?
          CMP   TRKend
          BEQ   LNext                    ;More tracks to FORMAT
-         BCS   WDONE                    ;Finished.  Exit FORMAT routine
+         BCS   DONE                     ;Finished.  Exit FORMAT routine
 LNext:   STA   TRKdes                   ;Move next track to FORMAT to TRKdes
          JSR   SEEK                     ;Move head to that track
          JMP   WRITE                    ;Write another track
-WDONE:   LDX   SlotF                    ;Turn the drive off
+DONE:    LDX   SlotF                    ;Turn the drive off
          LDA   DiskOFF,X
          plp
          lda   #$00                     ;MRP - No error
@@ -159,11 +161,11 @@ MStore:  STA   DiskWR,X                 ;Write byte to the disk
          BNE   LSync2
          INC   Buffer+1                 ;Increment Buffer by 255
          bne   LSync3                   ;MRP - More data
-WriteExit: LDA   ModeRD,X               ;Restore Mode softswitch to READ
+WriteExit: LDA ModeRD,X                 ;Restore Mode softswitch to READ
          LDA   DiskRD,X                 ;Restore Read softswitch to READ
          CLC
          RTS
-LWRprot:                                ;Disk is write protected! (Nerd!)
+LWRprot:                           ;Disk is write protected! (Nerd!)
          lda   #$2B
          sec
          rts
@@ -329,26 +331,29 @@ PHASE:
 ;                       *
 ;************************
 
-LByte:   .byte    1                        ;Storage for byte value used in Fill
+LByte:   .res 1                         ;Storage for byte value used in Fill
 LAddr:
-	.byte $D5,$AA,$96	; Address header
-	.byte $AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA ; Volume #, Track, Sector, Checksum
-	.byte $DE,$AA,$EB	; Address trailer
-	.byte $7f,$7f,$7f,$7f,$7f,$7f	; GAP2 sync bytes
-	.byte $D5,$AA,$AD	; Buffer header
-	.byte $00		; End of Address information
-LData:
-	.byte $DE,$AA,$EB	; Data trailer
-	.byte $7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f  ;GAP3 sync bytes
-	.byte $00     		; End of Data information
+         .byte $D5,$AA,$96              ; Address header
+         .byte $AA,$AA,$AA,$AA,$AA,$AA,$AA,$AA ; Volume #, Track, Sector, Checksum
+         .byte $DE,$AA,$EB              ; Address trailer
+         .byte $7f,$7f,$7f,$7f,$7f,$7f  ; GAP2 sync bytes
+         .byte $D5,$AA,$AD              ; Buffer header
+         .byte $00                      ; End of Address information
 
-LInOut:  .res    1                        ;Inward/Outward phase for stepper motor
+LData:
+         .byte $DE,$AA,$EB              ; Data trailer
+         .byte $7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f,$7f  ;GAP3 sync bytes
+         .byte $00                      ; End of Data information
+
+LInOut:  .res  1                        ;Inward/Outward phase for stepper motor
 LTable:
-	.byte $02,$04,$06,$00	; Phases for moving head inward
-	.byte $06,$04,$02,$00	;    |    |    |      |  outward
-Count:   .res    3                      ;General purpose counter/storage byte
-Track:   .res    2                      ;Track number being FORMATted
-Sector:  .res    2                      ;Current sector number (max=16)
-SlotF:   .res    2                      ;Slot/Drive of device to FORMAT
-TRKcur:  .res    2                      ;Current track position
-TRKdes:  .res    2                      ;Destination track position
+	.byte $02,$04,$06,$00               ; Phases for moving head inward
+	.byte $06,$04,$02,$00               ;    |    |    |      |  outward
+Count:   .res  3                        ;General purpose counter/storage byte
+Track:   .res  2                        ;Track number being FORMATted
+Sector:  .res  2                        ;Current sector number (max=16)
+SlotF:   .res  2                        ;Slot/Drive of device to FORMAT
+TRKcur:  .res  2                        ;Current track position
+TRKdes:  .res  2                        ;Destination track position
+
+

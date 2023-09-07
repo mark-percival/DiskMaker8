@@ -1,12 +1,15 @@
 PrtImgType:
 
-           lda  #19-1                 ; Image type display starts at
-           sta  HTab                  ; HTab 19.
 
-           lda  ImageType_M2             ; Setup index for text address retrieval
+           ; Expected to scope to Menu2Vars.s
+
+           lda  #19-1                   ; Image type display starts at
+           sta  HTab                    ; HTab 19.
+
+           lda  ImageType               ; Setup index for text address retrieval
            asl  a
            tax
-           lda  TypeIndex,x           ; Get address of image type text
+           lda  TypeIndex,x             ; Get address of image type text
            sta  Ptr1
            inx
            lda  TypeIndex,x
@@ -18,7 +21,7 @@ IT01:
 
            lda  (Ptr1),y
            beq  IT02
-           jsr  cout_mark
+           jsr  cout
            iny
            bra  IT01
 
@@ -27,17 +30,17 @@ IT02:
            cpy  #20
            beq  IT04
 
-           sty  ITBNextChar
+           sty  IT_NextChar
 
            sec
            lda  #20
-           sbc  ITBNextChar
+           sbc  IT_NextChar
            tax
            lda  #' '+$80
 
 IT03:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  IT03
 
@@ -45,17 +48,19 @@ IT04:
 
            rts
 
-ITBNextChar: .byte   $00
-InitImgType: .byte   $00
+IT_NextChar: .res 1
+InitImgType: .res 1
 
 TypeIndex: .addr   Type0,Type1,Type2,Type3,Type4
-TypeMax    =  $04
+TypeMax     =   $04
 
-Type0:     ascz  "Universal Disk (2MG)"
-Type1:     ascz  "DiskCopy 4.2"
-Type2:     ascz  "DiskCopy 6"
-Type3:     ascz  "ProDOS Order (PO)"
-Type4:     ascz  "DOS Order (DSK/DO)"
+;          Msb  On
+Type0:     ascz "Universal Disk (2MG)"
+Type1:     ascz "DiskCopy 4.2"
+Type2:     ascz "DiskCopy 6"
+Type3:     ascz "ProDOS Order (PO)"
+Type4:     ascz "DOS Order (DSK/DO)"
+;          Msb  Off
 
 ;
 ; SelImgType : User selection of image type
@@ -63,66 +68,66 @@ Type4:     ascz  "DOS Order (DSK/DO)"
 
 SelImgType:
 
-           lda  ImageType_M2
+           lda  ImageType
            sta  InitImgType
 
-           jsr  ITSaveScreen
+           jsr  IT_SaveScreen
 
 @Loop1:
 
            jsr  ShowBox
            jsr  BoxUI
 
-           lda  ITBoxRC
+           lda  BoxRC
            bne  @Loop1
 
-           jsr  ITRestScreen
+           jsr  IT_RestScreen
 
-           jsr  PlotMouse             ; Refresh mouse data
+           jsr  PlotMouse               ; Refresh mouse data
 
            lda  #17-1
            sta  VTab
            jsr  SetVTab
 
            lda  #Inverse
-           jsr  cout_mark
+           jsr  cout
 
            jsr  PrtImgType
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
 ; Open image type box
 
-ITFirstLine: .byte   $00
-ITLastLine:  .byte   $00
+FirstLine:  .res 1
+IT_LastLine:   .res 1
 
 ShowBox:
 
-           lda  #MouseText            ; Set mousetext on
-           jsr  cout_mark
+           lda  #MouseText              ; Set mousetext on
+           jsr  cout
 
-           lda  #17-1                 ; HTab 17
+           lda  #17-1                   ; HTab 17
            sta  HTab
            sec
-           lda  #16-1                 ; VTab 16 base.
+           lda  #16-1                   ; VTab 16 base.
            sbc  InitImgType
-           sta  ITFirstLine
-           inc  ITFirstLine           ; Save VTab of first line
+           sta  FirstLine
+           inc  FirstLine               ; Save VTab of first line
            sta  VTab
            jsr  SetVTab
 
            clc
-           lda  ITFirstLine
+           lda  FirstLine
            adc  #TypeMax+1
-           sta  ITLastLine            ; Save VTab of last line
+           sta  IT_LastLine                ; Save VTab of last line
 
 SB01:
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
 SB02:
 
@@ -134,14 +139,14 @@ SB03:
 
 SB04:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  SB04
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
-           stz  LineCount
+           stz  IT_LineCount
 
 SB05:
 
@@ -151,47 +156,47 @@ SB05:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
 
-           lda  LineCount
-           cmp  ImageType_M2
+           lda  IT_LineCount
+           cmp  ImageType
            bne  SB06
 
            lda  #Inverse
-           jsr  cout_mark
+           jsr  cout
 
 SB06:
 
-           lda  ImageType_M2
+           lda  ImageType
            pha
-           lda  LineCount
-           sta  ImageType_M2
+           lda  IT_LineCount
+           sta  ImageType
 
            jsr  PrtImgType
 
            pla
-           sta  ImageType_M2
+           sta  ImageType
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
-           inc  LineCount
-           lda  LineCount
+           inc  IT_LineCount
+           lda  IT_LineCount
            cmp  #TypeMax+1
            bne  SB05
 
@@ -203,7 +208,7 @@ SB06:
 SB07:
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
 SB08:
 
@@ -215,88 +220,119 @@ SB09:
 
 SB10:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  SB10
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
-LineCount: .byte   $00
+IT_LineCount:  .res 1
 
-ITSaveRtn:   .byte   $00
+IT_TextLine:                            ; Text screen line starting addresses
 
-ITStartHTab: .byte   $00
-ITEndHTab:   .byte   $00
-ITStartVTab: .byte   $00
-ITCurrLine:  .byte   $00
+IT_TextLine00: .addr $0400
+IT_TextLine01: .addr $0480
+IT_TextLine02: .addr $0500
+IT_TextLine03: .addr $0580
+IT_TextLine04: .addr $0600
+IT_TextLine05: .addr $0680
+IT_TextLine06: .addr $0700
+IT_TextLine07: .addr $0780
+IT_TextLine08: .addr $0428
+IT_TextLine09: .addr $04A8
+IT_TextLine10: .addr $0528
+IT_TextLine11: .addr $05A8
+IT_TextLine12: .addr $0628
+IT_TextLine13: .addr $06A8
+IT_TextLine14: .addr $0728
+IT_TextLine15: .addr $07A8
+IT_TextLine16: .addr $0450
+IT_TextLine17: .addr $04D0
+IT_TextLine18: .addr $0550
+IT_TextLine19: .addr $05D0
+IT_TextLine20: .addr $0650
+IT_TextLine21: .addr $06D0
+IT_TextLine22: .addr $0750
+IT_TextLine23: .addr $07D0
+
+;On80Store   =   $C001
+;Page1       =   $C054
+;Page2       =   $C055
+
+IT_SaveRtn:    .res 1
+
+IT_StartHTab: .res 1
+IT_EndHTab:   .res 1
+IT_StartVTab: .res 1
+IT_CurrLine:  .res 1
 
 ;
-; ITSaveScreen - save screen data under list box
-; ITRestScreen - restore screen data under messagebox
+; IT_SaveScreen - save screen data under list box
+; IT_RestScreen - restore screen data under messagebox
 ;
 ; Ptr1 = screen data : Ptr2 = save buffer
 ;
 
-ITSaveScreen:
+IT_SaveScreen:
 
            lda  #1
-           sta  ITSaveRtn
-           bra  ITStartRtn
+           sta  IT_SaveRtn
+           bra  IT_StartRtn
 
-ITRestScreen:
+IT_RestScreen:
 
-           stz  ITSaveRtn
+           stz  IT_SaveRtn
 
-ITStartRtn:
+IT_StartRtn:
 
-           sta  On80Store             ; Make sure 80STORE is on.
+           sta  On80Store               ; Make sure 80STORE is on.
 
            clc
-           lda  #17-1                 ; HTab 17 start
-           sta  ITStartHTab
-           adc  #24                   ; 24 char wide
-           sta  ITEndHTab             ; Ending HTab
+           lda  #17-1                   ; HTab 17 start
+           sta  IT_StartHTab
+           adc  #24                     ; 24 char wide
+           sta  IT_EndHTab              ; Ending HTab
 
            sec
-           lda  #16-1                 ; Base VTab
+           lda  #16-1                   ; Base VTab
            sbc  InitImgType
-           sta  ITStartVTab
-           sta  ITCurrLine
+           sta  IT_StartVTab
+           sta  IT_CurrLine
 
-           lda  #<MessageBuf          ; Set save buffer address
+           lda  #<MessageBuf             ; Set save buffer address
            sta  Ptr2
            lda  #>MessageBuf
            sta  Ptr2+1
 
-           ldx  #TypeMax+3            ; Max # of line + 2 for borders + 1 for
-                                      ;  being zero base.
-@SSLoop1:
+           ldx  #TypeMax+3              ; Max # of line + 2 for borders + 1 for
+;                                       ;  being zero base.
+IT_Loop1:
 
-           lda  ITCurrLine
+           lda  IT_CurrLine
            asl  a
            tay
-           lda  TextLine,y
+           lda  IT_TextLine,y
            sta  Ptr1
            iny
-           lda  TextLine,y
+           lda  IT_TextLine,y
            sta  Ptr1+1
 
-           ldy  ITStartHTab
+           ldy  IT_StartHTab
 
-@SSLoop2:
+IT_Loop2:
 
            phy
            tya
            lsr  a
            bcs  @FromMain
 
-@FromAux:
+;FromAux:
 
            sta  Page2
            bra  @GetChar
@@ -308,7 +344,7 @@ ITStartRtn:
 @GetChar:
 
            tay
-           lda  ITSaveRtn
+           lda  IT_SaveRtn
            beq  @Restore
 
            lda  (Ptr1),y
@@ -324,23 +360,23 @@ ITStartRtn:
 
            ply
 
-           inc  Ptr2                  ; Increment save buffer pointer
+           inc  Ptr2                    ; Increment save buffer pointer
            bne  @NoOF
 
            inc  Ptr2+1
 
-@NoOF:                                ; No overflow
+@NoOF:                                  ; No overflow
 
            iny
-           cpy  ITEndHTab             ; If y <= ITEndHTab, SSLoop2 to continue
-           bcc  @SSLoop2              ;  saving this line
-           beq  @SSLoop2
+           cpy  IT_EndHTab              ; If y <= IT_EndHTab, IT_Loop2 to continue
+           bcc  IT_Loop2                ;  saving this line
+           beq  IT_Loop2
 
-           inc  ITCurrLine            ; Move to next line
-           dex                        ; Another line?
-           bne  @SSLoop1
+           inc  IT_CurrLine             ; Move to next line
+           dex                          ; Another line?
+           bne  IT_Loop1
 
-           lda  Page1                 ; Set back to Main for exit.
+           lda  Page1                   ; Set back to Main for exit.
 
            rts
 
@@ -351,69 +387,69 @@ ITStartRtn:
 BoxUI:
 
            stz  ClearKbd
-           stz  ITBoxRC
+           stz  BoxRC
 
-@PollDev:
+IT_PollDev:
 
            jsr  PlotMouse
 
-ITPollDevLoop:
+IT_PollDevLoop:
 
-           lda  Keyboard              ; Get keypress
-           bpl  @PollMouse            ; No, keypress - check mouse
-           jmp  ITKeyDev              ; Keypress rtn.
+           lda  Keyboard                ; Get keypress
+           bpl  @PollMouse              ; No, keypress - check mouse
+           jmp  IT_KeyDev               ; Keypress rtn.
 
 @PollMouse:
 
-           jsr  ReadMouse             ; Read mouse
-           lsr  MouseX                ; Divide by 2 X and Y to bring into the
-           lsr  MouseY                ; 0 to 79 and 0 to 23 range
-           lda  MouseStat             ; Get mouse status
-           bit  #MouseMove            ; Test for mouse movement
-           bne  @MouseDev1            ; Mouse moved
-           bit  #CurrButton           ; Test for button press
-           bne  @MouseDev2            ; Button pressed
-           bit  #PrevButton           ; Test for button release
-           bne  @MouseDev3            ; Button released
+           jsr  ReadMouse               ; Read mouse
+           lsr  MouseX                  ; Divide by 2 X and Y to bring into the
+           lsr  MouseY                  ; 0 to 79 and 0 to 23 range
+           lda  MouseStat               ; Get mouse status
+           bit  #MouseMove              ; Test for mouse movement
+           bne  IT_MouseDev1            ; Moused moved
+           bit  #CurrButton             ; Test for button press
+           bne  IT_MouseDev2            ; Button pressed
+           bit  #PrevButton             ; Test for button release
+           bne  IT_MouseDev3            ; Button released
 
-           bra  ITPollDevLoop
+           bra  IT_PollDevLoop
 
 ;
 ; Mouse movement
 ;
 
-@MouseDev1:
+IT_MouseDev1:
 
            jsr  MoveMouse
-           jmp  ITPollDevLoop
+           jmp  IT_PollDevLoop
 
 ;
 ; Mouse button pressed
 ;
 
-@MouseDev2:
+IT_MouseDev2:
 
            lda  MouseY
-           cmp  ITFirstLine
-           bcc  @MouseDev3
-           cmp  ITLastLine
-           bcs  @MouseDev3
+           cmp  FirstLine
+           bcc  IT_MouseDev3
+           cmp  IT_LastLine
+           bcs  IT_MouseDev3
 
            lda  MouseX
            cmp  #19-1
-           bcc  @MouseDev3
+           bcc  IT_MouseDev3
            cmp  #39-1
-           bcs  @MouseDev3
+           bcs  IT_MouseDev3
 
            jsr  ChangeType
 
-           jmp  ITPollDevLoop
+           jmp  IT_PollDevLoop
 
 ;
 ; Mouse button released
 ;
 
-@MouseDev3:
+IT_MouseDev3:
 
            rts
 
@@ -425,75 +461,86 @@ ChangeType:
 
            sec
            lda  MouseY
-           sbc  ITFirstLine
-           cmp  ImageType_M2
+           sbc  FirstLine
+           cmp  ImageType
            bne  @Changed
            rts
 
 @Changed:
 
-           sta  ImageType_M2
+           sta  ImageType
            jsr  ShowBox
            jsr  PlotMouse
 
            rts
 
-ITBoxRC:     .byte   $00
+;
+; Keyboard key press routine
+;
 
-ITKeyDev:
+;UpArrow     =   $8B
+;DownArrow   =   $8A
+;LeftArrow   =   $88
+;RightArrow  =   $95
+;ReturnKey   =   $8D
+;TabKey      =   $89
+
+BoxRC:      .res 1
+
+IT_KeyDev:
 
            stz  ClearKbd
 
 ; Down / right arrow keypress logic
 
-@NextKey01:
+IT_NextKey01:
 
-           cmp  #DownArrow            ; Down arrow?
+           cmp  #DownArrow              ; Down arrow?
            beq  @DA1
            cmp  #RightArrow
            beq  @DA1
-           bra  @NextKey02
+           bra  IT_NextKey02
 
 @DA1:
 
-           lda  ImageType_M2
+           lda  ImageType
            cmp  #TypeMax
            bcs  @DA2
 
-           inc  ImageType_M2
+           inc  ImageType
 
 @DA2:
 
            lda  #1
-           sta  ITBoxRC
+           sta  BoxRC
 
            rts
 
-@NextKey02:
+IT_NextKey02:
 
-           cmp  #UpArrow              ; Up arrow?
+           cmp  #UpArrow                ; Up arrow?
            beq  @UA1
            cmp  #LeftArrow
            beq  @UA1
-           bra  @NextKey03
+           bra  IT_NextKey03
 
 @UA1:
 
-           lda  ImageType_M2
+           lda  ImageType
            beq  @UA2
 
-           dec  ImageType_M2
+           dec  ImageType
 
 @UA2:
 
            lda  #1
-           sta  ITBoxRC
+           sta  BoxRC
 
            rts
 
-@NextKey03:
+IT_NextKey03:
 
-           cmp  #ReturnKey            ; <cr>
+           cmp  #ReturnKey              ; <cr>
            bne  @BadKey
 
            rts
@@ -501,4 +548,6 @@ ITKeyDev:
 @BadKey:
 
            jsr  Beep
-           jmp  ITPollDevLoop
+           jmp  IT_PollDevLoop
+
+

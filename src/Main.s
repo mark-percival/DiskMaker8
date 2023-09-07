@@ -1,22 +1,21 @@
-.segment "CODE"
-.org $2000
-
 Main:
 
 ;          M a i n
 
            ldx  #$FF
-           txs                        ; Reset stack
+           txs                          ; Reset stack
 
            jsr  SystemCheck
-           bcs  MainExit
+           bcs  Main_Exit
 
-           jsr  Initialize
+           jsr  I_Initialize
 
            jsr  Menu1
 
            jsr  Cleanup
 
-MainExit:
+Main_Exit:
 
            jmp  MLIQuit
+
+

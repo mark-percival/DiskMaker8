@@ -1,5 +1,7 @@
 MLIRead4K:
 
+           ; Expected to scope to Menu2Vars.s
+
 ;          MLI Read ($CA) Call
 ;
 ;          Usage       : jsr MLIRead
@@ -9,45 +11,50 @@ MLIRead4K:
 ;          Returns     : 'readTrans' 2 byte number of bytes actually read
 ;                                    0 = EOF
 
+;MLICode_CA  =   $CA
+;MLI         =   $BF00
+
            lda  readRef
-           sta  r4k_ref_num
-           stz  r4k_req_count
+           sta  @ref_num
+           stz  @req_count
            lda  #$10
-           sta  r4k_req_count+1
+           sta  @req_count+1
 
            jsr  MLI
-           .byte ProDOSRead
-           .addr Read4KParms
+           .byte MLICode_CA
+           .addr @Parms
 
-           bne  @CheckError           ; MLI error
+           bne  @CheckError             ; MLI error
 
            bra  @GoodError
 
+@Parms:
+
+@parm_count: .byte $04
+@ref_num:    .res 1
+@data_buf:   .addr Buffer8K
+@req_count:  .res 2
+@tran_count: .res 2
+
 @CheckError:
 
-           cmp  #$4C                  ; EOF error code
+           cmp  #$4C                    ; EOF error code
            beq  @GoodError
 
-           pha                        ; Save MLI error
-           lda  #ProDOSRead
-           pha                        ; Save calling routine
+           pha                          ; Save MLI error
+           lda  #MLICode_CA
+           pha                          ; Save calling routine
            jmp  MLIError
 
 @GoodError:
 
-           pha                        ; Save error code
-           lda  r4k_tran_count        ; return byte transfer count
+           pha                          ; Save error code
+           lda  @tran_count             ; return byte transfer count
            sta  readTrans
-           lda  r4k_tran_count+1
+           lda  @tran_count+1
            sta  readTrans+1
-           pla                        ; Restore error code
+           pla                          ; Restore error code
 
            rts
 
-Read4KParms:
 
-r4k_parm_count: .byte $04
-r4k_ref_num:   .byte $00
-r4k_data_buf:  .addr Buffer8K
-r4k_req_count: .res  2
-r4k_tran_count: .res 2

@@ -8,9 +8,17 @@
 
 SystemCheck:
 
-Ptr         =  $06
-;HTab       =  $24
-;VTab       =  $25
+
+
+;Keyboard    =   $C000
+;Clear       =   $C010
+;Home        =   $FC58
+;Cout        =   $FDED
+;SetVTab     =   $FC22
+
+Ptr         =   $06
+;HTab        =   $24
+;VTab        =   $25
 
 ; Processor check
 
@@ -20,7 +28,7 @@ Ptr         =  $06
            clc
            adc  #$01
            cld
-           bmi  SCError                 ; 6502 test
+           bmi  @Error                  ; 6502 test
 
 ; ROM Check
 
@@ -28,29 +36,29 @@ Ptr         =  $06
 
            lda  $FBB3
            cmp  #$06
-           bne  SCError                 ; Apple II/II plus test
+           bne  @Error                  ; Apple II/II plus test
 
            lda  $FBC0
            cmp  #$EA
-           beq  SCError                 ; Unenhanced Apple IIe test
+           beq  @Error                  ; Unenhanced Apple IIe test
 
 ; Memory Check
 
            ldy  #$02
-           lda  $BF98                 ; MachID from ProDOS
-           and  #%00110000            ; 128K?
+           lda  $BF98                   ; MACHID from ProDOS
+           and  #%00110000              ; 128K?
            cmp  #%00110000
-           bne  SCError                ; No aux RAM
+           bne  @Error                  ; No aux RAM
 
-           clc                        ; Passed tests
+           clc                          ; Passed tests
 
            rts
 
-SCError:
+@Error:
 
            sty  YSave
 
-           jsr  Home                  ; Clear screen
+           jsr  Home                    ; Clear screen
 
            lda  #11-1
            sta  VTab
@@ -65,9 +73,9 @@ E1Loop:
 
            lda  Line1,x
            beq  Part2
-           jsr  cout_orig
+           jsr  cout_rom
            inx
-           bne  E1Loop                ; Always taken
+           bne  E1Loop                  ; Always taken
 
 Part2:
 
@@ -81,12 +89,12 @@ Part2:
            ldy  YSave
 
            cpy  #$00
-           beq  SCErrorA
+           beq  ErrorA
            cpy  #$01
-           beq  SCErrorB
-           bne  SCErrorC
+           beq  ErrorB
+           bne  ErrorC
 
-SCErrorA:
+ErrorA:
 
            lda  #<Line2a
            sta  Ptr
@@ -94,7 +102,7 @@ SCErrorA:
            sta  Ptr+1
            jmp  Write2
 
-SCErrorB:
+ErrorB:
 
            lda  #<Line2b
            sta  Ptr
@@ -102,7 +110,7 @@ SCErrorB:
            sta  Ptr+1
            jmp  Write2
 
-SCErrorC:
+ErrorC:
 
            lda  #<Line2c
            sta  Ptr
@@ -116,14 +124,14 @@ Write2:
 E2Loop:
 
            lda  (Ptr),y
-           beq  SCErrorExit
-           jsr  cout_orig
+           beq  ErrorExit
+           jsr  cout_rom
            iny
            bne  E2Loop
 
-SCErrorExit:
+ErrorExit:
 
-           sta  ClearKbd              ; Keyboard pause
+           sta  ClearKbd                ; Keyboard strobe
 
 KeyLoop:   lda  Keyboard
            bpl  KeyLoop
@@ -134,9 +142,13 @@ KeyLoop:   lda  Keyboard
 
            rts
 
-YSave:     .byte   $00
+YSave:      .res 1
 
+;          MSB  On
 Line1:     ascz "REQUIRES 128K ENHANCED IIE, IIC OR IIGS"
 Line2a:    ascz "PROCESSOR TEST FAILURE"
 Line2b:    ascz "ROM TEST FAILURE"
 Line2c:    ascz "AUX RAM TEST FAILURE"
+;          MSB  Off
+
+

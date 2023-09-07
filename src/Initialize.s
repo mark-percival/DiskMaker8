@@ -1,4 +1,4 @@
-Initialize:
+I_Initialize:
 
            jsr  RamOut                  ; Remove slot 3, drive 2 /RAM drive
 
@@ -56,7 +56,7 @@ Network:   lda  #$04                    ; Require at least ProDOS 8 1.4
            cmp  $BFFF                   ; KVERSION (ProDOS 8 version)
            beq  MoreNetwork             ; Have to check further
            lda  #$01                    ; Simulate bad command error
-           bcs  Error                   ; If 3 or less, no possibility of network
+           bcs  IN_Error                ; If 3 or less, no possibility of network
            bcc  NetCall
 
 MoreNetwork: lda $BF02                  ; High byte of the MLI entry point
@@ -65,23 +65,23 @@ MoreNetwork: lda $BF02                  ; High byte of the MLI entry point
            beq  NetCall                 ; Yes, so try AppleTalk
            lda  #$01
            sec
-           bcs  Error                   ; Simulate bad command error
+           bcs  IN_Error                ; Simulate bad command error
 
 NetCall:   jsr  $BF00                   ; ProDOS MLI
            .byte $42                    ; AppleTalk command number
            .addr ParamAddr              ; Address of Parameter table
-           bcs  Error
+           bcs  IN_Error
 
            rts
 
-Error:     stz  Entries
+IN_Error:     stz  Entries
 
            rts
 
 ParamAddr: .byte $00                    ; Async Flag (0 means synchronous only)
            .byte $2F                    ; command for FIListSessions
-ResultCode: .byte $00, $00              ; AppleTalk result code returned here
-           .word 448                    ; Length of the buffer supplied
+ResultCode: .addr $0000                 ; AppleTalk result code returned here
+           .addr 448                    ; Length of the buffer supplied
            .addr readBuf                ; Low word of pointer to buffer
            .addr $0000                  ; high word of pointer to buffer
 Entries:   .byte $00                    ; Number of entries returned
@@ -97,7 +97,7 @@ NetUnitNo:
            lda  #>readBuf+1
            sta  Ptr1+1
 
-Loop1:     lda  (Ptr1),y
+@Loop1:    lda  (Ptr1),y
            and  #$F0                    ; Keep only high nibble
            sta  NetDevs,x
 
@@ -111,15 +111,13 @@ Loop1:     lda  (Ptr1),y
 
            inx
            cpx  Entries
-           bcc  Loop1
+           bcc  @Loop1
 
            lda  #$00
 
-Loop2:     sta  NetDevs,x               ; Zero out remaining table entries.
+@Loop2:    sta  NetDevs,x               ; Zero out remaining table entries.
            inx
            cpx  #15
-           bcc  Loop2
+           bcc  @Loop2
 
            rts
-
-

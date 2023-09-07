@@ -1,4 +1,4 @@
-cout_mark:
+cout:
 
 ;
 ; Custom COUT - Mark Percival
@@ -82,10 +82,10 @@ CO6:
            lda  VTab
            asl  a
            tax
-           lda  TextLine,x
+           lda  CO_TextLine,x
            sta  TextPtr
            inx
-           lda  TextLine,x
+           lda  CO_TextLine,x
            sta  TextPtr+1
 
            lda  HTab
@@ -131,17 +131,48 @@ COExit:
 
            rts
 
-Character: .res   1
-Flags:     .byte $00
-InvOn      =  %00000001
-InvOff     =  %11111110
-MouseOn    =  %00000010
-MouseOff   =  %11111101
+Character:  .res 1
+Flags:      .byte $00
+InvOn       =   %00000001
+InvOff      =   %11111110
+MouseOn     =   %00000010
+MouseOff    =   %11111101
 
-SetInverse =  $0F
-SetNormal  =  $0E
-SetMouseTxt = $1B
-SetStdTxt  =  $18
+;On80Store   =   $C001
+;Page1       =   $C054
+;Page2       =   $C055
+
+SetInverse  =   $0F
+SetNormal   =   $0E
+SetMouseTxt  =  $1B
+SetStdTxt   =   $18
+
+CO_TextLine:                            ; Text screen line starting addresses
+
+CO_TextLine00: .addr $0400
+CO_TextLine01: .addr $0480
+CO_TextLine02: .addr $0500
+CO_TextLine03: .addr $0580
+CO_TextLine04: .addr $0600
+CO_TextLine05: .addr $0680
+CO_TextLine06: .addr $0700
+CO_TextLine07: .addr $0780
+CO_TextLine08: .addr $0428
+CO_TextLine09: .addr $04A8
+CO_TextLine10: .addr $0528
+CO_TextLine11: .addr $05A8
+CO_TextLine12: .addr $0628
+CO_TextLine13: .addr $06A8
+CO_TextLine14: .addr $0728
+CO_TextLine15: .addr $07A8
+CO_TextLine16: .addr $0450
+CO_TextLine17: .addr $04D0
+CO_TextLine18: .addr $0550
+CO_TextLine19: .addr $05D0
+CO_TextLine20: .addr $0650
+CO_TextLine21: .addr $06D0
+CO_TextLine22: .addr $0750
+CO_TextLine23: .addr $07D0
 
 ; Dummy routine to replace unneeded monitor routine
 
@@ -152,10 +183,12 @@ SetVTab:
 SetInv:
 
            lda  #SetInverse
-           jmp  cout_mark
+           jmp  cout
 
 
 SetNorm:
 
            lda  #SetNormal
-           jmp  cout_mark
+           jmp  cout
+
+

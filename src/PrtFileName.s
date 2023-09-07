@@ -1,6 +1,8 @@
 
 PrtFileName:
 
+; Expected to scope to Menu1Vars.s
+
 ;
 ;          Print file entry to screen
 ;
@@ -12,233 +14,235 @@ PrtFileName:
 
 ; Offsets
 
-oFileName  =  $00
-oFileTypeA =  $11 ; - $13             Converted to ASCII by LoadDirectory
-oLower1    =  $1D
-oLower2    =  $1C
-oLowerVol1 =  $17                   ; $1B - $04
-oLowerVol2 =  $16                   ; $1A - $04
+oFileName   =   $00
+oFileTypeA  =   $11 ;- $13               ; Converted to ASCII by LoadDirectory
+oLower1     =   $1D
+oLower2     =   $1C
+oLowerVol1  =   $17                     ; $1B - $04
+oLowerVol2  =   $16                     ; $1A - $04
 
-           bra  Start
+           bra  PF_Start
 
-FileLength: .byte   $00
+FileLength: .res 1
 
-Start:
+PF_Start:
 
-           ldy  #oFileName            ; Filename offset
-           lda  (Ptr1),y              ; Get storage type / filename length
-           and  #$F0                  ; Keep only storage type
-           cmp  #$F0                  ; Volume directory header?
-           bne  PrtFile02             ; No
+           ldy  #oFileName              ; Filename offset
+           lda  (Ptr1),y                ; Get storage type / filename length
+           and  #$F0                    ; Keep only storage type
+           cmp  #$F0                    ; Volume directory header?
+           bne  PrtFile02               ; No
 
 ;          A volume directory
 
            ldy  #oLowerVol1
-           lda  (Ptr1),y              ; Get first set of mixed case bits
+           lda  (Ptr1),y                ; Get first set of mixed case bits
            sta  Ptr2
-           ldy  #oLowerVol2           ; Get 2nd set of mixed case bits
+           ldy  #oLowerVol2             ; Get 2nd set of mixed case bits
            lda  (Ptr1),y
-           ldy  #oLower2              ; Save in position for normal file/dir.
+           ldy  #oLower2                ; Save in position for normal file/dir.
            sta  (Ptr1),y
-           asl  Ptr2                  ; Test for mixed case.
-           bcs  PrtFile01             ; Yes, process as normal.
+           asl  Ptr2                    ; Test for mixed case.
+           bcs  PrtFile01               ; Yes, process as normal.
 
-           lda  #0                    ; No, zero out bits to force upper case
+           lda  #0                      ; No, zero out bits to force upper case
            sta  Ptr2
            ldy  #oLowerVol2
            sta  (Ptr1),y
 
 PrtFile01:
 
-           lda  #MouseText            ; Mousetext on
-           jsr  cout_mark
+           lda  #MouseText              ; Mousetext on
+           jsr  cout
            lda  #'Z'
-           jsr  cout_mark             ; |
+           jsr  cout                    ; |
            lda  #'\'
-           jsr  cout_mark             ; Two horizontal lines
+           jsr  cout                    ; Two horizontal lines
            lda  #'^'
-           jsr  cout_mark             ; Box with dot
-           bra  PrtFile06             ; Print file name
+           jsr  cout                    ; Box with dot
+           bra  PrtFile06               ; Print file name
 
 PrtFile02:
 
-           ldy  #oFileName            ; Filename offset
-           lda  (Ptr1),y              ; Get storage type / filename length
-           and  #$F0                  ; Keep only storage type
-           cmp  #$E0                  ; Directory header?
-           bne  PrtFile03             ; No
+           ldy  #oFileName              ; Filename offset
+           lda  (Ptr1),y                ; Get storage type / filename length
+           and  #$F0                    ; Keep only storage type
+           cmp  #$E0                    ; Directory header?
+           bne  PrtFile03               ; No
 
 ;          A directory file header
 
-           lda  #0                    ; No mixed case info for a directory file
-           sta  Ptr2                  ; header so make it zeros to force upper
-           ldy  #oLower2              ; case only.
+           lda  #0                      ; No mixed case info for a directory file
+           sta  Ptr2                    ; header so make it zeros to force upper
+           ldy  #oLower2                ; case only.
            sta  (Ptr1),y
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
            lda  #'X'
-           jsr  cout_mark             ; Left half of folder
+           jsr  cout                    ; Left half of folder
            lda  #'Y'
-           jsr  cout_mark             ; Right half of folder
-           bra  PrtFile06             ; Print file name
+           jsr  cout                    ; Right half of folder
+           bra  PrtFile06               ; Print file name
 
 PrtFile03:
 
            ldy  #oLower1
-           lda  (Ptr1),y              ; Get first set of mixed case bits
+           lda  (Ptr1),y                ; Get first set of mixed case bits
            sta  Ptr2
-           asl  Ptr2                  ; Test for mixed case.
-           bcs  PrtFile04             ; Yes, process as normal.
+           asl  Ptr2                    ; Test for mixed case.
+           bcs  PrtFile04               ; Yes, process as normal.
 
-           lda  #0                    ; No, zero out bits to force upper case
+           lda  #0                      ; No, zero out bits to force upper case
            sta  Ptr2
            ldy  #oLower2
            sta  (Ptr1),y
 
 PrtFile04:
 
-           ldy  #oFileName            ; Filename offset
-           lda  (Ptr1),y              ; Get storage type / filename length
-           and  #$F0                  ; Keep only storage type
-           cmp  #$D0                  ; Directory entry?
-           bne  PrtFile05             ; No
+           ldy  #oFileName              ; Filename offset
+           lda  (Ptr1),y                ; Get storage type / filename length
+           and  #$F0                    ; Keep only storage type
+           cmp  #$D0                    ; Directory entry?
+           bne  PrtFile05               ; No
 
 ;          Directory file entry
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
            lda  #'X'
-           jsr  cout_mark             ; Left half of folder
+           jsr  cout                    ; Left half of folder
            lda  #'Y'
-           jsr  cout_mark             ; Right half of folder
-           bra  PrtFile06             ; Print file name
+           jsr  cout                    ; Right half of folder
+           bra  PrtFile06               ; Print file name
 
 PrtFile05:
 
 ;          Regular file entry
 
            lda  #' '+$80
-           jsr  cout_mark
-           jsr  cout_mark             ; Print three spaces
-           jsr  cout_mark
+           jsr  cout
+           jsr  cout                    ; Print three spaces
+           jsr  cout
 
 PrtFile06:
 
-           lda  #StdText              ; Normal text
-           jsr  cout_mark
+           lda  #StdText                ; Normal text
+           jsr  cout
 
-           ldy  #oFileName            ; Get file type
+           ldy  #oFileName              ; Get file type
            lda  (Ptr1),y
            and  #$F0
-           cmp  #$40                  ; File type < $40 is a regular file
+           cmp  #$40                    ; File type < $40 is a regular file
            bcc  PtrFile06a
-           cmp  #$D0                  ; File type >= $D0 is a directory or
-           bcs  PtrFile06a            ;  a directory header
+           cmp  #$D0                    ; File type >= $D0 is a directory or
+           bcs  PtrFile06a              ;  a directory header
 
-           lda  #'+'+$80              ; At here we have a non-ProDOS 8 file
-           jsr  cout_mark             ;  of some sort.
+           lda  #'+'+$80                ; At here we have a non-ProDOS 8 file
+           jsr  cout                    ;  of some sort.
            bra  PtrFile06b
 
 PtrFile06a:
 
-           lda  #' '+$80              ; Space
-           jsr  cout_mark             ; Print space
+           lda  #' '+$80                ; Space
+           jsr  cout                    ; Print space
 
 PtrFile06b:
 
-           lda  TextMode              ; Set selected/not selected entry
-           jsr  cout_mark
-           lda  #Normal               ; Set default TextMode to Normal text
+           lda  TextMode                ; Set selected/not selected entry
+           jsr  cout
+           lda  #Normal                 ; Set default TextMode to Normal text
            sta  TextMode
 
 ;          Start printing file name
 
            ldy  #oFileName
            lda  (Ptr1),y
-           and  #$0F                  ; Keep only filename length
-           sta  FileLength            ; Temp save for later
-           tax                        ; x reg = remaining chars to print
-           ldy  #oFileName            ; y reg = index
-           iny                        ; Move to first character of name
+           and  #$0F                    ; Keep only filename length
+           sta  FileLength              ; Temp save for later
+           tax                          ; x reg = remaining chars to print
+           ldy  #oFileName              ; y reg = index
+           iny                          ; Move to first character of name
 
 PrtFile07:
 
-           lda  (Ptr1),y              ; Get character
-           asl  Ptr2                  ; Check for lower case character
-           bcc  PrtFile08             ; No, so skip lower case conversion.
+           lda  (Ptr1),y                ; Get character
+           asl  Ptr2                    ; Check for lower case character
+           bcc  PrtFile08               ; No, so skip lower case conversion.
 
            clc
-           adc  #32                   ; Convert to lower case
+           adc  #32                     ; Convert to lower case
 
 PrtFile08:
 
-           ora  #$80                  ; Set high bit on
-           jsr  cout_mark             ; Print character
+           ora  #$80                    ; Set high bit on
+           jsr  cout                    ; Print character
 
-           iny                        ; Move index to next character
-           cpy  #oFileName+8          ; Check to see if we need the 2nd set of
-           bne  PrtFile09             ; mixed case bits.
+           iny                          ; Move index to next character
+           cpy  #oFileName+8            ; Check to see if we need the 2nd set of
+           bne  PrtFile09               ; mixed case bits.
 
-           phy                        ; Save y-reg
-           ldy  #oLower2              ; Get location of 2nd set of mixed bits.
-           lda  (Ptr1),y              ; Retrieve next set of midex case bits
-           sta  Ptr2                  ; Save bits in our pointer.
-           ply                        ; Restore y-reg.
+           phy                          ; Save y-reg
+           ldy  #oLower2                ; Get location of 2nd set of mixed bits.
+           lda  (Ptr1),y                ; Retrieve next set of midex case bits
+           sta  Ptr2                    ; Save bits in our pointer.
+           ply                          ; Restore y-reg.
 
 PrtFile09:
 
-           dex                        ; More to print?
-           bne  PrtFile07             ; Yes
+           dex                          ; More to print?
+           bne  PrtFile07               ; Yes
 
-           lda  #15                   ; Calculate spaces required to pad
+           lda  #15                     ; Calculate spaces requred to pad
            sec
            sbc  FileLength
-           beq  PrtFile11             ; No spaces required, exit.
+           beq  PrtFile11               ; No spaces required, exit.
 
            tax
-           lda  #' '+$80              ; Space
+           lda  #' '+$80                ; Space
 
 PrtFile10:
 
-           jsr  cout_mark             ; Print space
+           jsr  cout                    ; Print space
            dex
            bne  PrtFile10
 
 PrtFile11:
 
            lda  Ptr1
-           cmp  #<VolHeader_M1
+           cmp  #<VolHeader
            bne  PrtFile12
            lda  Ptr1+1
-           cmp  #>VolHeader_M1
+           cmp  #>VolHeader
            bne  PrtFile12
            bra  PrtFile14
 
 PrtFile12:
 
            lda  #' '+$80
-           jsr  cout_mark             ; Print a space
+           jsr  cout                    ; Print a space
 
            ldx  #3
            ldy  #oFileTypeA
 
-PrtFile13:                            ; Print file type loop
+PrtFile13:                         ; Print file type loop
 
            lda  (Ptr1),y
            ora  #$80
-           jsr  cout_mark
+           jsr  cout
            iny
            dex
            bne  PrtFile13
 
 PrtFile14:
 
-           lda  #Normal               ; Make sure Normal text mode.
-           jsr  cout_mark
+           lda  #Normal                 ; Make sure Normal text mode.
+           jsr  cout
 
            rts
+
+

@@ -3,12 +3,13 @@ MLIGetPrefix:
 ;          MLI Get Prefix($C7) Call
 ;
 ;          Usage       : jsr MLIGetPrefix
-;          Requirements: buffer named 'Prefix' 64 bytes long
+;          Requirements: buffer named 'prefix' 64 bytes long
 
-ProDOSGetPrefix    =  $C7
+MLICode_C7  =   $C7
+;MLI         =   $BF00
 
            jsr  MLI
-           .byte ProDOSGetPrefix
+           .byte MLICode_C7
            .addr @Parms
            bne  @CheckError
            rts
@@ -20,7 +21,9 @@ ProDOSGetPrefix    =  $C7
 
 @CheckError:
 
-           pha                        ; Save MLI error
-           lda  #ProDOSGetPrefix
-           pha                        ; Save calling routine
+           pha                          ; Save MLI error
+           lda  #MLICode_C7
+           pha                          ; Save calling routine
            jmp  MLIError
+
+

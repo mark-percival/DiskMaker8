@@ -4,6 +4,8 @@
 
 PaintMenu2:
 
+           ; Expected to scope to Menu2Vars.s
+
 ;   L i n e   8
 
            lda  #8-1
@@ -13,22 +15,22 @@ PaintMenu2:
            jsr  SetVTab
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'Z'
-           jsr  cout_mark             ; Left |
+           jsr  cout                    ; Left |
 
            ldx  #48
-           lda  #'L'                  ; Top of box
+           lda  #'L'                    ; Top of box
 
 L8Loop1:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L8Loop1
 
            lda  #'_'
-           jsr  cout_mark             ; Right |
+           jsr  cout                    ; Right |
 
 ;   L i n e   9
 
@@ -38,27 +40,27 @@ L8Loop1:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark             ; Left side |
+           jsr  cout                    ; Left side |
 
-           lda  #18-1                 ; Skip a space
+           lda  #18-1                   ; Skip a space
            sta  HTab
 
            ldy  #0
-           ldx  #PMLine9TextE-PMLine9Text
+           ldx  #PM_Line9TextE-PM_Line9Text
 
 L9Loop1:
 
-           lda  PMLine9Text,y
-           jsr  cout_mark
+           lda  PM_Line9Text,y
+           jsr  cout
            iny
            dex
            bne  L9Loop1
 
            lda  #47-1
-           sta  HTab                  ; Skip a space
+           sta  HTab                    ; Skip a space
 
-           lda  #'''+$80              ; Quote
-           jsr  cout_mark
+           lda  #'''+$80                ; Quote
+           jsr  cout
 
            ldx  Path
            ldy  #0
@@ -68,18 +70,18 @@ L9Loop2:
            iny
            lda  Path,y
            ora  #$80
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L9Loop2
 
-           lda  #'''+$80              ; Quote
-           jsr  cout_mark
+           lda  #'''+$80                ; Quote
+           jsr  cout
 
            lda  #65-1
-           sta  HTab                  ; Skip a space
+           sta  HTab                    ; Skip a space
 
            lda  #'_'
-           jsr  cout_mark             ; Right side |
+           jsr  cout                    ; Right side |
 
 ;   L i n e   1 0
 
@@ -89,17 +91,17 @@ L9Loop2:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark             ; Left side |
+           jsr  cout                    ; Left side |
 
            lda  #18-1
            sta  HTab
 
            ldx  #29
-           lda  #'_'+$80              ; Underscore
+           lda  #'_'+$80                ; Underscore
 
 L10Loop1:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L10Loop1
 
@@ -111,7 +113,7 @@ L10Loop1:
 
 L10Loop2:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L10Loop2
 
@@ -119,7 +121,7 @@ L10Loop2:
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark             ; Right side |
+           jsr  cout                    ; Right side |
 
 ;   L i n e   1 1
 
@@ -130,59 +132,59 @@ L10Loop2:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #18-1
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #45-1
            sta  HTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'R'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #49-1
            sta  HTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
            lda  #' '
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #11
            ldy  #1
 
 L11Loop1:
 
-           lda  AboutText_M2,y
-           jsr  cout_mark
+           lda  AboutText,y
+           jsr  cout
            iny
            dex
            bne  L11Loop1
 
            lda  #' '
-           jsr  cout_mark
+           jsr  cout
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #65-1
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ;   L i n e   1 2
 
@@ -193,22 +195,22 @@ L11Loop1:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #18-1
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #45-1
            sta  HTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'V'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #50-1
            sta  HTab
@@ -218,7 +220,7 @@ L11Loop1:
 
 L12Loop1:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L12Loop1
 
@@ -226,7 +228,7 @@ L12Loop1:
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ;   L i n e   1 3
 
@@ -237,59 +239,59 @@ L12Loop1:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #18-1
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #45-1
            sta  HTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'V'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #49-1
            sta  HTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
            lda  #' '
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #11
            ldy  #1
 
 L13Loop1:
 
-           lda  SkipText_M2,y
-           jsr  cout_mark
+           lda  SkipText,y
+           jsr  cout
            iny
            dex
            bne  L13Loop1
 
            lda  #' '
-           jsr  cout_mark
+           jsr  cout
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #65-1
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ;   L i n e   1 4
 
@@ -300,22 +302,22 @@ L13Loop1:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #18-1
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #45-1
            sta  HTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'V'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #50-1
            sta  HTab
@@ -325,7 +327,7 @@ L13Loop1:
 
 L14Loop1:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L14Loop1
 
@@ -333,7 +335,7 @@ L14Loop1:
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ;   L i n e   1 5
 
@@ -344,59 +346,59 @@ L14Loop1:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #18-1
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #45-1
            sta  HTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'Q'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #49-1
            sta  HTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
            lda  #' '
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #11
            ldy  #1
 
 L15Loop1:
 
-           lda  MakeText_M2,y
-           jsr  cout_mark
+           lda  MakeText,y
+           jsr  cout
            iny
            dex
            bne  L15Loop1
 
            lda  #' '
-           jsr  cout_mark
+           jsr  cout
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #65-1
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ;   L i n e   16
 
@@ -407,7 +409,7 @@ L15Loop1:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #18-1
            sta  HTab
@@ -417,23 +419,23 @@ L15Loop1:
 
 L16Loop1:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L16Loop1
 
            lda  #'L'
-           jsr  cout_mark
-           jsr  cout_mark
+           jsr  cout
+           jsr  cout
 
            lda  #'\'
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #4
            lda  #'L'
 
 L16Loop2:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L16Loop2
 
@@ -445,7 +447,7 @@ L16Loop2:
 
 L16Loop3:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L16Loop3
 
@@ -453,7 +455,7 @@ L16Loop3:
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ;   L i n e   1 7
 
@@ -464,13 +466,13 @@ L16Loop3:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #18-1
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            jsr  PrtImgType
 
@@ -478,19 +480,19 @@ L16Loop3:
            sta  HTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #41-1
            sta  HTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #43-1
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            ldy  #0
            ldx  #Line17TexE-Line17Text
@@ -498,7 +500,7 @@ L16Loop3:
 L17Loop1:
 
            lda  Line17Text,y
-           jsr  cout_mark
+           jsr  cout
            iny
            dex
            bne  L17Loop1
@@ -507,7 +509,7 @@ L17Loop1:
            sta  HTab
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ;   L i n e   1 8
 
@@ -518,46 +520,50 @@ L17Loop1:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'+$80
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #22
            lda  #'\'
 
 L18Loop1:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L18Loop1
 
            lda  #'_'+$80
-           jsr  cout_mark
-           jsr  cout_mark
+           jsr  cout
+           jsr  cout
 
            lda  #'\'
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #22
            lda  #'_'+$80
 
 L18Loop2:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L18Loop2
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
-PMLine9Text: asc "Select target for the image:"
-PMLine9TextE:
+;          Msb  On
+
+PM_Line9Text: asc "Select target for the image:"
+PM_Line9TextE:
 
 Line17Text: asc "Same-size disks only"
 Line17TexE:
+
+;          Msb  Off
 
 ;
 ; Clear menu2 data area
@@ -565,33 +571,35 @@ Line17TexE:
 
 ClearMenu2:
 
-           lda  #16-1                 ; Start at HTab 16
+           lda  #16-1                   ; Start at HTab 16
            sta  HTab
-           lda  #8-1                  ; Start at VTab 8
+           lda  #8-1                    ; Start at VTab 8
            sta  VTab
            jsr  SetVTab
 
-           ldy  #11                   ; Total lines to wipe out
+           ldy  #11                     ; Total lines to wipe out
 
 @NextLine:
 
-           phy                        ; Save y register
-           lda  #' '+$80              ; Space character
-           ldx  #50                   ; Character per line to wipe out
+           phy                          ; Save y register
+           lda  #' '+$80                ; Space character
+           ldx  #50                     ; Character per line to wipe out
 
 @NextChar:
 
-           jsr  cout_mark             ; Print space
-           dex                        ; Count space printed
-           bne  @NextChar             ; More?
+           jsr  cout                    ; Print space
+           dex                          ; Count space printed
+           bne  @NextChar                ; More?
 
-           lda  #16-1                 ; Line complete
-           sta  HTab                  ; Set HTab back to 17
-           inc  VTab                  ; Bump up VTAB
+           lda  #16-1                   ; Line complete
+           sta  HTab                    ; Set HTab back to 17
+           inc  VTab                    ; Bump up VTAB
            jsr  SetVTab
 
-           ply                        ; Restore y register
-           dey                        ; Count line printed
-           bne  @NextLine             ; More
+           ply                          ; Restore y register
+           dey                          ; Count line printed
+           bne  @NextLine               ; More
 
-           rts                        ; Return
+           rts                          ; Return
+
+

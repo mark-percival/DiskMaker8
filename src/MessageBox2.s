@@ -4,48 +4,58 @@
 
 UI:
 
-           stz  MBRC                  ; Reset return code
-           stz  ClearKbd              ; Clear keyboard strobe
+UpArrow     =   $8B
+DownArrow   =   $8A
+LeftArrow   =   $88
+RightArrow  =   $95
+ReturnKey   =   $8D
+TabKey      =   $89
 
-@PollDev:
+;AppleKey    =   $C061
+;OptionKey   =   $C062
 
-           jsr  PlotMouse             ; Put mouse cursor on screen
+           stz  M1_RC                   ; Reset return code
+           stz  ClearKbd                ; Clear keyboard strobe
 
-MB2PollDevLoop:
+MB2_PollDev:
 
-           lda  Keyboard              ; Get keypress
-           bpl  @PollMouse            ; No keypress, check mouse
-           jmp  @KeyDev
+           jsr  PlotMouse               ; Put mouse cursor on screen
+
+MB2_PollDevLoop:
+
+           lda  Keyboard                ; Get keypress
+           bpl  @PollMouse              ; No keypress, check mouse
+           jmp  MB2_KeyDev
 
 @PollMouse:
 
-           jsr  ReadMouse             ; Readmouse
-           lsr  MouseX                ; Put x and y mouse coordinates into
-           lsr  MouseY                ;  0 to 79 and 0 to 23 range.
-           lda  MouseStat             ; Get mouse status
-           bit  #MouseMove            ; Move moved?
-           bne  @MouseDev1            ; Yes, process mouse movement
-           bit  #CurrButton           ; Mouse button pressed?
-           bne  @MouseDev2            ; Yes, process mouse button press.
-           bit  #PrevButton           ; Mouse button released?
-           bne  @MouseDev3            ; Yes, process mouse button release.
+           jsr  ReadMouse               ; Readmouse
+           lsr  MouseX                  ; Put x and y mouse coordinates into
+           lsr  MouseY                  ;  0 to 79 and 0 to 23 range.
+           lda  MouseStat               ; Get mouse status
+           bit  #MouseMove              ; Move moved?
+           bne  MB2_MouseDev1           ; Yes, process mouse movement
+           bit  #CurrButton             ; Mouse button pressed?
+           bne  MB2_MouseDev2           ; Yes, process mouse button press.
+           bit  #PrevButton             ; Mouse button released?
+           bne  MB2_MouseDev3           ; Yes, process mouse button release.
 
-           bra  MB2PollDevLoop        ; Check keyboard and mouse again.
+           bra  MB2_PollDevLoop         ; Check keyboard and mouse again.
 
 ;
 ; Process mouse movement
 ;
 
-@MouseDev1:
+MB2_MouseDev1:
 
            jsr  MoveMouse
-           bra  MB2PollDevLoop
+           bra  MB2_PollDevLoop
 
 ;
 ; Process mouse button press
 ;
 
-@MouseDev2:
+MB2_MouseDev2:
 
            jmp  ButtonPress
 
@@ -53,7 +63,7 @@ MB2PollDevLoop:
 ; Process mouse button release
 ;
 
-@MouseDev3:
+MB2_MouseDev3:
 
            jmp  ButtonRelease
 
@@ -61,63 +71,63 @@ MB2PollDevLoop:
 ; Process keyboard key press
 ;
 
-@KeyDev:
+MB2_KeyDev:
 
-           stz  ClearKbd              ; Clear keyboard strobe
-           sta  KeyPress              ; Save keypress
+           stz  ClearKbd                ; Clear keyboard strobe
+           sta  MB_KeyPress             ; Save keypress
 
 ; Tab key routine
 
-           lda  KeyPress
+           lda  MB_KeyPress
            cmp  #TabKey
-           beq  @TabReq
-           bra  @NextKey01
+           beq  MB2_TabReq
+           bra  MB2_NextKey01
 
-@TabReq:
+MB2_TabReq:
 
            lda  OptionKey
-           bmi  @TabUp
+           bmi  MB2_TabUp
 
-@TabDown:
+;TabDown:
 
-           inc  MBTabIndex
-           lda  MBTabIndex
+           inc  M1_TabIndex
+           lda  M1_TabIndex
            cmp  NumButts
-           bcc  @TabReq1
+           bcc  MB2_TabReq1
 
-           stz  MBTabIndex
-           bra  @TabReq1
+           stz  M1_TabIndex
+           bra  MB2_TabReq1
 
-@TabUp:
+MB2_TabUp:
 
-           dec  MBTabIndex
-           bpl  @TabReq1
+           dec  M1_TabIndex
+           bpl  MB2_TabReq1
 
            lda  NumButts
            dec  a
-           sta  MBTabIndex
+           sta  M1_TabIndex
 
-@TabReq1:
+MB2_TabReq1:
 
            lda  #TabOnly
-           sta  MBRC
-           jmp  MB2Exit
+           sta  M1_RC
+           jmp  MB2_Exit
 
-@NextKey01:
+MB2_NextKey01:
 
 ; Process <cr>
 
-           lda  KeyPress
+           lda  MB_KeyPress
            cmp  #ReturnKey
-           beq  MB2EnterReq
+           beq  MB2_EnterReq
            cmp  #' '+$80
-           beq  MB2EnterReq
+           beq  MB2_EnterReq
 
            bra  InvalidKey
 
-MB2EnterReq:
+MB2_EnterReq:
 
-           lda  MBTabIndex
+           lda  M1_TabIndex
            cmp  #Button1
            bne  @Enter01
            jmp  Button1Req
@@ -130,48 +140,48 @@ MB2EnterReq:
 
 @Enter02:
 
-           jmp  MB2PollDevLoop
+           jmp  MB2_PollDevLoop
 
 Button1Req:
 
            lda  #Button1
-           cmp  MBTabIndex
-           sta  MBTabIndex
+           cmp  M1_TabIndex
+           sta  M1_TabIndex
            beq  B1Req01
 
-           jsr  MBRefreshBtn
+           jsr  MB1_RefreshBtn
 
 B1Req01:
 
-           jsr  MB2AnimateBtn
+           jsr  MB2_AnimateBtn
 
-           lda  #MBCROnly
-           sta  MBRC
-           jmp  MB2Exit
+           lda  #MB_CROnly
+           sta  M1_RC
+           jmp  MB2_Exit
 
 Button2Req:
 
            lda  #Button2
-           cmp  MBTabIndex
-           sta  MBTabIndex
+           cmp  M1_TabIndex
+           sta  M1_TabIndex
            beq  B2Req01
 
-           jsr  MBRefreshBtn
+           jsr  MB1_RefreshBtn
 
 B2Req01:
 
-           jsr  MB2AnimateBtn
+           jsr  MB2_AnimateBtn
 
-           lda  #MBCROnly
-           sta  MBRC
-           jmp  MB2Exit
+           lda  #MB_CROnly
+           sta  M1_RC
+           jmp  MB2_Exit
 
 InvalidKey:
 
            jsr  Beep
-           jmp  MB2PollDevLoop
+           jmp  MB2_PollDevLoop
 
-MB2Exit:
+MB2_Exit:
 
            rts
 
@@ -179,16 +189,16 @@ MB2Exit:
 ; Do button animation
 ;
 
-MB2AnimateBtn:
+MB2_AnimateBtn:
 
            lda  #15-1
            sta  VTab
            jsr  SetVTab
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
 
-           lda  MBTabIndex
+           lda  M1_TabIndex
            cmp  #Button1
            beq  AnimateB1
 
@@ -205,7 +215,7 @@ AnimateB1:
            sta  Ptr1+1
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            lda  B1HTabS
            sta  HTab
@@ -216,7 +226,7 @@ AnimateB1:
            jsr  Wait
 
            lda  #Inverse
-           jsr  cout_mark
+           jsr  cout
 
            lda  B1HTabS
            sta  HTab
@@ -227,7 +237,7 @@ AnimateB1:
            jsr  Wait
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
@@ -239,7 +249,7 @@ AnimateB2:
            sta  Ptr1+1
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            lda  B2HTabS
            sta  HTab
@@ -250,7 +260,7 @@ AnimateB2:
            jsr  Wait
 
            lda  #Inverse
-           jsr  cout_mark
+           jsr  cout
 
            lda  B2HTabS
            sta  HTab
@@ -261,7 +271,7 @@ AnimateB2:
            jsr  Wait
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
@@ -270,11 +280,11 @@ PtrButton:
            ldx  #8
            ldy  #0
 
-@PB01:     lda  (Ptr1),y
-           jsr  cout_mark
+PB01:      lda  (Ptr1),y
+           jsr  cout
            iny
            dex
-           bne  @PB01
+           bne  PB01
 
            rts
 
@@ -286,10 +296,10 @@ ButtonPress:
 
            lda  MouseStat
            bit  #PrevButton
-           beq  NotHeld
-           jmp  MB2PollDevLoop
+           beq  @NotHeld
+           jmp  MB2_PollDevLoop
 
-NotHeld:
+@NotHeld:
 
            lda  MouseY
            cmp  #15-1
@@ -306,11 +316,11 @@ RightRow:
 
 ; Button 1 click
 
-           stz  MBTabIndex
+           stz  M1_TabIndex
 
            lda  #TabOnly
-           sta  MBRC
-           jmp  MB2Exit
+           sta  M1_RC
+           jmp  MB2_Exit
 
 TestForB2:
 
@@ -330,18 +340,18 @@ CheckForB2:
 ; Button 2 click
 
            lda  #1
-           sta  MBTabIndex
+           sta  M1_TabIndex
 
            lda  #TabOnly
-           sta  MBRC
-           jmp  MB2Exit
+           sta  M1_RC
+           jmp  MB2_Exit
 
 TestForB3:
 
 BadPress:
 
            jsr  Beep
-           jmp  MB2PollDevLoop
+           jmp  MB2_PollDevLoop
 
 ;
 ; Button Release
@@ -353,11 +363,11 @@ ButtonRelease:
            cmp  #15-1
            beq  GoodRow
 
-           jmp  MB2PollDevLoop
+           jmp  MB2_PollDevLoop
 
 GoodRow:
 
-           lda  MBTabIndex
+           lda  M1_TabIndex
            bne  B2Release
 
 B1Release:
@@ -367,7 +377,7 @@ B1Release:
            bcc  ButtExit
            cmp  B1HTabE
            bcs  ButtExit
-           jmp  MB2EnterReq
+           jmp  MB2_EnterReq
 
 B2Release:
 
@@ -376,8 +386,8 @@ B2Release:
            bcc  ButtExit
            cmp  B2HTabE
            bcs  ButtExit
-           jmp  MB2EnterReq
+           jmp  MB2_EnterReq
 
 ButtExit:
 
-           jmp  MB2PollDevLoop
+           jmp  MB2_PollDevLoop

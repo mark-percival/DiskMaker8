@@ -1,65 +1,66 @@
 SameSizeRtn:
+; Expected to scope to Menu2vars.s
 
 ;
 ; Print the same-size disks only setting
 ;
 
-SizeOff    =  ' '+$80                 ; Normal space
-SizeOffSel =  ' '                     ; Inverse space
-SizeOn     =  'D'                     ; Normal check mark
-SizeOnSel  =  'E'                     ; Inverse check mark
+SizeOff     =   ' '+$80                 ; Normal space
+SizeOffSel  =   ' '                     ; Inverse space
+SizeOn      =   'D'                     ; Normal check mark
+SizeOnSel   =   'E'                     ; Inverse check mark
 
 PrtSameSize:
 
-           lda  #42-1                 ; HTab 42
+           lda  #42-1                   ; HTab 42
            sta  HTab
-           lda  #17-1                 ; VTab 17
+           lda  #17-1                   ; VTab 17
            sta  VTab
            jsr  SetVTab
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
-           lda  TabIndex_M2
+           lda  TabIndex2
            cmp  #SameSize
            beq  Selected
 
-           lda  blnSize_M2
+           lda  blnSize
            beq  UnSelOff
 
 UnSelOn:
 
            lda  #SizeOn
-           jsr  cout_mark
-           bra  PrtExit
+           jsr  cout
+           bra  SS_PrtExit
 
 UnSelOff:
 
            lda  #SizeOff
-           jsr  cout_mark
-           bra  PrtExit
+           jsr  cout
+           bra  SS_PrtExit
 
 Selected:
 
-           lda  blnSize_M2
+           lda  blnSize
            beq  SelOff
 
 SelOn:
 
            lda  #SizeOnSel
-           jsr  cout_mark
-           bra  PrtExit
+           jsr  cout
+           bra  SS_PrtExit
 
 SelOff:
 
            lda  #SizeOffSel
-           jsr  cout_mark
-           bra  PrtExit
+           jsr  cout
+           bra  SS_PrtExit
 
-PrtExit:
+SS_PrtExit:
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
@@ -69,17 +70,17 @@ PrtExit:
 
 ToggleSize:
 
-           lda  blnSize_M2
+           lda  blnSize
            beq  TurnOn
 
 TurnOff:
 
-           stz  blnSize_M2
+           stz  blnSize
            bra  ToggleExit
 
 TurnOn:
 
-           inc  blnSize_M2
+           inc  blnSize
            bra  ToggleExit
 
 ToggleExit:
@@ -87,3 +88,5 @@ ToggleExit:
            jsr  PrtSameSize
 
            rts
+
+

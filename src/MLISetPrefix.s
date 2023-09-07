@@ -3,12 +3,13 @@ MLISetPrefix:
 ;          MLI Set Prefix($C6) Call
 ;
 ;          Usage       : jsr MLISetPrefix
-;          Requirements: buffer named 'Prefix' 64 bytes long
+;          Requirements: buffer named 'prefix' 64 bytes long
 
-ProDOSSetPrefix    =  $C6
+MLICode_C6  =   $C6
+;MLI         =   $BF00
 
            jsr  MLI
-           .byte ProDOSSetPrefix
+           .byte MLICode_C6
            .addr @Parms
            bne  @CheckError
            rts
@@ -20,7 +21,9 @@ ProDOSSetPrefix    =  $C6
 
 @CheckError:
 
-           pha                        ; Save MLI error
-           lda  #ProDOSSetPrefix
-           pha                        ; Save calling routine
+           pha                          ; Save MLI error
+           lda  #MLICode_C6
+           pha                          ; Save calling routine
            jmp  MLIError
+
+

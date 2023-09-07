@@ -3,9 +3,9 @@ Divide:
 ;
 ; 16 Bit Divide Routine
 ;
-; ACC / AUX -> ACC with remainder in EXT
+; acc / aux -> acc with remainder in ext
 ;
-;          Define ACC, AUX and EXT as 2 byte ZP locations
+;          Define acc, aux and ext as 2 byte ZP locations
 ;
            lda  #0
            sta  ext+1
