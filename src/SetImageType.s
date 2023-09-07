@@ -3,6 +3,8 @@
 ;
 
 SetImgType:
+           ; Expected to scope to Menu2Vars.s
+
 
 ; First check file type / auxtype
 ;
@@ -11,8 +13,8 @@ SetImgType:
 ; $E0 / $0120 = DiskCopy 6
 ; $E0 / $0121 = ProDOS order image
 
-           lda  #Type_PO              ; Default type
-           sta  ImageType_M2
+           lda  #Type_PO                ; Default type
+           sta  ImageType
 
            lda  FileType
            cmp  #$E0
@@ -21,19 +23,19 @@ SetImgType:
 
 Next00:
 
-           lda  AuxType+1             ; Check for DiskCopy 4.2 type
+           lda  AuxType+1               ; Check for DiskCopy 4.2 type
            bne  Next01
            lda  AuxType
            cmp  #$05
            bne  Next01
 
            lda  #Type_DC
-           sta  ImageType_M2
+           sta  ImageType
            jmp  TryExtension
 
 Next01:
 
-           lda  AuxType+1             ; Check for Universal Disk Image
+           lda  AuxType+1               ; Check for Universal Disk Image
            cmp  #$01
            bne  Next02
            lda  AuxType
@@ -41,12 +43,12 @@ Next01:
            bne  Next02
 
            lda  #Type_2IMG
-           sta  ImageType_M2
+           sta  ImageType
            jmp  TryExtension
 
 Next02:
 
-           lda  AuxType+1             ; Check for DiskCopy 6
+           lda  AuxType+1               ; Check for DiskCopy 6
            cmp  #$01
            bne  Next03
            lda  AuxType
@@ -54,12 +56,12 @@ Next02:
            bne  Next03
 
            lda  #Type_DC6
-           sta  ImageType_M2
+           sta  ImageType
            jmp  TryExtension
 
 Next03:
 
-           lda  AuxType+1             ; Check for ProDOS order image
+           lda  AuxType+1               ; Check for ProDOS order image
            cmp  #$01
            bne  Next04
            lda  AuxType
@@ -67,7 +69,7 @@ Next03:
            bne  Next04
 
            lda  #Type_PO
-           sta  ImageType_M2
+           sta  ImageType
            jmp  TryExtension
 
 Next04:
@@ -95,15 +97,15 @@ TryExtension:
            dex
            bne  @NextChar
 
-           jmp  CheckHeader           ; Falls to here if no extension.
+           jmp  CheckHeader             ; Falls to here if no extension.
 
 FoundPeriod:
 
-           inx                        ; Move 1 past period
+           inx                          ; Move 1 past period
            stx  ExtStart
            cpx  FileLen
            bne  OkExt
-           jmp  CheckHeader           ; Period at end of filename.
+           jmp  CheckHeader             ; Period at end of filename.
 
 OkExt:
 
@@ -112,7 +114,7 @@ OkExt:
            sbc  ExtStart
            inc  a
            sta  ExtLen
-           cmp  #2                    ; An extension length of 2?
+           cmp  #2                      ; An extension length of 2?
            bne  TryIMG
 
            ldx  ExtStart
@@ -125,13 +127,13 @@ OkExt:
            bne  TryIMG
 
            lda  #Type_DC
-           sta  ImageType_M2
+           sta  ImageType
            jmp  CheckHeader
 
 TryIMG:
 
            lda  ExtLen
-           cmp  #3                    ; An extension length of 2?
+           cmp  #3                      ; An extension length of 2?
            bne  TryDC6
 
            ldx  ExtStart
@@ -148,13 +150,13 @@ TryIMG:
            bne  TryDC6
 
            lda  #Type_DC
-           sta  ImageType_M2
+           sta  ImageType
            jmp  CheckHeader
 
 TryDC6:
 
            lda  ExtLen
-           cmp  #3                    ; An extension length of 2?
+           cmp  #3                      ; An extension length of 2?
            bne  TryDMG
 
            ldx  ExtStart
@@ -171,13 +173,13 @@ TryDC6:
            bne  TryDMG
 
            lda  #Type_DC6
-           sta  ImageType_M2
+           sta  ImageType
            jmp  CheckHeader
 
 TryDMG:
 
            lda  ExtLen
-           cmp  #3                    ; An extension length of 2?
+           cmp  #3                      ; An extension length of 2?
            bne  Try2MG
 
            ldx  ExtStart
@@ -194,13 +196,13 @@ TryDMG:
            bne  Try2MG
 
            lda  #Type_DC6
-           sta  ImageType_M2
+           sta  ImageType
            jmp  CheckHeader
 
 Try2MG:
 
            lda  ExtLen
-           cmp  #3                    ; An extension length of 2?
+           cmp  #3                      ; An extension length of 2?
            bne  TryPO
 
            ldx  ExtStart
@@ -217,13 +219,13 @@ Try2MG:
            bne  TryPO
 
            lda  #Type_2IMG
-           sta  ImageType_M2
+           sta  ImageType
            jmp  CheckHeader
 
 TryPO:
 
            lda  ExtLen
-           cmp  #2                    ; An extension length of 2?
+           cmp  #2                      ; An extension length of 2?
            bne  TryDSK
 
            ldx  ExtStart
@@ -236,14 +238,14 @@ TryPO:
            bne  TryDSK
 
            lda  #Type_PO
-           sta  ImageType_M2
+           sta  ImageType
            jmp  CheckHeader
 
 
 TryDSK:
 
            lda  ExtLen
-           cmp  #3                    ; An extension length of 2?
+           cmp  #3                      ; An extension length of 2?
            bne  TryDO
 
            ldx  ExtStart
@@ -260,13 +262,13 @@ TryDSK:
            bne  TryDO
 
            lda  #Type_DO
-           sta  ImageType_M2
+           sta  ImageType
            jmp  CheckHeader
 
 TryDO:
 
            lda  ExtLen
-           cmp  #2                    ; An extension length of 2?
+           cmp  #2                      ; An extension length of 2?
            bne  TryUnk
 
            ldx  ExtStart
@@ -279,12 +281,12 @@ TryDO:
            bne  TryUnk
 
            lda  #Type_DO
-           sta  ImageType_M2
+           sta  ImageType
            jmp  CheckHeader
 
-TryUnk:                               ; Unknown extension
+TryUnk:                         ; Unknown extension
 
-CheckHeader:                          ; Check file header
+CheckHeader:                        ; Check file header
 
            jsr  MLIOpen1
 
@@ -319,7 +321,7 @@ Try2IMG:
            bne  ExitRtn
 
            lda  #Type_2IMG
-           sta  ImageType_M2
+           sta  ImageType
            bra  ExitRtn
 
 TryGMI2:
@@ -341,12 +343,14 @@ TryGMI2:
            bne  ExitRtn
 
            lda  #Type_2IMG
-           sta  ImageType_M2
+           sta  ImageType
 
 ExitRtn:
 
            rts
 
-FileLen:   .byte   $00
-ExtStart:  .byte   $00
-ExtLen:    .byte   $00
+FileLen:    .res 1
+ExtStart:   .res 1
+ExtLen:     .res 1
+
+

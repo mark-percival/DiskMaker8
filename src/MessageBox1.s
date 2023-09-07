@@ -6,15 +6,15 @@ DisplayBox:
 
            lda  #10-1
            sta  VTab
-           lda  StartHTab
+           lda  MB_StartHTab
            sta  HTab
            jsr  SetVTab
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  BoxWidth
            dec  a
@@ -25,22 +25,22 @@ DisplayBox:
 
 Line10a:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line10a
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; VTab 11
 
-           lda  StartHTab
+           lda  MB_StartHTab
            sta  HTab
            inc  VTab
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  BoxWidth
            dec  a
@@ -51,35 +51,35 @@ Line10a:
 
 Line11a:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line11a
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; VTab 12
 
-           lda  StartHTab
+           lda  MB_StartHTab
            sta  HTab
            inc  VTab
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'='+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'\'+$80
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #3
            lda  #' '+$80
 
 Line12a:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line12a
 
@@ -88,15 +88,15 @@ Line12a:
 
 Line12b:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line12b
 
            lda  #' '+$80
-           jsr  cout_mark
-           jsr  cout_mark
+           jsr  cout
+           jsr  cout
 
-           ldy  #0                    ; Message index
+           ldy  #0                      ; Message index
            ldx  #0
 
 Line12c:
@@ -106,7 +106,7 @@ Line12c:
            cmp  #$0D
            beq  Line12d
            ora  #$80
-           jsr  cout_mark
+           jsr  cout
            iny
            inx
            bra  Line12c
@@ -125,48 +125,48 @@ Line12d:
 
 Line12e:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line12e
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; VTab 13
 
-           lda  StartHTab
+           lda  MB_StartHTab
            sta  HTab
            inc  VTab
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'o'+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
-           jsr  cout_mark
+           jsr  cout
+           jsr  cout
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'?'+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
-           jsr  cout_mark
+           jsr  cout
+           jsr  cout
 
            ldx  #0
            lda  (MsgPtr),y
@@ -182,7 +182,7 @@ Line13a:
            beq  Line13a1
 
            ora  #$80
-           jsr  cout_mark
+           jsr  cout
            inx
 
 Line13a1:
@@ -204,62 +204,62 @@ Line13b:
 
 Line13c:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line13c
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; VTab 14
 
-           lda  StartHTab
+           lda  MB_StartHTab
            sta  HTab
            inc  VTab
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'I'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'Y'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'/'+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'!'+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
-           sec                        ; Setup for subtraction
-           lda  MsgWidth              ; A = MsgWidth - MinMsg  (= extra chars)
+           sec                          ; Setup for subtraction
+           lda  MsgWidth                ; A = MsgWidth - MinMsg  (= extra chars)
            sbc  MinMsg
-           lsr  a                     ; Divide by 2 to center
-           inc  a                     ; Add 2 for extra spaces in layout
+           lsr  a                       ; Divide by 2 to center
+           inc  a                       ; Add 2 for extra spaces in layout
            inc  a
 
 Line14a:
 
-           tax                        ; Move to index
+           tax                          ; Move to index
            lda  #' '+$80
 
 Line14b:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line14b
 
@@ -268,7 +268,7 @@ Line14b:
 
 Line14c:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line14c
 
@@ -281,7 +281,7 @@ Line14c:
 
 Line14d:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line14d
 
@@ -290,7 +290,7 @@ Line14d:
 
 Line14e:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line14e
 
@@ -316,39 +316,39 @@ Line14h:
 
 Line14i:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line14i
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; HTab 15
 
-           lda  StartHTab
+           lda  MB_StartHTab
            sta  HTab
            inc  VTab
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'M'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
-           jsr  cout_mark
+           jsr  cout
+           jsr  cout
 
            ldx  #4
            lda  #'L'
 
 Line15a:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line15a
 
@@ -359,8 +359,8 @@ Line15a:
 
            tax
 
-           clc                        ; Calculate HTab positions for buttons.
-           adc  StartHTab
+           clc                          ; Calculate HTab positions for buttons.
+           adc  MB_StartHTab
            adc  #12
            sta  B1HTabS
            adc  #8
@@ -375,15 +375,15 @@ Line15a:
 
 Line15b:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line15b
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #8
            ldy  #0
@@ -391,29 +391,29 @@ Line15b:
 Line15c:
 
            lda  B1Text,y
-           jsr  cout_mark
+           jsr  cout
            iny
            dex
            bne  Line15c
 
            lda  #' '
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            ldx  Mode
            cpx  #ModeOk
            beq  Line15d1
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #8
            ldy  #0
@@ -421,16 +421,16 @@ Line15c:
 Line15d:
 
            lda  B2Text,y
-           jsr  cout_mark
+           jsr  cout
            iny
            dex
            bne  Line15d
 
            lda  #' '
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 Line15d1:
 
@@ -450,22 +450,22 @@ Line15e:
 
 Line15f:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line15f
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; HTab 16
 
-           lda  StartHTab
+           lda  MB_StartHTab
            sta  HTab
            inc  VTab
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            sec
            lda  MsgWidth
@@ -478,7 +478,7 @@ Line15f:
 
 Line16a:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line16a
 
@@ -487,7 +487,7 @@ Line16a:
 
 Line16b:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line16b
 
@@ -500,7 +500,7 @@ Line16b:
 
 Line16c:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line16c
 
@@ -509,7 +509,7 @@ Line16c:
 
 Line16d:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line16d
 
@@ -532,133 +532,137 @@ Line16e:
 
 Line16f:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  Line16f
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
-TextLineMB:                           ; Text screen line starting addresses
+M1_TextLine:                            ; Text screen line starting addresses
 
-TextLineMB09: .addr $04A8             ; 1st message box line
-TextLineMB10: .addr $0528             ; 2nd message box line
-TextLineMB11: .addr $05A8             ; 3rd message box line
-TextLineMB12: .addr $0628             ; 4th message box line
-TextLineMB13: .addr $06A8             ; 5th message box line
-TextLineMB14: .addr $0728             ; 6th message box line
-TextLineMB15: .addr $07A8             ; 7th message box line
+M1_TextLine09: .addr $04A8              ; 1st message box line
+M1_TextLine10: .addr $0528              ; 2nd message box line
+M1_TextLine11: .addr $05A8              ; 3rd message box line
+M1_TextLine12: .addr $0628              ; 4th message box line
+M1_TextLine13: .addr $06A8              ; 5th message box line
+M1_TextLine14: .addr $0728              ; 6th message box line
+M1_TextLine15: .addr $07A8              ; 7th message box line
 
-MBEndHTab: .res   1
-MBSaveRtn: .res   1
+M1_EndHTab:  .res 1
+M1_SaveRtn:  .res 1
+
+;On80Store   =   $C001
+;Page1       =   $C054
+;Page2       =   $C055
 
 ;
-; MBSaveScreen - Save screen data under message box.
-; MBRestScreen - Restore screen data under message box.
+; M1_SaveScreen - Save screen data under message box.
+; M1_RestScreen - Restore screen data under message box.
 ;
 ; Ptr1 = screen data address : Ptr2 = Save buffer address
 ;
 
-MBSaveScreen:
+M1_SaveScreen:
 
            lda  #1
-           sta  MBSaveRtn
-           bra  MB1StartRtn
+           sta  M1_SaveRtn
+           bra  M1_StartRtn
 
-MBRestScreen:
+M1_RestScreen:
 
-           stz  MBSaveRtn
+           stz  M1_SaveRtn
 
-MB1StartRtn:
+M1_StartRtn:
 
-           sta  On80Store             ; Make sure 80STORE is on.
+           sta  On80Store               ; Make sure 80STORE is on.
 
-           clc                        ; Calculate ending HTab
-           lda  StartHTab
+           clc                          ; Calculate ending HTab
+           lda  MB_StartHTab
            adc  BoxWidth
            dec  a
-           sta  MBEndHTab
+           sta  M1_EndHTab
 
-           lda  #<MessageBuf          ; Set save buffer address in Ptr2
+           lda  #<MessageBuf            ; Set save buffer address in Ptr2
            sta  Ptr2
            lda  #>MessageBuf
            sta  Ptr2+1
 
-           ldx  #7                    ; 7 lines to save
+           ldx  #7                      ; 7 lines to save
 
-@SSLoop1:
+M1_SSLoop1:
 
-           txa                        ; Copy lines to save to accumulator
-           dec  a                     ; Subtract one to make it a 0 - 6 number
-           asl  a                     ; Multiply by two for address table index
-           tay                        ; Move to index
-           lda  TextLineMB,y          ;   Get line number starting address and
-           sta  Ptr1                  ; put it in Ptr1.
+           txa                          ; Copy lines to save to accumulator
+           dec  a                       ; Subtract one to make it a 0 - 6 number
+           asl  a                       ; Multiply by two for address table index
+           tay                          ; Move to index
+           lda  M1_TextLine,y              ; Get line number starting address and
+           sta  Ptr1                    ; put it in Ptr1.
            iny
-           lda  TextLineMB,y
+           lda  M1_TextLine,y
            sta  Ptr1+1
 
-           ldy  StartHTab
+           ldy  MB_StartHTab
 
-@SSLoop2:
+M1_SSLoop2:
 
-           phy                        ; Push HTab to stack.
-           tya                        ; Put HTab into accumulator
-           lsr  a                     ; Divide by 2 for index
-           bcs  @FromMain             ; A remainder then get char from main mem.
+           phy                          ; Push HTab to stack.
+           tya                          ; Put HTab into accumulator
+           lsr  a                       ; Divide by 2 for index
+           bcs  @FromMain               ; A remainder then get char from main mem.
 
-@FromAux:
+;FromAux:
 
-           sta  Page2                 ; Set access to aux memory
+           sta  Page2                   ; Set access to aux memory
            bra  @GetChar
 
 @FromMain:
 
-           sta  Page1                 ; Set access to main memory
+           sta  Page1                   ; Set access to main memory
 
 @GetChar:
 
-           tay                        ; Move index value to y register
-           lda  MBSaveRtn             ;   Is this a save or restore?
-           beq  @Restore               ; If MBSaveRtn = 0 then we're restoring
+           tay                          ; Move index value to y register
+           lda  M1_SaveRtn              ; Is this a save or restore?
+           beq  @Restore                ; If M1_SaveRtn = 0 then we're restoring
 
-           lda  (Ptr1),y              ; Get character from screen
-           sta  (Ptr2)                ; Save to buffer area
+           lda  (Ptr1),y                ; Get character from screen
+           sta  (Ptr2)                  ; Save to buffer area
            bra  @Continue
 
-@Restore:  lda  (Ptr2)                ; Get character from buffer area
-           sta  (Ptr1),y              ; Restore back to screen area
+@Restore:  lda  (Ptr2)                  ; Get character from buffer area
+           sta  (Ptr1),y                ; Restore back to screen area
 
 @Continue:
 
-           ply                        ; Get HTab from stack
+           ply                          ; Get HTab from stack
 
-           inc  Ptr2                  ; Bump up save buffer address
-           bne  @NoOF                 ; If Ptr2 = 0 then add 1 to Ptr2+1
+           inc  Ptr2                    ; Bump up save buffer address
+           bne  @NoOF                   ; If Ptr2 = 0 then add 1 to Ptr2+1
 
            inc  Ptr2+1
 
-@NoOF:                                ; No overflow label
+@NoOF:                                  ; No overflow label
 
-           iny                        ; Add 1 to HTab
-           cpy  MBEndHTab             ;   Compare to ending HTab
-           bcc  @SSLoop2              ; < or
-           beq  @SSLoop2              ;   = y register process next character.
+           iny                          ; Add 1 to HTab
+           cpy  M1_EndHTab              ; Compare to ending HTab
+           bcc  M1_SSLoop2              ; < or
+           beq  M1_SSLoop2              ;   = y register process next character.
 
-           dex                        ; More lines to process?
-           bne  @SSLoop1              ; Yes
+           dex                          ; More lines to process?
+           bne  M1_SSLoop1              ; Yes
 
-           lda  Page1                 ; Set back main memory access prior to rts
+           lda  Page1                   ; Set back main memory access prior to rts
 
            rts
 
 ;
-; MBRefreshBtn - Redraw command buttons with selected button highlighted
+; MB1_RefreshBtn - Redraw command buttons with selected button highlighted
 ;
 
-MBRefreshBtn:
+MB1_RefreshBtn:
 
            lda  #15-1
            sta  VTab
@@ -667,20 +671,20 @@ MBRefreshBtn:
            jsr  SetVTab
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
 
-           lda  TabIndex_M1
+           lda  M1_TabIndex
            cmp  #Button1
            beq  B1Selected
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
            bra  PrtB1
 
 B1Selected:
 
            lda  #Inverse
-           jsr  cout_mark
+           jsr  cout
 
 PrtB1:
 
@@ -690,31 +694,31 @@ PrtB1:
 PrtLoop1:
 
            lda  B1Text,y
-           jsr  cout_mark
+           jsr  cout
            iny
            dex
            bne  PrtLoop1
 
            lda  Mode
            cmp  #ModeOk
-           beq  MB1PrtExit
+           beq  MB_PrtExit
 
            lda  B2HTabS
            sta  HTab
            jsr  SetVTab
 
-           lda  TabIndex_M1
+           lda  M1_TabIndex
            cmp  #Button2
            beq  B2Selected
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
            bra  PrtB2
 
 B2Selected:
 
            lda  #Inverse
-           jsr  cout_mark
+           jsr  cout
 
 PrtB2:
 
@@ -724,14 +728,14 @@ PrtB2:
 PrtLoop2:
 
            lda  B2Text,y
-           jsr  cout_mark
+           jsr  cout
            iny
            dex
            bne  PrtLoop2
 
-MB1PrtExit:
+MB_PrtExit:
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            rts

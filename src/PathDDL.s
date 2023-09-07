@@ -1,8 +1,10 @@
-;
-; Path drop down list, part of Menu 1
+ ;
+; Path drop down list
 ;
 
 PathDDL:
+
+           ; Expected to scope to Menu1Vars.s
 
            lda  Prefix
            sta  InitPrefix
@@ -13,14 +15,14 @@ PathDDL:
 HavePrefix:
 
            lda  #TabOnly
-           sta  RC_M1
+           sta  DDLRC
            stz  NumLevels
            lda  #1
-           sta  DDLSelLine
+           sta  PD_SelLine
 
            jsr  CalcLevels
 
-           jsr  PDSaveScreen
+           jsr  PD_SaveScreen
 
 Loop:
 
@@ -35,61 +37,61 @@ Loop:
            beq  NoChange
 
            lda  #OpenBtn
-           sta  TabIndex_M1
+           sta  M1_TabIndex
 
            lda  #DirChange
-           sta  RC_M1
+           sta  DDLRC
 
 NoChange:
 
-           jsr  PDRestScreen
+           jsr  PD_RestScreen
 
            jsr  PlotMouse
 
            rts
 
-InitPrefix: .byte  $00
-NumLevels: .byte   $00
-LevelsPosn: .res   16
-DDLSelLine: .byte  $00
-DDLRC:     .byte   $00
-LastLine:  .byte   $00
+InitPrefix: .res 1
+NumLevels:  .res 1
+LevelsPosn: .res 16
+PD_SelLine: .res 1
+DDLRC:      .res 1
+PD_LastLine: .res 1
 
 CalcLevels:
 
-           ldx  Prefix                ; Get prefix length
-           ldy  #$00                  ; Zero LevelPosn index
+           ldx  Prefix                  ; Get prefix length
+           ldy  #$00                    ; Zero LevelPosn index
 
 CL01:
 
-           lda  Prefix,x              ; Get prefix character
-           cmp  #'/'                  ; Is it a '/'?
-           bne  CL02                  ; No, move to next character
+           lda  Prefix,x                ; Get prefix character
+           cmp  #'/'                    ; Is it a '/'?
+           bne  CL02                    ; No, move to next character
 
            txa
-           sta  LevelsPosn,y          ; Save prefix ending position
+           sta  LevelsPosn,y            ; Save prefix ending position
 
-           cpx  #1                    ; At root?
+           cpx  #1                      ; At root?
            beq  CL03
 
-           cpy  #15                   ; Move than 15 subdirectories?
+           cpy  #15                     ; Move than 15 subdirectories?
            beq  CL03
 
-           iny                        ; Increment index
+           iny                          ; Increment index
 
 CL02:
 
-           dex                        ; Move to next path character
-           bne  CL01                  ; If not zero then loop
+           dex                          ; Move to next path character
+           bne  CL01                    ; If not zero then loop
 
 CL03:
 
-           sty  NumLevels             ; Save the number of directory levels
+           sty  NumLevels               ; Save the number of directory levels
 
            clc
            lda  #10
            adc  NumLevels
-           sta  LastLine
+           sta  PD_LastLine
 
            rts
 
@@ -105,22 +107,22 @@ ShowDDL:
            jsr  SetVTab
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #20
            lda  #'L'
 
 SDDL01:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  SDDL01
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #0
 
@@ -135,49 +137,49 @@ SDDL02:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            ldy  LevelsPosn,x
            iny
 
-           cpy  #2                    ; At root?
+           cpy  #2                      ; At root?
            beq  SDDL03
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'X'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'Y'
-           jsr  cout_mark
+           jsr  cout
 
            bra  SDDL04
 
 SDDL03:
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'\'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'^'
-           jsr  cout_mark
+           jsr  cout
 
 SDDL04:
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
-           cpx  DDLSelLine
+           cpx  PD_SelLine
            bne  SDDL04a
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #Inverse
-           jsr  cout_mark
+           jsr  cout
 
 SDDL04a:
 
@@ -192,7 +194,7 @@ SDDL05:
            beq  SDDL06
            ora  #$80
 
-           jsr  cout_mark
+           jsr  cout
 
            iny
            dex
@@ -202,23 +204,23 @@ SDDL05:
 SDDL06:
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  SDDL06
 
 SDDL07:
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            plx
            cpx  NumLevels
@@ -240,39 +242,39 @@ SDDL07a:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'['
-           jsr  cout_mark
-           jsr  cout_mark
+           jsr  cout
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
-           cpx  DDLSelLine
+           cpx  PD_SelLine
            bne  SDDL07b
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #Inverse
-           jsr  cout_mark
+           jsr  cout
 
 SDDL07b:
 
            lda  #'D'+$80
-           jsr  cout_mark
+           jsr  cout
            lda  #'i'+$80
-           jsr  cout_mark
+           jsr  cout
            lda  #'s'+$80
-           jsr  cout_mark
+           jsr  cout
            lda  #'k'+$80
-           jsr  cout_mark
+           jsr  cout
            lda  #'s'+$80
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #10
 
@@ -280,21 +282,21 @@ SDDL07b:
 
 SDDL08:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  SDDL08
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 SDDL09:
 
@@ -305,22 +307,22 @@ SDDL09:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #20
            lda  #'_'+$80
 
 SDDL10:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  SDDL10
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
@@ -331,15 +333,15 @@ DDLUI:
            stz  ClearKbd
            stz  DDLRC
 
-@PollDev:
+PD_PollDev:
 
            jsr  PlotMouse
 
-PDPollDevLoop:
+PD_PollDevLoop:
 
            lda  Keyboard
            bpl  @PollMouse
-           jmp  PDKeyDev
+           jmp  PD_KeyDev
 
 @PollMouse:
 
@@ -348,44 +350,44 @@ PDPollDevLoop:
            lsr  MouseY
            lda  MouseStat
            bit  #MouseMove
-           bne  @MouseDev1
+           bne  PD_MouseDev1
            bit  #CurrButton
-           bne  @MouseDev2
+           bne  PD_MouseDev2
            bit  #PrevButton
-           bne  @MouseDev3
+           bne  PD_MouseDev3
 
-           bra  PDPollDevLoop
+           bra  PD_PollDevLoop
 
 ; Mouse movement
 
-@MouseDev1:
+PD_MouseDev1:
 
            jsr  MoveMouse
-           jmp  PDPollDevLoop
+           jmp  PD_PollDevLoop
 
 ; Mouse button pressed
 
-@MouseDev2:
+PD_MouseDev2:
 
            lda  MouseY
            cmp  #8-1
-           bcc  @MouseDev3
-           cmp  LastLine
-           bcs  @MouseDev3
+           bcc  PD_MouseDev3
+           cmp  PD_LastLine
+           bcs  PD_MouseDev3
 
            lda  MouseX
            cmp  #23-1
-           bcc  @MouseDev3
+           bcc  PD_MouseDev3
            cmp  #46-1
-           bcs  @MouseDev3
+           bcs  PD_MouseDev3
 
            jsr  ChangePosn
 
-           jmp  PDPollDevLoop
+           jmp  PD_PollDevLoop
 
 ; Mouse button release
 
-@MouseDev3:
+PD_MouseDev3:
 
            rts
 
@@ -395,15 +397,15 @@ ChangePosn:
 
            sec
            lda  MouseY
-           sbc  #9-1                  ; First line
-           inc  a                     ; Make one based
-           bne  NotZero               ; In case he's above the first line
+           sbc  #9-1                    ; First line
+           inc  a                       ; Make one based
+           bne  @NotZero                ; In case he's above the first line
            inc  a
 
-NotZero:
+@NotZero:
 
-           cmp  NumLevels             ; If he's pointing beyond the last line,
-           bcc  InRange               ; set it to the last line.
+           cmp  NumLevels               ; If he's pointing beyond the last line,
+           bcc  InRange                 ; set it to the last line.
            beq  InRange
 
            lda  NumLevels
@@ -413,30 +415,40 @@ NotZero:
 
 InRange:
 
-           cmp  DDLSelLine
-           bne  Changed
+           cmp  PD_SelLine
+           bne  @Changed
            rts
 
-Changed:
+@Changed:
 
-           sta  DDLSelLine
+           sta  PD_SelLine
            jsr  SetPrefix
            jsr  ShowDDL
            jsr  PlotMouse
 
            rts
 
-PDKeyDev:
+
+; Keyboard routine
+
+;UpArrow     =   $8B
+;DownArrow   =   $8A
+;LeftArrow   =   $88
+;RightArrow  =   $95
+;ReturnKey   =   $8D
+;TabKey      =   $89
+
+PD_KeyDev:
 
            stz  ClearKbd
 
-@NextKey01:
+PD_NextKey01:
 
            cmp  #DownArrow
            beq  @DA1
            cmp  #RightArrow
            beq  @DA1
-           bra  @NextKey02
+           bra  PD_NextKey02
 
 @DA1:
 
@@ -448,32 +460,32 @@ PDKeyDev:
 
 @DA2:
 
-           cmp  DDLSelLine
-           beq  @DA3
+           cmp  PD_SelLine
+           beq  DA3
 
-           inc  DDLSelLine
+           inc  PD_SelLine
 
-@DA3:
+DA3:
 
            inc  DDLRC
 
            rts
 
-@NextKey02:
+PD_NextKey02:
 
            cmp  #UpArrow
            beq  @UA1
            cmp  #LeftArrow
            beq  @UA1
-           bra  @NextKey03
+           bra  PD_NextKey03
 
 @UA1:
 
-           lda  DDLSelLine
+           lda  PD_SelLine
            cmp  #1
            beq  @UA2
 
-           dec  DDLSelLine
+           dec  PD_SelLine
 
 @UA2:
 
@@ -481,19 +493,19 @@ PDKeyDev:
 
            rts
 
-@NextKey03:
+PD_NextKey03:
 
            cmp  #ReturnKey
-           bne  BadKey
+           bne  @BadKey
 
            jsr  SetPrefix
 
            rts
 
-BadKey:
+@BadKey:
 
            jsr  Beep
-           jmp  PDPollDevLoop
+           jmp  PD_PollDevLoop
 
 
 ; Set the prefix based upon line number selected.
@@ -501,7 +513,7 @@ BadKey:
 SetPrefix:
 
            lda  NumLevels
-           cmp  DDLSelLine
+           cmp  PD_SelLine
 
            bcs  CR01
 
@@ -511,7 +523,7 @@ SetPrefix:
 
 CR01:
 
-           ldx  DDLSelLine
+           ldx  PD_SelLine
            lda  LevelsPosn-1,x
 
            sta  Prefix
@@ -521,120 +533,149 @@ CR01:
 
 ; Save / Restore Screen routine.
 
-On80Store  =  $C001
-Page1      =  $C054
-Page2      =  $C055
+PD_TextLine:                         ; Text screen line starting addresses
 
-SaveRtn:   .byte   $00
+PD_TextLine00: .addr $0400
+PD_TextLine01: .addr $0480
+PD_TextLine02: .addr $0500
+PD_TextLine03: .addr $0580
+PD_TextLine04: .addr $0600
+PD_TextLine05: .addr $0680
+PD_TextLine06: .addr $0700
+PD_TextLine07: .addr $0780
+PD_TextLine08: .addr $0428
+PD_TextLine09: .addr $04A8
+PD_TextLine10: .addr $0528
+PD_TextLine11: .addr $05A8
+PD_TextLine12: .addr $0628
+PD_TextLine13: .addr $06A8
+PD_TextLine14: .addr $0728
+PD_TextLine15: .addr $07A8
+PD_TextLine16: .addr $0450
+PD_TextLine17: .addr $04D0
+PD_TextLine18: .addr $0550
+PD_TextLine19: .addr $05D0
+PD_TextLine20: .addr $0650
+PD_TextLine21: .addr $06D0
+PD_TextLine22: .addr $0750
+PD_TextLine23: .addr $07D0
 
-StartHTab: .byte   $00
-EndHTab:   .byte   $00
-StartVTab: .byte   $00
-CurrLine:  .byte   $00
+;On80Store   =   $C001
+;Page1       =   $C054
+;Page2       =   $C055
+
+PD_SaveRtn:    .res 1
+
+PD_StartHTab: .res 1
+PD_EndHTab:   .res 1
+PD_StartVTab: .res 1
+PD_CurrLine:   .res 1
 
 ;
-; PDSaveScreen - save screen data under list box
-; PDRestScreen - restore screen data under messagebox
+; PD_SaveScreen - save screen data under list box
+; PD_RestScreen - restore screen data under messagebox
 ;
 ; Ptr1 = screen data : Ptr2 = save buffer
 ;
 
-PDSaveScreen:
+PD_SaveScreen:
 
            lda  #1
-           sta  SaveRtn
-           bra  StartRtn
+           sta  PD_SaveRtn
+           bra  PD_StartRtn
 
-PDRestScreen:
+PD_RestScreen:
 
-           stz  SaveRtn
+           stz  PD_SaveRtn
 
-StartRtn:
+PD_StartRtn:
 
-           sta  On80Store             ; Make sure 80STORE is on.
+           sta  On80Store               ; Make sure 80STORE is on.
 
            clc
-           lda  #24-1                 ; HTab start
-           sta  StartHTab
-           adc  #22                   ; # char wide
-           sta  EndHTab               ; Ending HTab
+           lda  #24-1                   ; HTab start
+           sta  PD_StartHTab
+           adc  #22                     ; # char wide
+           sta  PD_EndHTab              ; Ending HTab
 
            sec
-           lda  #8-1                  ; Base VTab
-           sta  StartVTab
-           sta  CurrLine
+           lda  #8-1                    ; Base VTab
+           sta  PD_StartVTab
+           sta  PD_CurrLine
 
-           lda  #<MessageBuf          ; Set save buffer address
+           lda  #<MessageBuf            ; Set save buffer address
            sta  Ptr2
            lda  #>MessageBuf
            sta  Ptr2+1
 
-           ldx  #15+3                 ; Max # of line + 2 for borders + 1 for
-;                                     ;  being zero base.
-SSLoop1:
+           ldx  #15+3                   ; Max # of line + 2 for borders + 1 for
+;                                       ;  being zero base.
+PD_SSLoop1:
 
-           lda  CurrLine
+           lda  PD_CurrLine
            asl  a
            tay
-           lda  TextLine,y
+           lda  PD_TextLine,y
            sta  Ptr1
            iny
-           lda  TextLine,y
+           lda  PD_TextLine,y
            sta  Ptr1+1
 
-           ldy  StartHTab
+           ldy  PD_StartHTab
 
-SSLoop2:
+PD_SSLoop2:
 
            phy
            tya
            lsr  a
-           bcs  FromMain
+           bcs  @FromMain
 
-FromAux:
+;FromAux:
 
            sta  Page2
-           bra  GetChar
+           bra  @GetChar
 
-FromMain:
+@FromMain:
 
            sta  Page1
 
-GetChar:
+@GetChar:
 
            tay
-           lda  SaveRtn
-           beq  Restore
+           lda  PD_SaveRtn
+           beq  @Restore
 
            lda  (Ptr1),y
            sta  (Ptr2)
-           bra  Continue
+           bra  @Continue
 
-Restore:
+@Restore:
 
            lda  (Ptr2)
            sta  (Ptr1),y
 
-Continue:
+@Continue:
 
            ply
 
-           inc  Ptr2                  ; Increment save buffer pointer
-           bne  NoOF
+           inc  Ptr2                    ; Increment save buffer pointer
+           bne  @NoOF
 
            inc  Ptr2+1
 
-NoOF:                                 ; No overflow
+@NoOF:                                  ; No overflow
 
            iny
-           cpy  EndHTab               ; If y <= EndHTab, SSLoop2 to continue
-           bcc  SSLoop2               ;  saving this line
-           beq  SSLoop2
+           cpy  PD_EndHTab              ; If y <= PD_EndHTab, PD_SSLoop2 to continue
+           bcc  PD_SSLoop2              ;  saving this line
+           beq  PD_SSLoop2
 
-           inc  CurrLine              ; Move to next line
-           dex                        ; Another line?
-           bne  SSLoop1
+           inc  PD_CurrLine             ; Move to next line
+           dex                          ; Another line?
+           bne  PD_SSLoop1
 
-           lda  Page1                 ; Set back to Main for exit.
+           lda  Page1                   ; Set back to Main for exit.
 
            rts
+
+

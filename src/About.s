@@ -4,10 +4,10 @@
 
 About:
 
-           jsr  ASaveScreen
+           jsr  A_SaveScreen
            jsr  ShowAbout
            jsr  AboutUI
-           jsr  ARestScreen
+           jsr  A_RestScreen
 
            jsr  PlotMouse
 
@@ -16,7 +16,7 @@ About:
 ShowAbout:
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
 ; Line 1
 
@@ -28,33 +28,33 @@ ShowAbout:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'L'
            ldx  #59
 
 L1A:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L1A
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Line 2
 
-           jsr  ANextLine
+           jsr  A_NextLine
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
            ldx  #22
 
 L2A:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L2A
 
@@ -64,7 +64,7 @@ L2B:
 
            lda  Line2Text,x
            beq  L2C
-           jsr  cout_mark
+           jsr  cout
            inx
            bra  L2B
 
@@ -75,26 +75,26 @@ L2C:
 
 L2D:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L2D
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Line 3
 
-           jsr  ANextLine
+           jsr  A_NextLine
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
            ldx  #14
 
 L3A:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L3A
 
@@ -104,7 +104,7 @@ L3B:
 
            lda  Line3Text,x
            beq  L3C
-           jsr  cout_mark
+           jsr  cout
            inx
            bra  L3B
 
@@ -115,42 +115,42 @@ L3C:
 
 L3D:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L3D
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 
 ; Line 4
 
-           jsr  ANextLine
+           jsr  A_NextLine
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
            ldx  #59
 
 L4A:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L4A
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Line 5
 
-           jsr  ANextLine
+           jsr  A_NextLine
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #0
 
@@ -158,7 +158,7 @@ L5A:
 
            lda  Line5Text,x
            beq  L5B
-           jsr  cout_mark
+           jsr  cout
            inx
            bra  L5A
 
@@ -169,22 +169,22 @@ L5B:
 
 L5C:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L5C
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Line 6
 
-           jsr  ANextLine
+           jsr  A_NextLine
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #0
 
@@ -192,7 +192,7 @@ L6A:
 
            lda  Line6Text,x
            beq  L6B
-           jsr  cout_mark
+           jsr  cout
            inx
            bra  L6A
 
@@ -203,30 +203,30 @@ L6B:
 
 L6C:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L6C
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Line 7
 
-           jsr  ANextLine
+           jsr  A_NextLine
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #0
 
 L7A:
 
-           lda  Line7Text,x
+           lda  A_Line7Text,x
            beq  L7B
-           jsr  cout_mark
+           jsr  cout
            inx
            bra  L7A
 
@@ -237,22 +237,22 @@ L7B:
 
 L7C:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L7C
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Line 8
 
-           jsr  ANextLine
+           jsr  A_NextLine
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #0
 
@@ -260,7 +260,7 @@ L8A:
 
            lda  Line8Text,x
            beq  L8B
-           jsr  cout_mark
+           jsr  cout
            inx
            bra  L8A
 
@@ -271,26 +271,26 @@ L8B:
 
 L8C:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L8C
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Line 9
 
-           jsr  ANextLine
+           jsr  A_NextLine
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
            ldx  #25
 
 L9A:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L9A
 
@@ -299,7 +299,7 @@ L9A:
 
 L9B:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L9B
 
@@ -308,40 +308,40 @@ L9B:
 
 L9C:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L9C
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Line 10
 
-           jsr  ANextLine
+           jsr  A_NextLine
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
            ldx  #24
 
 L10A:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L10A
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '
-           jsr  cout_mark
+           jsr  cout
 
            lda  #Inverse
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #0
 
@@ -349,49 +349,49 @@ L10B:
 
            lda  OkText,x
            beq  L10C
-           jsr  cout_mark
+           jsr  cout
            inx
            bra  L10B
 
 L10C:
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '
-           jsr  cout_mark
+           jsr  cout
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
            ldx  #23
 
 L10D:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L10D
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Line 11
 
-           jsr  ANextLine
+           jsr  A_NextLine
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'+$80
            ldx  #25
 
 L11A:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L11A
 
@@ -400,7 +400,7 @@ L11A:
 
 L11B:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L11B
 
@@ -409,29 +409,31 @@ L11B:
 
 L11C:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  L11C
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Exit
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
-Line2Text: ascz  "DiskMaker 8 v1.1"
-Line3Text: ascz  "Copyright 2006 by Mark Percival"
-Line5Text: ascz  "Converts Universal Disk Image, DiskCopy 4.2, DiskCopy 6"
-Line6Text: ascz  "DOS Order 5.25 and ProDOS Order 5.25 images into"
-Line7Text: ascz  "actual disks.  Please support the Apple II by paying"
-Line8Text: ascz  "the $5 shareware fee.  See the documentation for details."
-OkText:    ascz  "   Ok   "
+;          Msb  On
+Line2Text: ascz "DiskMaker 8 v1.1"
+Line3Text: ascz "Copyright 2006 by Mark Percival"
+Line5Text: ascz "Converts Universal Disk Image, DiskCopy 4.2, DiskCopy 6,"
+Line6Text: ascz "DOS Order 5.25 and ProDOS Order 5.25 images into"
+A_Line7Text: ascz "actual disks.  Please support the Apple II by paying"
+Line8Text: ascz "the $5 shareware fee.  See the documentation for details."
+OkText:    ascz "   Ok   "
+;          Msb  Off
 
-ANextLine:
+A_NextLine:
 
            lda  #10-1
            sta  HTab
@@ -443,106 +445,109 @@ ANextLine:
 
 AboutUI:
 
-           stz  ClearKbd              ; Clear keyboard strobe
+;ReturnKey   =   $8D
+;TabKey      =   $89
 
-@PollDev:
+           stz  ClearKbd                ; Clear keyboard strobe
 
-           jsr  PlotMouse             ; Put mouse cursor on screen
+A_PollDev:
 
-@PollDevLoop:
+           jsr  PlotMouse               ; Put mouse cursor on screen
 
-           lda  Keyboard              ; Get keypress
-           bpl  @PollMouse            ; No keypress, check mouse
-           jmp  @KeyDev
+A_PollDevLoop:
+
+           lda  Keyboard                ; Get keypress
+           bpl  @PollMouse              ; No keypress, check mouse
+           jmp  A_KeyDev
 
 @PollMouse:
 
-           jsr  ReadMouse             ; Readmouse
-           lsr  MouseX                ; Put x and y mouse coordinates into
-           lsr  MouseY                ;  0 to 79 and 0 to 23 range.
-           lda  MouseStat             ; Get mouse status
-           bit  #MouseMove            ; Move moved?
-           bne  @MouseDev1            ; Yes, process mouse movement
-           bit  #CurrButton           ; Mouse button pressed?
-           bne  @MouseDev2            ; Yes, process mouse button press.
-           bit  #PrevButton           ; Mouse button released?
-           bne  @MouseDev3            ; Yes, process mouse button release.
+           jsr  ReadMouse               ; Readmouse
+           lsr  MouseX                  ; Put x and y mouse coordinates into
+           lsr  MouseY                  ;  0 to 79 and 0 to 23 range.
+           lda  MouseStat               ; Get mouse status
+           bit  #MouseMove              ; Move moved?
+           bne  A_MouseDev1             ; Yes, process mouse movement
+           bit  #CurrButton             ; Mouse button pressed?
+           bne  A_MouseDev2             ; Yes, process mouse button press.
+           bit  #PrevButton             ; Mouse button released?
+           bne  A_MouseDev3             ; Yes, process mouse button release.
 
-           bra  @PollDevLoop          ; Check keyboard and mouse again.
+           bra  A_PollDevLoop           ; Check keyboard and mouse again.
 
 ;
 ; Process mouse movement
 ;
 
-@MouseDev1:
+A_MouseDev1:
 
            jsr  MoveMouse
-           bra  @PollDevLoop
+           bra  A_PollDevLoop
 
 ;
 ; Process mouse button press
 ;
 
-@MouseDev2:
+A_MouseDev2:
 
-           bra  @PollDevLoop
+           bra  A_PollDevLoop
 
 ;
 ; Process mouse button release
 ;
 
-@MouseDev3:
+A_MouseDev3:
 
            lda  MouseY
            cmp  #17-1
-           bne  @No
+           bne  No
            lda  MouseX
            cmp  #37-1
-           bcc  @No
+           bcc  No
            cmp  #45-1
-           bcs  @No
+           bcs  No
 
-           jsr  @AnimateBtn
+           jsr  A_AnimateBtn
 
            rts
 
-@No:
+No:
 
-           bra  @PollDevLoop
+           bra  A_PollDevLoop
 
 ;
 ; Process keyboard key press
 ;
 
-@KeyDev:
+A_KeyDev:
 
-           stz  ClearKbd              ; Clear keyboard strobe
+           stz  ClearKbd                ; Clear keyboard strobe
 
            cmp  #ReturnKey
-           beq  @Return
+           beq  Return
            cmp  #' '+$80
-           beq  @Return
+           beq  Return
            cmp  #TabKey
-           beq  @Tab
+           beq  Tab
 
            jsr  Beep
 
-           jmp  @PollDevLoop
+           jmp  A_PollDevLoop
 
-@Tab:
+Tab:
 
-           jmp  @PollDevLoop
+           jmp  A_PollDevLoop
 
-@Return:
+Return:
 
-           jsr  @AnimateBtn
+           jsr  A_AnimateBtn
 
            rts
 
-@AnimateBtn:
+A_AnimateBtn:
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            lda  #17-1
            sta  VTab
@@ -557,7 +562,7 @@ AboutUI:
 AB01:
 
            lda  OkText,y
-           jsr  cout_mark
+           jsr  cout
            iny
            dex
            bne  AB01
@@ -566,7 +571,7 @@ AB01:
            jsr  Wait
 
            lda  #Inverse
-           jsr  cout_mark
+           jsr  cout
 
            lda  #17-1
            sta  VTab
@@ -581,7 +586,7 @@ AB01:
 AB02:
 
            lda  OkText,y
-           jsr  cout_mark
+           jsr  cout
            iny
            dex
            bne  AB02
@@ -590,79 +595,110 @@ AB02:
            jsr  Wait
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
 ; Save / Restore Screen routine.
 
-ASaveRtn:   .byte   1
+A_TextLine:                             ; Text screen line starting addresses
 
-AStartHTab: .byte   1
-AEndHTab:   .byte   1
-AStartVTab: .byte   1
-ACurrLine:  .byte   1
+A_TextLine00: .addr $0400
+A_TextLine01: .addr $0480
+A_TextLine02: .addr $0500
+A_TextLine03: .addr $0580
+A_TextLine04: .addr $0600
+A_TextLine05: .addr $0680
+A_TextLine06: .addr $0700
+A_TextLine07: .addr $0780
+A_TextLine08: .addr $0428
+A_TextLine09: .addr $04A8
+A_TextLine10: .addr $0528
+A_TextLine11: .addr $05A8
+A_TextLine12: .addr $0628
+A_TextLine13: .addr $06A8
+A_TextLine14: .addr $0728
+A_TextLine15: .addr $07A8
+A_TextLine16: .addr $0450
+A_TextLine17: .addr $04D0
+A_TextLine18: .addr $0550
+A_TextLine19: .addr $05D0
+A_TextLine20: .addr $0650
+A_TextLine21: .addr $06D0
+A_TextLine22: .addr $0750
+A_TextLine23: .addr $07D0
+
+;On80Store   =   $C001
+;Page1       =   $C054
+;Page2       =   $C055
+
+A_SaveRtn:    .res 1
+
+A_StartHTab: .res 1
+A_EndHTab:   .res 1
+A_StartVTab: .res 1
+A_CurrLine:  .res 1
 
 ;
-; ASaveScreen - save screen data under list box
-; ARestScreen - restore screen data under messagebox
+; A_SaveScreen - save screen data under list box
+; A_RestScreen - restore screen data under messagebox
 ;
 ; Ptr1 = screen data : Ptr2 = save buffer
 ;
 
-ASaveScreen:
+A_SaveScreen:
 
            lda  #1
-           sta  ASaveRtn
-           bra  AStartRtn
+           sta  A_SaveRtn
+           bra  A_StartRtn
 
-ARestScreen:
+A_RestScreen:
 
-           stz  ASaveRtn
+           stz  A_SaveRtn
 
-AStartRtn:
+A_StartRtn:
 
-           sta  On80Store             ; Make sure 80STORE is on.
+           sta  On80Store               ; Make sure 80STORE is on.
 
            clc
-           lda  #10-1                 ; HTab start
-           sta  AStartHTab
-           adc  #61                   ; # char wide
-           sta  AEndHTab              ; Ending HTab
+           lda  #10-1                   ; HTab start
+           sta  A_StartHTab
+           adc  #61                     ; # char wide
+           sta  A_EndHTab                 ; Ending HTab
 
            sec
-           lda  #8-1                  ; Base VTab
-           sta  AStartVTab
-           sta  ACurrLine
+           lda  #8-1                    ; Base VTab
+           sta  A_StartVTab
+           sta  A_CurrLine
 
-           lda  #<MessageBuf          ; Set save buffer address
+           lda  #<MessageBuf             ; Set save buffer address
            sta  Ptr2
            lda  #>MessageBuf
            sta  Ptr2+1
 
-           ldx  #11                   ; Max # of lines
+           ldx  #11                     ; Max # of lines
 
-@SSLoop1:
+A_Loop1:
 
-           lda  ACurrLine
+           lda  A_CurrLine
            asl  a
            tay
-           lda  TextLine,y
+           lda  A_TextLine,y
            sta  Ptr1
            iny
-           lda  TextLine,y
+           lda  A_TextLine,y
            sta  Ptr1+1
 
-           ldy  AStartHTab
+           ldy  A_StartHTab
 
-@SSLoop2:
+A_Loop2:
 
            phy
            tya
            lsr  a
            bcs  @FromMain
 
-@FromAux:
+;FromAux:
 
            sta  Page2
            bra  @GetChar
@@ -674,7 +710,7 @@ AStartRtn:
 @GetChar:
 
            tay
-           lda  ASaveRtn
+           lda  A_SaveRtn
            beq  @Restore
 
            lda  (Ptr1),y
@@ -690,22 +726,24 @@ AStartRtn:
 
            ply
 
-           inc  Ptr2                  ; Increment save buffer pointer
+           inc  Ptr2                    ; Increment save buffer pointer
            bne  @NoOF
 
            inc  Ptr2+1
 
-@NoOF:                                ; No overflow
+@NoOF:                                  ; No overflow
 
            iny
-           cpy  AEndHTab              ; If y <= AEndHTab, @SSLoop2 to continue
-           bcc  @SSLoop2              ;  saving this line
-           beq  @SSLoop2
+           cpy  A_EndHTab               ; If y <= A_EndHTab, A_Loop2 to continue
+           bcc  A_Loop2                 ;  saving this line
+           beq  A_Loop2
 
-           inc  ACurrLine             ; Move to next line
-           dex                        ; Another line?
-           bne  @SSLoop1
+           inc  A_CurrLine              ; Move to next line
+           dex                          ; Another line?
+           bne  A_Loop1
 
-           lda  Page1                 ; Set back to Main for exit.
+           lda  Page1                   ; Set back to Main for exit.
 
            rts
+
+

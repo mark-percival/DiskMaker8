@@ -4,78 +4,80 @@
 
 LoadDevs:
 
+           ; Expected to scope to Menu2Vars.s
+
            lda  #<Buffer8K
            sta  Ptr1
            lda  #>Buffer8K
            sta  Ptr1+1
 
-           stz  DevEntCnt_M2
+           stz  DevEntCnt
 
-           lda  #7                    ; 7 slots to scan
+           lda  #7                      ; 7 slots to scan
            sta  Slot
 
 SetUnitNo:
 
-           asl  a                     ; Setup unit number by shifting slot
-           asl  a                     ;  number to left nibble.
+           asl  a                       ; Setup unit number by shifting slot
+           asl  a                       ;  number to left nibble.
            asl  a
            asl  a
 
-           ldx  #RemapDev             ; Default to a remapped Smartport dev.
-           stx  DevType
+           ldx  #RemapDev               ; Default to a remapped Smartport dev.
+           stx  LD_DevType
 
 NextDrive:
 
-           sta  onlineUnit            ; Setup unit no for call.
-           jsr  MLIOnLine             ; Call MLI Online
+           sta  onlineUnit              ; Setup unit no for call.
+           jsr  MLIOnLine               ; Call MLI Online
 
-           cmp  #$28                  ; Device not connected error
+           cmp  #$28                    ; Device not connected error
            beq  Skip
 
-           jsr  IsNetwork             ; Is this an Appleshare volume?
+           jsr  IsNetwork               ; Is this an Appleshare volume?
            bcs  Skip
 
-           jsr  GetDevSize            ; Get valid device block size
+           jsr  GetDevSize              ; Get valid device block size
 
-           lda  DevSize               ; Couldn't find size so skip.
+           lda  DevSize                 ; Couldn't find size so skip.
            ora  DevSize+1
            beq  Skip
 
-           lda  blnSize_M2            ; See if Same Size checkbox is on
-           beq  SizeOk                ; No, so process save device info.
+           lda  blnSize                 ; See if Same Size checkbox is on
+           beq  SizeOk                  ; No, so process save device info.
 
-           lda  ImageSize_M2+1           ; Check to see if the device size
-           cmp  DevSize+1             ; matches the image size we have.
+           lda  ImageSize+1             ; Check to see if the device size
+           cmp  DevSize+1               ; matches the image size we have.
            bne  Skip
 
-           lda  ImageSize_M2
+           lda  ImageSize
            cmp  DevSize
            bne  Skip
 
 SizeOk:
 
-           inc  DevEntCnt_M2             ; Valid device, count it.
-           jsr  SaveDevInfo           ; Save device data to buffer.
+           inc  DevEntCnt               ; Valid device, count it.
+           jsr  SaveDevInfo             ; Save device data to buffer.
 
 Skip:
 
-           lda  onlineUnit            ; Have we tested drive 2 for this slot?
-           bmi  NextSlot              ; Yes so go to next slot.
+           lda  onlineUnit              ; Have we tested drive 2 for this slot?
+           bmi  @NextSlot                ; Yes so go to next slot.
 
-           ora  #%10000000            ; Set to drive 2 and
-           bra  NextDrive             ;  test device.
+           ora  #%10000000              ; Set to drive 2 and
+           bra  NextDrive               ;  test device.
 
-NextSlot:
+@NextSlot:
 
-           dec  Slot                  ; Move to next slot.
-           lda  Slot                  ; Are we now at slot 0?
-           bne  SetUnitNo             ; No so test for device.
+           dec  Slot                    ; Move to next slot.
+           lda  Slot                    ; Are we now at slot 0?
+           bne  SetUnitNo               ; No so test for device.
 
            rts
 
-Slot:      .byte   $00
-DevSize:   .word   $0000
-DevType:   .byte   $00
+Slot:       .res 1
+DevSize:    .res 2
+LD_DevType: .res 1
 
 ; Check to see if we have an Appleshare unit number in accumulator.
 
@@ -83,7 +85,7 @@ IsNetwork:
 
            ldy  #0
            ldx  NetDevCnt
-           beq  IN95                  ; No network volumes
+           beq  IN95                    ; No network volumes
 
 IN01:
 
@@ -108,11 +110,11 @@ IN95:
 
 GetDevSize:
 
-           lda  #$C0                  ; Set up slot address
+           lda  #$C0                    ; Set up slot address
            ora  Slot
            sta  Ptr2+1
 
-           lda  #$01                  ; 1st ID byte
+           lda  #$01                    ; 1st ID byte
            sta  Ptr2
            lda  (Ptr2)
            cmp  #$20
@@ -121,7 +123,7 @@ GetDevSize:
 
 Ok1:
 
-           lda  #$03                  ; 2nd ID byte
+           lda  #$03                    ; 2nd ID byte
            sta  Ptr2
            lda  (Ptr2)
            beq  Ok2
@@ -129,7 +131,7 @@ Ok1:
 
 Ok2:
 
-           lda  #$05                  ; 3rd ID byte
+           lda  #$05                    ; 3rd ID byte
            sta  Ptr2
            lda  (Ptr2)
            cmp  #$03
@@ -152,23 +154,23 @@ BlockDev:
            lda  #$18
            sta  DevSize
 
-           lda  #DiskIIDev           ; Set device type to Disk ][
-           sta  DevType
+           lda  #DiskIIDev              ; Set device type to Disk ][
+           sta  LD_DevType
 
            rts
 
 NotDiskII:
 
-           lda  #SmartDev            ; Smartport in this slot
-           sta  DevType
+           lda  #SmartDev               ; Smartport in this slot
+           sta  LD_DevType
 
-           lda  #$07                 ;  4th ID byte
+           lda  #$07                    ; 4th ID byte
            sta  Ptr2
            lda  (Ptr2)
-           beq  Smartport
+           beq  @Smartport
            jmp  ProStatus
 
-Smartport:
+@Smartport:
 
 ; We have a Smartport device so get it's blocksize from $FC and $FD offset.
 ; If this value is zeros then we must do a Smartport status call to get size.
@@ -192,28 +194,28 @@ GoodSize:
 
 ProStatus:
 
-DevAddr    =  $BF10
+DevAddr     =   $BF10
 
-           lda  onlineUnit            ; Compute slot/drive offset by dividing
-           lsr  a                     ; unit number by 16.
+           lda  onlineUnit              ; Compute slot/drive offset by dividing
+           lsr  a                       ; unit number by 16.
            lsr  a
            lsr  a
-           tax                        ; Move offset to index.
+           tax                          ; Move offset to index.
 
-           lda  DevAddr,x             ; Get low byte of ProDOS driver address
+           lda  DevAddr,x               ; Get low byte of ProDOS driver address
            sta  Ptr2
            inx
-           lda  DevAddr,x             ; Get high byte of ProDOS driver address
+           lda  DevAddr,x               ; Get high byte of ProDOS driver address
            sta  Ptr2+1
 
-           php                        ; Save status
-           sei                        ; Interrupts off
+           php                          ; Save status
+           sei                          ; Interrupts off
 
            lda  #0
-           sta  $42                   ; Status call
+           sta  $42                     ; Status call
 
            lda  onlineUnit
-           sta  $43                   ; Unit number
+           sta  $43                     ; Unit number
 
            lda  #<Buffer512
            sta  $44
@@ -224,43 +226,43 @@ DevAddr    =  $BF10
            sta  $46
            sta  $47
 
-           lda  $C08B                 ; Read and write enable the language card
-           lda  $C08B                 ;  with bank 1 on.
+           lda  $C08B                   ; Read and write enable the language card
+           lda  $C08B                   ;  with bank 1 on.
 
-           jsr  CallDriver            ; Call ProDOS driver.
+           jsr  LD_CallDriver           ; Call ProDOS driver.
 
-           bit  $C082                 ; Put ROM back on-line
-           bcs  LDError
+           bit  $C082                   ; Put ROM back on-line
+           bcs  LD_Error
 
-OkError:
+LD_OkError:
 
-           stx  DevSize               ; Save device size.
+           stx  DevSize                 ; Save device size.
            sty  DevSize+1
 
 NoMessage:
 
-           plp                        ; Restore status
+           plp                          ; Restore status
 
            rts
 
-CallDriver:
+LD_CallDriver:
 
            jmp  (Ptr2)
 
-LDError:
+LD_Error:
 
-           cmp  #$2B                  ; Write protect error is ok.
-           beq  OkError
-           cmp  #$2F                  ; Disk offline error
-           beq  OkError
+           cmp  #$2B                    ; Write protect error is ok.
+           beq  LD_OkError
+           cmp  #$2F                    ; Disk offline error
+           beq  LD_OkError
 
-           stz  DevSize               ; Unknown size
+           stz  DevSize                 ; Unknown size
            stz  DevSize+1
 
-           cmp  #$28                  ; Device not connected error
-           beq  NoMessage             ; (This error shouldn't happen here)
+           cmp  #$28                    ; Device not connected error
+           beq  NoMessage               ; (This error shouldn't happen here)
 
-           plp                        ; Restore status
+           plp                          ; Restore status
 
            tay
            lsr  a
@@ -268,35 +270,38 @@ LDError:
            lsr  a
            lsr  a
            tax
-           lda  AsciiTable,x
+           lda  ASCIITable,x
            sta  E1Code
 
            tya
            and  #$0F
            tax
-           lda  AsciiTable,x
+           lda  ASCIITable,x
            sta  E1Code+1
 
            lda  #<E1
            sta  MsgPtr
            lda  #>E1
            sta  MsgPtr+1
-           jsr  MBMsgOk
+           jsr  MsgOk
 
            rts
 
-E1:        asc   "ProDOS driver status call"
-           .byte $0D
+;          Msb  On
+
+E1:        asccr "ProDOS driver status call"
            asc   "error $"
-E1Code:    asc   "00"
+E1Code:    asc   "00"   
            ascz  " encountered."
+
+;          Msb  Off
 
 ; Do a Smartport status call to retrieve device block size
 
 SmartStatus:
 
-           lda  #$FF                  ; Set up Smartport dispatch address in Ptr2
-           sta  Ptr
+           lda  #$FF                    ; Setup Smartport dispatch address in Ptr2
+           sta  Ptr2
            lda  (Ptr2)
            sta  Ptr2
 
@@ -305,7 +310,7 @@ SmartStatus:
            adc  #3
            sta  Ptr2
 
-           lda  onlineUnit            ; Is this drive 1 or 2?
+           lda  onlineUnit              ; Is this drive 1 or 2?
            bmi  SPD2
 
 SPD1:
@@ -323,8 +328,8 @@ CallSP:
 
            jsr  Dispatch
 
-CmdNum:    .byte $00
-CmdList:   .addr SPParms
+CmdNum:     .byte $00
+CmdList:    .addr SPParms
            bcs  SPError
            lda  DSB+3
            beq  DSBSizeOk
@@ -336,11 +341,11 @@ CmdList:   .addr SPParms
 
 DSBSizeOk:
 
-           lda  DSB+1                 ; Do we still have a zero byte device?
+           lda  DSB+1                   ; Do we still have a zero byte device?
            ora  DSB+2
-           beq  CheckType             ; Yes, check device type for Disk3.5
+           beq  CheckType               ; Yes, check device type for Disk3.5
 
-           lda  DSB+1                 ; Save size.
+           lda  DSB+1                   ; Save size.
            sta  DevSize
            lda  DSB+2
            sta  DevSize+1
@@ -349,19 +354,19 @@ DSBSizeOk:
 
 CheckType:
 
-           lda  DSB+21                ; If we have a 1 here then this is a
-           cmp  #1                    ; Disk 3.5 (or Unidisk) so set default
-           beq  Disk35                ; value.
+           lda  DSB+21                  ; If we have a 1 here then this is a
+           cmp  #1                      ; Disk 3.5 (or Unidisk) so set default
+           beq  Disk35                  ; value.
 
-           stz  DevSize               ; Not a Disk35 so I don't know what type
-           stz  DevSize+1             ; of device we have so set size to zero.
+           stz  DevSize                 ; Not a Disk35 so I don't know what type
+           stz  DevSize+1               ; of device we have so set size to zero.
 
            rts
 
 Disk35:
 
-           lda  #$40                  ; Set Disk 3.5 default to 1600 ($0640)
-           sta  DevSize               ;  blocks.
+           lda  #$40                    ; Set Disk 3.5 default to 1600 ($0640)
+           sta  DevSize                 ;  blocks.
            lda  #$06
            sta  DevSize+1
 
@@ -372,12 +377,12 @@ Dispatch:
            jmp  (Ptr2)
 
 SPParms:
-SPCount:   .byte $03
-SPUnitNo:  .byte $00
-SPListPtr: .addr DSB
-SPCode:    .byte $03
+SPCount:    .byte $03
+SPUnitNo:   .byte $00
+SPListPtr:  .addr DSB
+SPCode:     .byte $03
 
-DSB:       .byte   25
+DSB:        .res 25
 
 SPError:
 
@@ -390,26 +395,30 @@ SPError:
            lsr  a
            lsr  a
            tax
-           lda  AsciiTable,x
+           lda  ASCIITable,x
            sta  E2Code
 
            tya
            and  #$0F
            tax
-           lda  AsciiTable,x
+           lda  ASCIITable,x
            sta  E2Code+1
 
            lda  #<E2
            sta  MsgPtr
            lda  #>E2
            sta  MsgPtr+1
-           jsr  MBMsgOk
+           jsr  MsgOk
 
            rts
 
-E2:        asc   "Smartport status call error $"
-E2Code:    asc   "00"
-           ascz  " encountered."
+;          Msb  On
+
+E2:        asc  "Smartport status call error $"
+E2Code:    asc  "00"   
+           ascz " encountered."
+
+;          Msb  Off
 
 ;
 ; Save valid device data to buffer.
@@ -418,7 +427,7 @@ E2Code:    asc   "00"
 SaveDevInfo:
 
            ldx  Slot
-           lda  AsciiTable,x
+           lda  ASCIITable,x
            ldy  #oSlot
            sta  (Ptr1),y
 
@@ -443,7 +452,7 @@ SaveDrive:
            ldy  #oVolume
 
            lda  onlineBuf
-           and  #$0F                  ; Keep volume name length
+           and  #$0F                    ; Keep volume name length
            sta  NameLength
            bne  @NextChar
            jmp  DevMessage
@@ -515,8 +524,8 @@ SaveQuest:
 
 WeHaveASize:
 
-           lsr  DevSize+1             ; Divide DevSize by 2 to convert
-           ror  DevSize               ; block into kilobytes.
+           lsr  DevSize+1               ; Divide DevSize by 2 to convert
+           ror  DevSize                 ; block into kilobytes.
            bcc  NoRounding
 
            inc  DevSize
@@ -526,12 +535,12 @@ WeHaveASize:
 NoRounding:
 
            lda  DevSize+1
-           cmp  #$04                  ; See if size > 1024K ($0400)
+           cmp  #$04                    ; See if size > 1024K ($0400)
            bcc  Kilobytes
 
 MegaBytes:
 
-           ldx  #4                    ; First divide DevSize by 16
+           ldx  #4                      ; First divide DevSize by 16
 
 @Loop1:
 
@@ -545,8 +554,8 @@ MegaBytes:
            lda  DevSize
            sta  Multiplier
 
-           asl  DevSize               ; Multiply by 5 doing a multiply by 4 and
-           rol  DevSize+1             ;  adding the original value another time.
+           asl  DevSize                 ; Multiply by 5 doing a multiply by 4 and
+           rol  DevSize+1               ;  adding the original value another time.
            asl  DevSize
            rol  DevSize+1
 
@@ -558,7 +567,7 @@ MegaBytes:
            adc  Multiplier+1
            sta  DevSize+1
 
-           ldx  #5                    ; Divide by 32 for final result
+           ldx  #5                      ; Divide by 32 for final result
 
 @Loop2:
 
@@ -593,14 +602,14 @@ ConvAscii:
            lda  #10
            sta  aux
 
-@Loop3:
+LD_Loop3:
 
            lda  acc
            ora  acc+1
            bne  @NotZero
 
            lda  #' '+$80
-           bra  @SaveValue
+           bra  SaveValue
 
 @NotZero:
 
@@ -609,32 +618,32 @@ ConvAscii:
            plx
            lda  ext
 
-@SaveValue:
+SaveValue:
 
            pha
            dex
-           bne  @Loop3
+           bne  LD_Loop3
 
            tya
            tax
            ldy  #oSize
 
-@Loop4:
+LD_Loop4:
 
            pla
            cmp  #' '+$80
-           beq  @LeadZero
+           beq  LeadZero
            phy
            tay
-           lda  AsciiTable,y
+           lda  ASCIITable,y
            ply
 
-@LeadZero:
+LeadZero:
 
            sta  (Ptr1),y
            iny
            dex
-           bne  @Loop4
+           bne  LD_Loop4
 
            cpy  #oSize+3
            bne  NoDecimal
@@ -648,12 +657,12 @@ Decimal:
 
 NoDecimal:
 
-           ldy  #oDevType             ; Save device type data
-           lda  DevType
+           ldy  #oDevType               ; Save device type data
+           lda  LD_DevType
 
            sta  (Ptr1),y
 
-           clc                        ; Setup buffer address for next record.
+           clc                          ; Setup buffer address for next record.
            lda  Ptr1
            adc  #oEntryLen
            sta  Ptr1
@@ -663,8 +672,8 @@ NoDecimal:
 
            rts
 
-NameLength: .byte   $00
-Multiplier: .word   $0000
+NameLength: .res 1
+Multiplier: .res 2
 
 ;
 ; Device messages when a volume not mounted
@@ -673,13 +682,13 @@ Multiplier: .word   $0000
 DevMessage:
 
            lda  onlineBuf+1
-           cmp  #$27                  ; IO Error on a Disk ][
+           cmp  #$27                    ; IO error on a Disk ][
            beq  NoDisk
-           cmp  #$2F                  ; Device Off-line
+           cmp  #$2F                    ; Device Off-line
            beq  NoDisk
-           cmp  #$52                  ; Non-ProDOS
+           cmp  #$52                    ; Non-ProDOS
            beq  NonProDOS
-           jmp  PrtSpaces             ; Mystery error?
+           jmp  PrtSpaces               ; Mystery error?
 
 NoDisk:
 
@@ -715,7 +724,13 @@ NonProDOS1:
            sta  NameLength
            jmp  PrtSpaces
 
-DevMes1:   asc   "<No Disk>"
+;          Msb  On
+
+DevMes1:   asc "<No Disk>"
 DevMes1E:
-DevMes2:   asc   "<Non ProDOS>"
+DevMes2:   asc "<Non ProDOS>"
 DevMes2E:
+
+;          Msb  Off
+
+

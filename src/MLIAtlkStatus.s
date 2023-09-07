@@ -5,16 +5,19 @@ MLIAtlkInfo:
 ;          Usage       : jsr MLIAtlkInfo
 ;          Requirements: None
 
-ProDOSAtlkInfo    =  $42
+MLICode_42  =   $42
+;MLI         =   $BF00
 
            jsr  MLI
-           .byte ProDOSAtlkInfo
+           .byte MLICode_42
            .addr @Parms
 
            rts
 
 @Parms:
 
-@InfoParams .byte $00                 ; Synchronous only
-            .byte $02                 ; GetInfo call number
-@InfoResult .res 13                   ; Result returned here
+@InfoParams: .byte $00                  ; Synchronous only
+            .byte $02                   ; GetInfo call number
+@InfoResult: .res 13                    ; Result returned here
+
+

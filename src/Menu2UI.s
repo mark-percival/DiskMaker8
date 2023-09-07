@@ -4,209 +4,222 @@
 
 Menu2UI:
 
-           stz  RC_M2                ; Reset return code
+
+           ; Expected to scope to Menu2Vars.s
+
+;UpArrow     =   $8B
+;DownArrow   =   $8A
+;LeftArrow   =   $88
+;RightArrow  =   $95
+;ReturnKey   =   $8D
+;TabKey      =   $89
+
+;AppleKey    =   $C061
+;OptionKey   =   $C062
+
+           stz  RC2                     ; Reset return code
            stz  ClearKbd
 
-@PollDev:
+M2_PollDev:
 
-           jsr  PlotMouse             ; Put mouse cursor on screen
+           jsr  PlotMouse               ; Put mouse cursor on screen
 
-@M2PollDevLoop:
+M2_PollDevLoop:
 
-           lda  Keyboard              ; Get keypress
-           bpl  @PollMouse            ; No keypress, check mouse
-           jmp  @KeyDev
+           lda  Keyboard                ; Get keypress
+           bpl  @PollMouse              ; No keypress, check mouse
+           jmp  M2_KeyDev
 
 @PollMouse:
 
-           jsr  ReadMouse             ; Read mouse
-           lsr  MouseX                ; Put x and y mouse coordinates into
-           lsr  MouseY                ;  0 to 79 and 0 to 23 range.
-           lda  MouseStat             ; Mouse status
-           bit  #MouseMove            ; Mouse moved?
-           bne  @MouseDev1            ; Yes, process cursor movement
-           bit  #CurrButton           ; Button pressed?
-           bne  @MouseDev2            ; Yes, process button pressed.
-           bit  #PrevButton           ; Button release?
-           bne  @MouseDev3            ; Yes, process button release.
+           jsr  ReadMouse               ; Read mouse
+           lsr  MouseX                  ; Put x and y mouse coordinates into
+           lsr  MouseY                  ;  0 to 79 and 0 to 23 range.
+           lda  MouseStat               ; Mouse status
+           bit  #MouseMove              ; Mouse moved?
+           bne  M2_MouseDev1            ; Yes, process cursor movement
+           bit  #CurrButton             ; Button pressed?
+           bne  M2_MouseDev2            ; Yes, process button pressed.
+           bit  #PrevButton             ; Button release?
+           bne  M2_MouseDev3            ; Yes, process button release.
 
-           bra  @M2PollDevLoop        ; Check keyboard and mouse again.
+           bra  M2_PollDevLoop          ; Check keyboard and mouse again.
 
 ;
 ; Process mouse movement
 ;
 
-@MouseDev1:
+M2_MouseDev1:
 
            jsr  MoveMouse
-           jmp  @M2PollDevLoop
+           jmp  M2_PollDevLoop
 
 ;
 ; Process button pressed
 ;
 
-@MouseDev2:
+M2_MouseDev2:
 
-           jmp  @ButtonDown
+           jmp  M2_ButtonDown
 
 ;
 ; Process mouse button release
 ;
 
-@MouseDev3:
+M2_MouseDev3:
 
-           jmp  @ButtonUp
+           jmp  M2_ButtonUp
 
 ;
 ; Process keyboard key press
 ;
 
-@KeyDev:
+M2_KeyDev:
 
-           stz  ClearKbd              ; Clear keyboard strobe
-           sta  @M2KeyPress
+           stz  ClearKbd                ; Clear keyboard strobe
+           sta  M2_KeyPress
 
 ; Text for quiting screen
 
            lda  AppleKey
-           bpl  @NextKey01
-           lda  @M2KeyPress
+           bpl  M2_NextKey01
+           lda  M2_KeyPress
            cmp  #'Q'+$80
-           beq  @QuitReq
+           beq  M2_QuitReq
            cmp  #'q'+$80
-           beq  @QuitReq
+           beq  M2_QuitReq
            cmp  #'B'+$80
-           beq  @QuitReq
+           beq  M2_QuitReq
            cmp  #'b'+$80
-           beq  @QuitReq
-           bra  @NextKey01
+           beq  M2_QuitReq
+           bra  M2_NextKey01
 
-@QuitReq:
+M2_QuitReq:
 
-           lda  #SkipBtn              ; Test here to see of Skip is the
-           cmp  TabIndex_M2           ;  current displayed button.
-           sta  TabIndex_M2
-           beq  @QuitReq0
-           jsr  Refresh2Btn           ; Display Skip as current selected.
+           lda  #SkipBtn                ; Test here to see of Skip is the
+           cmp  TabIndex2               ;  current displayed button.
+           sta  TabIndex2
+           beq  M2_QuitReq0
+           jsr  Refresh2Btn             ; Display Skip as current selected.
 
-@QuitReq0:
+M2_QuitReq0:
 
-           jsr  @AnimateBtn
+           jsr  M2_AnimateBtn
 
            lda  #Quit2
-           sta  RC_M2
-           jmp  @Exit
+           sta  RC2
+           jmp  M2_Exit
 
 ; Down / right arrow keypress logic
 
-@NextKey01:
+M2_NextKey01:
 
-           lda  @M2KeyPress
-           cmp  #DownArrow            ; Down arrow?
-           beq  @DownReq2
-           cmp  #RightArrow           ; ...or right arrow?
-           beq  @DownReq2
-           bra  @NextKey02
+           lda  M2_KeyPress
+           cmp  #DownArrow              ; Down arrow?
+           beq  DownReq2
+           cmp  #RightArrow             ; ...or right arrow?
+           beq  DownReq2
+           bra  M2_NextKey02
 
-@DownReq2:
+DownReq2:
 
-           lda  SelLine_M2
-           cmp  #5                    ; At bottom of window?
+           lda  M2_SelLine
+           cmp  #5                      ; At bottom of window?
            beq  @AtBottom
 
-           lda  DevEntCnt_M2           ; If total number of devices = our current
-           cmp  SelLine_M2             ;  line number then no more entries.
+           lda  DevEntCnt               ; If total number of devices = our current
+           cmp  M2_SelLine              ;  line number then no more entries.
            beq  @AtBottom
 
-@M2IncSelLine:
+;IncSelLine:
 
-           inc  SelLine_M2
+           inc  M2_SelLine
            lda  #UpdDevLst
-           sta  RC_M2
-           jmp  @Exit
+           sta  RC2
+           jmp  M2_Exit
 
 @AtBottom:
 
-           lda  Below_M2
+           lda  Below
            beq  @NoMoreBelow
 
-           inc  SelLine_M2             ; Should make SelLine_M2 = 6
+           inc  M2_SelLine              ; Should make M2_SelLine = 6
 
 @NoMoreBelow:
 
            lda  #UpdDevLst
-           sta  RC_M2
-           jmp  @Exit
+           sta  RC2
+           jmp  M2_Exit
 
-@NextKey02:
+M2_NextKey02:
 
 ; Up / left arrow keypress
 
-           lda  @M2KeyPress
+           lda  M2_KeyPress
            cmp  #UpArrow
-           beq  @UpReq2
+           beq  UpReq2
            cmp  #LeftArrow
-           beq  @UpReq2
-           bra  @NextKey03
+           beq  UpReq2
+           bra  M2_NextKey03
 
-@UpReq2:
+UpReq2:
 
-           lda  SelLine_M2
+           lda  M2_SelLine
            cmp  #1
            beq  @AtTop
 
-           dec  SelLine_M2
+           dec  M2_SelLine
            lda  #UpdDevLst
-           sta  RC_M2
-           jmp  @Exit
+           sta  RC2
+           jmp  M2_Exit
 
 @AtTop:
 
-           lda  Above_M2
+           lda  Above
            beq  @NoMoreAbove
 
-           dec  SelLine_M2             ; Should make SelLine_M2 = 0
+           dec  M2_SelLine              ; Should make M2_SelLine = 0
 
 @NoMoreAbove:
 
            lda  #UpdDevLst
-           sta  RC_M2
-           jmp  @Exit
+           sta  RC2
+           jmp  M2_Exit
 
-@NextKey03:
+M2_NextKey03:
 
 ; About screen request
 
            lda  AppleKey
-           bpl  @NextKey04
-           lda  @M2KeyPress
+           bpl  M2_NextKey04
+           lda  M2_KeyPress
            cmp  #'A'+$80
-           beq  @AboutReq
+           beq  AboutReq
            cmp  #'a'+$80
-           beq  @AboutReq
-           bra  @NextKey04
+           beq  AboutReq
+           bra  M2_NextKey04
 
-@AboutReq:
+AboutReq:
 
            lda  #AboutBtn
-           cmp  TabIndex_M2
-           sta  TabIndex_M2
-           beq  @AboutReq0
+           cmp  TabIndex2
+           sta  TabIndex2
+           beq  AboutReq0
 
            jsr  Refresh2Btn
 
-@AboutReq0:
+AboutReq0:
 
-           jsr  @AnimateBtn
+           jsr  M2_AnimateBtn
 
-@AboutReq1:
+AboutReq1:
 
            lda  #SkipBtn
-           sta  TabIndex_M2
+           sta  TabIndex2
 
-;          lda  #@AboutMsg
+;          lda  #<AboutMsg
 ;          sta  MsgPtr
-;          lda  #>@AboutMsg
+;          lda  #>AboutMsg
 ;          sta  MsgPtr+1
 ;
 ;          jsr  MsgOk
@@ -214,126 +227,128 @@ Menu2UI:
            jsr  About
 
            lda  #Nothing
-           sta  RC_M2
-           jmp  @Exit
+           sta  RC2
+           jmp  M2_Exit
 
-@AboutMsg: asccr "       Diskmaker 8"
+;          Msb  On
+AboutMsg:  asccr "       Diskmaker 8"
            ascz  "(c) 2005 by Mark Percival"
+;          Msb  Off
 
-@NextKey04:
+M2_NextKey04:
 
 ; Make disk request
 
            lda  AppleKey
-           bpl  @NextKey05
-           lda  @M2KeyPress
+           bpl  M2_NextKey05
+           lda  M2_KeyPress
            cmp  #'M'+$80
-           beq  @MakeReq1
+           beq  MakeReq
            cmp  #'m'+$80
-           beq  @MakeReq1
-           bra  @NextKey05
+           beq  MakeReq
+           bra  M2_NextKey05
 
-@MakeReq1:
+MakeReq:
 
            lda  #MakeBtn
-           cmp  TabIndex_M2
-           sta  TabIndex_M2
-           beq  @MakeReq10
+           cmp  TabIndex2
+           sta  TabIndex2
+           beq  MakeReq0
 
            jsr  Refresh2Btn
 
-@MakeReq10:
+MakeReq0:
 
-           jsr  @AnimateBtn
+           jsr  M2_AnimateBtn
 
-           lda  DevEntCnt_M2          ; Check to see if there are devices listed
-           bne  @MakeReq11            ;  on the screen.
+           lda  DevEntCnt               ; Check to see if there are devices listed
+           bne  MakeReq1                ;  on the screen.
 
-           jsr  Beep                  ; Nope, so beep him and exit.
+           jsr  Beep                    ; Nope, so beep him and exit.
 
            lda  #Nothing
-           sta  RC_M2
-           jmp  @Exit
+           sta  RC2
+           jmp  M2_Exit
 
-@MakeReq11:
+MakeReq1:
 
            lda  #SkipBtn
-           sta  TabIndex_M2
+           sta  TabIndex2
 
            lda  #MakingDisk
-           sta  RC_M2
-           jmp  @Exit
+           sta  RC2
+           jmp  M2_Exit
 
-@NextKey05:
+M2_NextKey05:
 
 ; Tab key routine
 
-           lda  @M2KeyPress
+           lda  M2_KeyPress
            cmp  #TabKey
-           beq  @TabReq
-           bra  @NextKey06
+           beq  M2_TabReq
+           bra  M2_NextKey06
 
-@TabReq:
+M2_TabReq:
 
            lda  OptionKey
-           bmi  @TabUp
+           bmi  M2_TabUp
 
-@TabDown:
+;TabDown:
 
-           lda  TabIndex_M2
+           lda  TabIndex2
            inc  a
            cmp  #LoopBack2
-           bne  @TabReq1
+           bne  M2_TabReq1
 
            lda  #0
-           bra  @TabReq1
+           bra  M2_TabReq1
 
-@TabUp:
+M2_TabUp:
 
-           lda  TabIndex_M2
+           lda  TabIndex2
            dec  a
-           bpl  @TabReq1
+           bpl  M2_TabReq1
 
            lda  #LoopBack2-1
 
-@TabReq1:
+M2_TabReq1:
 
-           sta  TabIndex_M2
+           sta  TabIndex2
 
            lda  #Nothing
-           sta  RC_M2
-           jmp  @Exit
+           sta  RC2
+           jmp  M2_Exit
 
-@NextKey06:
+M2_NextKey06:
 
 ; Process <cr>
 
-           lda   @M2KeyPress
+           lda   M2_KeyPress
            cmp  #ReturnKey
-           beq  @M2EnterReq
+           beq  M2_EnterReq
            cmp  #' '+$80
-           beq  @M2EnterReq
-           bra  @NextKey07
+           beq  M2_EnterReq
+           bra  M2_NextKey07
 
-@M2EnterReq:
+M2_EnterReq:
 
-           lda  TabIndex_M2
+           lda  TabIndex2
 
            cmp  #AboutBtn
            bne  @Enter01
-           jmp  @AboutReq
+           jmp  AboutReq
 
 @Enter01:
 
            cmp  #SkipBtn
            bne  @Enter02
-           jmp  @QuitReq
+           jmp  M2_QuitReq
 
 @Enter02:
 
            cmp  #MakeBtn
            bne  @Enter03
-           jmp  @MakeReq1
+           jmp  MakeReq
 
 @Enter03:
 
@@ -342,15 +357,15 @@ Menu2UI:
            jsr  SelImgType
            jsr  GetImgSize
 
-           lda  blnSize_M2            ; Is same-size on?
-           bne  @Enter03
-           jmp  @M2PollDevLoop        ; No, so just get next keystroke.
+           lda  blnSize                 ; Is same-size on?
+           bne  @Enter03a
+           jmp  M2_PollDevLoop          ; No, so just get next keystroke.
 
 @Enter03a:
 
-           lda  #ReloadDevs           ; Same size on and he changed type so
-           sta  RC_M2                ; refresh device display.
-           jmp  @Exit
+           lda  #ReloadDevs             ; Same size on and he changed type so
+           sta  RC2                     ; refresh device display.
+           jmp  M2_Exit
 
 @Enter04:
 
@@ -358,37 +373,37 @@ Menu2UI:
            bne  @Enter05
            jsr  ToggleSize
            lda  #ReloadDevs
-           sta  RC_M2
-           jmp  @Exit
+           sta  RC2
+           jmp  M2_Exit
 
 @Enter05:
 
-@NextKey07:
+M2_NextKey07:
 
            jsr  Beep
-           jmp  @M2PollDevLoop
+           jmp  M2_PollDevLoop
 
-@Exit:
+M2_Exit:
 
            rts
 
-@M2KeyPress:  .byte   $00
+M2_KeyPress: .res 1
 
 ;
 ; Do button animation on <cr>
 ;
 
-@AnimateBtn:
+M2_AnimateBtn:
 
            lda  #<M2BtnText
            sta  Ptr1
            lda  #>M2BtnText
            sta  Ptr1+1
 
-           ldx  TabIndex_M2
-           beq  @AnimBtn02
+           ldx  TabIndex2
+           beq  M2_AnimBtn02
 
-@AnimBtn01:
+M2_AnimBtn01:
 
            clc
            lda  Ptr1
@@ -399,12 +414,12 @@ Menu2UI:
            sta  Ptr1+1
 
            dex
-           bne  @AnimBtn01
+           bne  M2_AnimBtn01
 
-@AnimBtn02:
+M2_AnimBtn02:
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            jsr  @PrtButton
 
@@ -412,7 +427,7 @@ Menu2UI:
            jsr  Wait
 
            lda  #Inverse
-           jsr  cout_mark
+           jsr  cout
 
            jsr  @PrtButton
 
@@ -420,7 +435,7 @@ Menu2UI:
            jsr  Wait
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
@@ -442,7 +457,7 @@ Menu2UI:
 @PrtButt01:
 
            lda  (Ptr1),y
-           jsr  cout_mark
+           jsr  cout
            iny
            dex
            bne  @PrtButt01
@@ -453,307 +468,309 @@ Menu2UI:
 ; Process mouse button press
 ;
 
-@ButtonDown:
+M2_ButtonDown:
 
-           lda  MouseStat             ; Button is down but make sure he has also
-           bit  #PrevButton           ; released it and is not holding it down.
-           beq  @BD00
+           lda  MouseStat               ; Button is down but make sure he has also
+           bit  #PrevButton             ; released it and is not holding it down.
+           beq  BD00
 
-           lda  @HoldCnt              ; Check to see how long he's held down the
-           cmp  #$FF                  ; mouse button.
-           beq  @Repeat               ; Long enough so he's repeating.
+           lda  M2_HoldCnt              ; Check to see how long he's held down the
+           cmp  #$FF                    ; mouse button.
+           beq  M2_Repeat               ; Long enough so he's repeating.
 
-           inc  @HoldCnt              ; Hasn't held it long enough to be
-           lda  #$01                  ; considered repeating so count the hold
+           inc  M2_HoldCnt              ; Hasn't held it long enough to be
+           lda  #$01                    ; considered repeating so count the hold
            jsr  Wait
 
-           jmp  @M2PollDevLoop
+           jmp  M2_PollDevLoop
 
-@HoldCnt:   .byte   $00               ;    Count how long he's holding the button
+M2_HoldCnt:    .res 1                   ; Count how long he's holding the button
 
-@BD00:
+BD00:
 
-           stz  @HoldCnt              ; Zero out counter on first button press.
+           stz  M2_HoldCnt              ; Zero out counter on first button press.
 
-@Repeat:
+M2_Repeat:
 
 ; Test for About button click
 
            lda  MouseY
            cmp  #11-1
-           bne  @BD01
+           bne  BD01
 
            lda  MouseX
            cmp  #50-1
-           bcc  @BD01
+           bcc  BD01
 
            cmp  #62
-           bcs  @BD01
+           bcs  BD01
 
            lda  #AboutBtn
-           sta  TabIndex_M2
+           sta  TabIndex2
 
            lda  #Nothing
-           sta  RC_M2
+           sta  RC2
            rts
 
-@BD01:
+BD01:
 
 ; Test for Skip button click
 
            lda  MouseY
            cmp  #13-1
-           bne  @BD02
+           bne  BD02
 
            lda  MouseX
            cmp  #50-1
-           bcc  @BD02
+           bcc  BD02
 
            cmp  #62
-           bcs  @BD02
+           bcs  BD02
 
            lda  #SkipBtn
-           sta  TabIndex_M2
+           sta  TabIndex2
 
            lda  #Nothing
-           sta  RC_M2
+           sta  RC2
            rts
 
-@BD02:
+BD02:
 
 ; Test for Make Disks button click
 
            lda  MouseY
            cmp  #15-1
-           bne  @BD03
+           bne  BD03
 
            lda  MouseX
            cmp  #50-1
-           bcc  @BD03
+           bcc  BD03
 
            cmp  #62
-           bcs  @BD03
+           bcs  BD03
 
            lda  #MakeBtn
-           sta  TabIndex_M2
+           sta  TabIndex2
 
            lda  #Nothing
-           sta  RC_M2
+           sta  RC2
            rts
 
-@BD03:
+BD03:
 
 ; Test for Image Type box click
 
            lda  MouseY
            cmp  #17-1
-           bne  @BD04
+           bne  BD04
 
            lda  MouseX
            cmp  #19-1
-           bcc  @BD04
+           bcc  BD04
 
            cmp  #38
-           bcs  @BD04
+           bcs  BD04
 
            lda  #ImgTypeBox
-           sta  TabIndex_M2
+           sta  TabIndex2
 
            jsr  Refresh2Btn
            jsr  SelImgType
            jsr  GetImgSize
 
-           lda  blnSize_M2            ; Is same-size on?
-           bne  @BD03a
-           jmp  @M2PollDevLoop        ; No, so just get next keystroke.
+           lda  blnSize                 ; Is same-size on?
+           bne  BD03a
+           jmp  M2_PollDevLoop             ; No, so just get next keystroke.
 
-@BD03a:
+BD03a:
 
-           lda  #ReloadDevs           ; Same size on and he changed type so
-           sta  RC_M2                ; refresh device display.
+           lda  #ReloadDevs             ; Same size on and he changed type so
+           sta  RC2                     ; refresh device display.
            rts
 
-@BD04:
+BD04:
 
 ; Test for Same-size disks checkbox click
 
            lda  MouseY
            cmp  #17-1
-           bne  @BD05
+           bne  BD05
 
            lda  MouseX
            cmp  #42-1
-           bcc  @BD05
+           bcc  BD05
 
            cmp  #63
-           bcs  @BD05
+           bcs  BD05
 
            lda  #SameSize
-           sta  TabIndex_M2
+           sta  TabIndex2
 
            lda  #Nothing
-           sta  RC_M2
+           sta  RC2
            rts
 
-@BD05:
+BD05:
 
 ; Text for scroll list box up
 
            lda  MouseY
            cmp  #11-1
-           bne  @BD06
+           bne  BD06
 
            lda  MouseX
            cmp  #46-1
-           bne  @BD06
+           bne  BD06
 
-           jmp  @UpReq2
+           jmp  UpReq2
 
-@BD06:
+BD06:
 
 ; Test for scroll list box down
 
            lda  MouseY
            cmp  #15-1
-           bne  @BD07
+           bne  BD07
 
            lda  MouseX
            cmp  #46-1
-           bne  @BD07
+           bne  BD07
 
-           jmp  @DownReq2
+           jmp  DownReq2
 
-@BD07:
+BD07:
 
 ; Look for a click on a device inside of list box
 
            lda  MouseY
            cmp  #11-1
-           bcc  @BD09
+           bcc  BD09
 
            cmp  #15
-           bcs  @BD09
+           bcs  BD09
 
            lda  MouseX
            cmp  #19-1
-           bcc  @BD09
+           bcc  BD09
 
            cmp  #44
-           bcs  @BD09
+           bcs  BD09
 
            sec
            lda  MouseY
            sbc  #9
-           cmp  SelLine_M2            ; Did he click the same line twice?
-           beq  @BD08                 ; Yes so execute double click logic
+           cmp  M2_SelLine              ; Did he click the same line twice?
+           beq  BD08                    ; Yes so execute double click logic
 
-           sta  SelLine_M2            ; No so change selected line pointer.
+           sta  M2_SelLine              ; No so change selected line pointer.
 
            lda  #UpdDevLst
-           sta  RC_M2
+           sta  RC2
            rts
 
-@BD08:                                ; Double clicked line
+BD08:                         ; Double clicked line
 
-           lda  #MakeBtn              ; Change command to Make Disks
-           sta  TabIndex_M2
+           lda  #MakeBtn                ; Change command to Make Disks
+           sta  TabIndex2
 
-           jmp  @M2EnterReq           ; Pretend that he pressed Enter key
+           jmp  M2_EnterReq             ; Pretend that he pressed Enter key
 
-@BD09:
+BD09:
 
            jsr  Beep
-           jmp  @M2PollDevLoop
+           jmp  M2_PollDevLoop
 
            rts
 ;
 ; Process mouse button release
 ;
 
-@ButtonUp:
+M2_ButtonUp:
 
 ; Test for About button click
 
            lda  MouseY
            cmp  #11-1
-           bne  @BU01
+           bne  BU01
 
            lda  MouseX
            cmp  #50-1
-           bcc  @BU01
+           bcc  BU01
 
            cmp  #62
-           bcs  @BU01
+           bcs  BU01
 
-           lda  TabIndex_M2
+           lda  TabIndex2
            cmp  #AboutBtn
-           bne  @BU01
+           bne  BU01
 
-           jmp  @M2EnterReq
+           jmp  M2_EnterReq
 
-@BU01:
+BU01:
 
 ; Test for Skip button click
 
            lda  MouseY
            cmp  #13-1
-           bne  @BU02
+           bne  BU02
 
            lda  MouseX
            cmp  #50-1
-           bcc  @BU02
+           bcc  BU02
 
            cmp  #62
-           bcs  @BU02
+           bcs  BU02
 
-           lda  TabIndex_M2
+           lda  TabIndex2
            cmp  #SkipBtn
-           bne  @BU02
+           bne  BU02
 
-           jmp  @M2EnterReq
+           jmp  M2_EnterReq
 
-@BU02:
+BU02:
 
 ; Test for Make Disks button click
 
            lda  MouseY
            cmp  #15-1
-           bne  @BU03
+           bne  BU03
 
            lda  MouseX
            cmp  #50-1
-           bcc  @BU03
+           bcc  BU03
 
            cmp  #62
-           bcs  @BU03
+           bcs  BU03
 
-           lda  TabIndex_M2
+           lda  TabIndex2
            cmp  #MakeBtn
-           bne  @BU03
+           bne  BU03
 
-           jmp  @M2EnterReq
+           jmp  M2_EnterReq
 
-@BU03:
+BU03:
 
 ; Test for Same-size disks checkbox click
 
            lda  MouseY
            cmp  #17-1
-           bne  @BU04
+           bne  BU04
 
            lda  MouseX
            cmp  #42-1
-           bcc  @BU04
+           bcc  BU04
 
            cmp  #63
-           bcs  @BU04
+           bcs  BU04
 
-           lda  TabIndex_M2
+           lda  TabIndex2
            cmp  #SameSize
-           bne  @BU04
+           bne  BU04
 
-           jmp  @M2EnterReq
+           jmp  M2_EnterReq
 
-@BU04:
+BU04:
 
-           jmp  @M2PollDevLoop
+           jmp  M2_PollDevLoop
+
+

@@ -8,7 +8,8 @@ MLISetMark:
 ;          Returns     : Nothing
 ;
 
-ProDOSSetMark    =  $CE
+MLICode_CE  =   $CE
+;MLI         =   $BF00
 
            lda  setMarkRef
            sta  @ref_num
@@ -23,26 +24,28 @@ ProDOSSetMark    =  $CE
            sta  @position+2
 
            jsr  MLI
-           .byte ProDOSSetMark
+           .byte MLICode_CE
            .addr @Parms
 
-           bne  @CheckError           ; MLI error
+           bne  @CheckError             ; MLI error
 
            bra  @GoodError
 
 @Parms:
 
 @parm_count: .byte $02
-@ref_num:   .res   1
-@position:  .res   3
+@ref_num:    .res 1
+@position:   .res 3
 
 @CheckError:
 
-           pha                        ; Save MLI error
-           lda  #ProDOSSetMark
-           pha                        ; Save calling routine
+           pha                          ; Save MLI error
+           lda  #MLICode_CE
+           pha                          ; Save calling routine
            jmp  MLIError
 
 @GoodError:
 
            rts
+
+

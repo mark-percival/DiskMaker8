@@ -2,19 +2,19 @@
 
 ;          jsr  DebugData
 
-           jsr  CheckSize             ; Check to see if image size matchs device
-           bne  Canceled              ; selected.
+           jsr  CheckSize               ; Check to see if image size matchs device
+           bne  Canceled                ; selected.
 
-           jsr  VerifyTarget          ; Make sure we can write to the device and
-           bne  Canceled              ; format if necessary.
+           jsr  VerifyTarget            ; Make sure we can write to the device and
+           bne  Canceled                ; format if necessary.
 
            sec
-           lda  EndBlock_M2           ; Subtract 1 from EndBlock_M2 since block
-           sbc  #$01                  ;  numbers are zero based.
-           sta  EndBlock_M2
-           lda  EndBlock_M2+1
+           lda  EndBlock                ; Subtract 1 from EndBlock since block
+           sbc  #$01                    ;  numbers are zero based.
+           sta  EndBlock
+           lda  EndBlock+1
            sbc  #$00
-           sta  EndBlock_M2+1
+           sta  EndBlock+1
 
            jsr  WriteImage
 
@@ -24,9 +24,9 @@ Canceled:
 
 InitVars:
 
-           lda  SelAddr_M2
+           lda  SelAddr
            sta  Ptr1
-           lda  SelAddr_M2+1
+           lda  SelAddr+1
            sta  Ptr1+1
 
            ldy  #oUnitNo
@@ -43,28 +43,28 @@ InitVars:
 
            ldy  #oDevType
            lda  (Ptr1),y
-           sta  PIDevType
+           sta  PI_DevType
 
            rts
 
-TargetUnit: .byte   $00
-TargetSize: .word   $0000
-PIDevType:   .byte   $00
-Volume:    .byte   $00
+TargetUnit: .res 1
+TargetSize: .res 2
+PI_DevType:    .res 1
+Volume:     .res 1
 
 ; Test for image size and destination size to be same.
 
 CheckSize:
 
-           lda  ImageSize_M2             ; Take current image size as default
-           sta  EndBlock_M2              ; number of blocks to write.
-           lda  ImageSize_M2+1
-           sta  EndBlock_M2+1
+           lda  ImageSize               ; Take current image size as default
+           sta  EndBlock                ; number of blocks to write.
+           lda  ImageSize+1
+           sta  EndBlock+1
 
            lda  TargetSize+1
-           cmp  ImageSize_M2+1
+           cmp  ImageSize+1
            bcc  TooSmall
-           beq  PISameSize
+           beq  PI_SameSize
 
 TooBig:
 
@@ -74,8 +74,8 @@ TooBig:
 TooSmall:  jsr  SmallBox
            bra  CheckExit
 
-PISameSize: lda  TargetSize
-           cmp  ImageSize_M2
+PI_SameSize: lda  TargetSize
+           cmp  ImageSize
            bcc  TooSmall
            beq  CheckExit
            bra  TooBig
@@ -102,10 +102,10 @@ MsgBig:    asccr "The destination disk is bigger than necessary."
 
 SmallBox:
 
-           lda  TargetSize            ; Default size is set yo ImageSize_M2 at this
-           sta  EndBlock_M2              ; point and since the device we're writing
-           lda  TargetSize+1          ; to isn't big enough, wen need to fall
-           sta  EndBlock_M2+1            ; short of writing the entire image.
+           lda  TargetSize              ; Default size is set yo ImageSize at this
+           sta  EndBlock                ; point and since the device we're writing
+           lda  TargetSize+1            ; to isn't big enough, wen need to fall
+           sta  EndBlock+1              ; short of writing the entire image.
 
            lda  #<MsgSmall
            sta  MsgPtr
@@ -135,12 +135,12 @@ SuccessBox:
 
            jsr  Beep
 
-           lda  PIDevType
-           cmp  #RemapDev             ; Can't boot a remapped volume
+           lda  PI_DevType
+           cmp  #RemapDev               ; Can't boot a remapped volume
            beq  NoBoot
 
            lda  TargetUnit
-           bmi  NoBoot                ; Can't boot drive 2
+           bmi  NoBoot                  ; Can't boot drive 2
 
 Bootable:
 
@@ -150,22 +150,22 @@ Bootable:
            sta  MsgPtr+1
 
            jsr  MsgBootCan
-           bne  BootExit              ; Not booting disk
+           bne  BootExit                ; Not booting disk
 
 CheckDisk:
 
            lda  TargetUnit
            sta  onlineUnit
 
-           jsr  MLIOnLine             ; Make sure disk is still there.
+           jsr  MLIOnLine               ; Make sure disk is still there.
 
-           cmp  #$27                  ; IO Error?
+           cmp  #$27                    ; IO Error?
            beq  WhereDisk
 
-           cmp  #$2F                  ; Disk offline?
+           cmp  #$2F                    ; Disk offline?
            beq  WhereDisk
 
-           jsr  Home                  ; We are good so setup pointer to boot.
+           jsr  Home                    ; We are good so setup pointer to boot.
 
            clc
            lda  TargetUnit
@@ -178,10 +178,10 @@ CheckDisk:
            sta  Ptr1+1
            stz  Ptr1
 
-           ldx  #$FF                  ; POP all address off stack prior to boot
+           ldx  #$FF                    ; POP all address off stack prior to boot
            txs
 
-           jmp  (Ptr1)                ; Boot
+           jmp  (Ptr1)                  ; Boot
 
 BootExit:
 
@@ -194,7 +194,7 @@ NoBoot:
            lda  #>MsgNoBoot
            sta  MsgPtr+1
 
-           jsr  MBMsgOk
+           jsr  MsgOk
 
            rts
 
@@ -206,9 +206,9 @@ WhereDisk:
            sta  MsgPtr+1
 
            jsr  MsgRetCan1
-           beq  CheckDisk             ; Retry
+           beq  CheckDisk               ; Retry
 
-           rts                        ; or cancel.
+           rts                          ; or cancel.
 
 MsgNoBoot: asccr "Disk created"
            ascz  "successfully"
@@ -222,7 +222,7 @@ MsgWhere:  asccr "Error atempting to boot disk"
 PaintBox:
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
 ; First line
 
@@ -235,19 +235,19 @@ PaintBox:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #27
            lda  #'L'
 
 BP01:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  BP01
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Second line
 
@@ -258,10 +258,10 @@ BP01:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            ldy  #0
            ldx  #9
@@ -269,7 +269,7 @@ BP01:
 BP02:
 
            lda  Text1,y
-           jsr  cout_mark
+           jsr  cout
            iny
            dex
            bne  BP02
@@ -282,12 +282,12 @@ BP03:
            iny
            lda  Path,y
            ora  #$80
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  BP03
 
            lda  #'''+$80
-           jsr  cout_mark
+           jsr  cout
 
            sec
            lda  #15
@@ -299,12 +299,12 @@ BP03:
 
 BP04:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  BP04
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Third line
 
@@ -315,25 +315,25 @@ BP04:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #25
            lda  #'_'+$80
 
 BP05:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  BP05
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Fourth line
 
@@ -344,21 +344,21 @@ BP05:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
-           jsr  cout_mark
+           jsr  cout
+           jsr  cout
 
            ldx  #25
            lda  #' '+$80
 
 BP06:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  BP06
 
            lda  #'_'
-           jsr  cout_mark
-           jsr  cout_mark
+           jsr  cout
+           jsr  cout
 
 ; Fifth line
 
@@ -369,32 +369,34 @@ BP06:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'+$80
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #25
            lda  #'\'
 
 BP07:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  BP07
 
            lda  #'_'+$80
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
+;          Msb  On
 Text1:     asc "Writing '"
+;          Msb  Off
 
 ClearBox:
 
@@ -403,20 +405,20 @@ ClearBox:
 
            jsr  SetVTab
 
-           ldx  #5                    ; 5 lines to erase
+           ldx  #5                      ; 5 lines to erase
 
 CB01:
 
            lda  #26-1
            sta  HTab
 
-           ldy  #29                   ; 29 characters per line
+           ldy  #29                     ; 29 characters per line
 
            lda  #' '+$80
 
 CB02:
 
-           jsr  cout_mark
+           jsr  cout
            dey
            bne  CB02
 
@@ -440,22 +442,22 @@ ShowFormat:
            jsr  SetVTab
 
            lda  #MouseText
-           jsr  cout_mark
+           jsr  cout
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #16
            lda  #'L'
 
 SF01:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  SF01
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Second line
 
@@ -465,12 +467,12 @@ SF01:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #3
            lda  #' '+$80
 
-SF02:      jsr  cout_mark
+SF02:      jsr  cout
            dex
            bne  SF02
 
@@ -480,7 +482,7 @@ SF02:      jsr  cout_mark
 SF03:
 
            lda  FmtMsg,y
-           jsr  cout_mark
+           jsr  cout
            iny
            dex
            bne  SF03
@@ -490,12 +492,12 @@ SF03:
 
 SF04:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  SF04
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
 ; Third line
 
@@ -506,26 +508,28 @@ SF04:
            jsr  SetVTab
 
            lda  #'Z'
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #16
            lda  #'_'+$80
 
 SF05:
 
-           jsr  cout_mark
+           jsr  cout
            dex
            bne  SF05
 
            lda  #'_'
-           jsr  cout_mark
+           jsr  cout
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
-FmtMsg:    asc  "Formatting"
+;          Msb  On
+FmtMsg:    asc  "Formatting"   
+;          Msb  Off
 
 ClrFormat:
 
@@ -534,20 +538,20 @@ ClrFormat:
 
            jsr  SetVTab
 
-           ldx  #3                    ; 3 lines to erase
+           ldx  #3                      ; 3 lines to erase
 
 CF01:
 
            lda  #32-1
            sta  HTab
 
-           ldy  #18                   ; 18 characters per line
+           ldy  #18                     ; 18 characters per line
 
            lda  #' '+$80
 
 CF02:
 
-           jsr  cout_mark
+           jsr  cout
            dey
            bne  CF02
 
@@ -569,41 +573,41 @@ CF02:
 ;          jsr  SetVTab
 ;
 ;          lda  #'S'+$80
-;          jsr  cout_mark
+;          jsr  cout
 ;
 ;          lda  #'='+$80
-;          jsr  cout_mark
+;          jsr  cout
 ;
 ;          lda  #'$'+$80
-;          jsr  cout_mark
+;          jsr  cout
 ;
-;          lda  ImageSize_M2+1
+;          lda  ImageSize+1
 ;          jsr  PrByte
 ;
-;          lda  ImageSize_M2
+;          lda  ImageSize
 ;          jsr  PrByte
 ;
 ;          lda  #' '+$80
-;          jsr  cout_mark
-;          jsr  cout_mark
+;          jsr  cout
+;          jsr  cout
 ;
 ;          lda  #'T'+$80
-;          jsr  cout_mark
+;          jsr  cout
 ;
 ;          lda  #'='+$80
-;          jsr  cout_mark
+;          jsr  cout
 ;
 ;          lda  #'$'+$80
-;          jsr  cout_mark
+;          jsr  cout
 ;
 ;          lda  TargetUnit
 ;          jsr  PrByte
 ;
 ;          lda  #' '+$80
-;          jsr  cout_mark
+;          jsr  cout
 ;
 ;          lda  #'$'+$80
-;          jsr  cout_mark
+;          jsr  cout
 ;
 ;          lda  TargetSize+1
 ;          jsr  PrByte
@@ -611,93 +615,93 @@ CF02:
 ;          jsr  PrByte
 ;
 ;          lda  #' '+$80
-;          jsr  cout_mark
+;          jsr  cout
 ;
-;          lda  PIDevType
+;          lda  PI_DevType
 ;          jsr  PrHex
 ;
 ;          rts
 
 VerifyTarget:
 
-           jsr  GetVolNum             ; Get DOS 3.3 volume number
+           jsr  GetVolNum               ; Get DOS 3.3 volume number
 
 ReVerify:
 
            lda  TargetUnit
            sta  onlineUnit
 
-           jsr  MLIOnLine             ; Check status of target
+           jsr  MLIOnLine               ; Check status of target
 
-           cmp  #$2F                  ; *** Device off-line error ***
+           cmp  #$2F                    ; *** Device off-line error ***
            bne  VT01
 
            jsr  OffLine
-           bne  VTExit                ; He decided to Cancel
-           bra  ReVerify              ; Retry
+           bne  VTExit                  ; He decided to Cancel
+           bra  ReVerify                ; Retry
 
 VT01:
 
-           ldy  OptionKey             ; Option key held?
+           ldy  OptionKey               ; Option key held?
 
-           bmi  VT01a                 ; Force a format
+           bmi  VT01a                   ; Force a format
 
-           cmp  #$27                  ; IO Error (unformatted?)
+           cmp  #$27                    ; IO Error (unformatted?)
            bne  VT02
 
 VT01a:
 
-           ldy  Volume                ; DOS 3.3 volume number if 0.
+           ldy  Volume                  ; DOS 3.3 volume number if 0.
            bne  VT01b
 
            jsr  FormatReq
-           bne  VTExit                ; He canceled format
+           bne  VTExit                  ; He canceled format
 
 VT01b:
 
-           jsr  ShowFormat            ; Formatting message
-           jsr  FormatDev             ; Format device.
-           php                        ; Save error status.
-           jsr  ClrFormat             ; Clear formatting message.
-           plp                        ; Restore error status.
-           bne  VTExit                ; Formatting error.
+           jsr  ShowFormat              ; Formatting message
+           jsr  FormatDev               ; Format device.
+           php                          ; Save error status.
+           jsr  ClrFormat               ; Clear formatting message.
+           plp                          ; Restore error status.
+           bne  VTExit                  ; Formatting error.
 
-           bra  ReVerify              ; Check to see if volume is now ok.
+           bra  ReVerify                ; Check to see if volume is now ok.
 
 VT02:
 
-           cmp  #$52                  ; Non-ProDOS disk
-           bne  VT02a                 ; No, check for ProDOS disk...
+           cmp  #$52                    ; Non-ProDOS disk
+           bne  VT02a                   ; No, check for ProDOS disk...
 
-           ldy  Volume                ; Yes, look if DOS 3.3
-           bne  VT01b                 ; DOS 3.3 so format disk.
+           ldy  Volume                  ; Yes, look if DOS 3.3
+           bne  VT01b                   ; DOS 3.3 so format disk.
 
-           beq  VTExit                ; Always taken
+           beq  VTExit                  ; Always taken
 
 VT02a:
 
-           cmp  #0                    ; ProDOS disk
+           cmp  #0                      ; ProDOS disk
            beq  VT03
 
-           lda  #<MsgMLI               ; Other MLI error
+           lda  #<MsgMLI                ; Other MLI error
            sta  MsgPtr
            lda  #>MsgMLI
            sta  MsgPtr+1
 
-           jsr  MBMsgOk
+           jsr  MsgOk
 
            bra  VTExit
 
-MsgMLI:    ascz  "MLIError from MLI_ONLINE call."
+MsgMLI:    ascz "MLIError from MLI_ONLINE call."
 
 VT03:
 
-           jsr  ProDOSWipe            ; Destroying ProDOS volume?
+           jsr  ProDOSWipe              ; Destroying ProDOS volume?
 
-           bne  VTExit                ; He decided to cancel.
+           bne  VTExit                  ; He decided to cancel.
 
-           ldy  Volume                ; He's ok with wiping out volume
-           bne  VT01b                 ; so see if DOS 3.3 format required.
+           ldy  Volume                  ; He's ok with wiping out volume
+           bne  VT01b                   ; so see if DOS 3.3 format required.
 
 VTExit:
 
@@ -715,7 +719,9 @@ OffLine:
 
            rts
 
-MsgOffLine: ascz  "No disk loaded in device."
+;          Msb  On
+MsgOffLine: ascz "No disk loaded in device."
+;          Msb  Off
 
 ProDOSWipe:
 
@@ -762,9 +768,9 @@ NoPadding:
            rts
 
 MsgWipe:   asc "You are about to erase ProDOS volume '"
-VolName:   .res    16
+VolName:   .res 16
            .byte $0D
-           ascz  "Do you wish to continue anyway?"
+           ascz "Do you wish to continue anyway?"
 
 FormatReq:
 
@@ -785,16 +791,16 @@ FormatMsg: asccr "The destination disk appears to be unformatted."
 
 FormatDev:
 
-           lda  PIDevType
+           lda  PI_DevType
            cmp  #DiskIIDev
-           bne  PISmartPort
+           bne  PI_Smartport
 
-DiskII:                               ; Disk ][ device
+DiskII:                                 ; Disk ][ device
 
            lda  Volume
            bne  HaveVolNum
 
-           lda  #$FE                  ; Default volume number
+           lda  #$FE                    ; Default volume number
 
 HaveVolNum:
 
@@ -808,7 +814,7 @@ HaveVolNum:
 
            rts
 
-PISmartPort:                           ; Standard SmartPort device
+PI_Smartport:                           ; Standard Smartport device
 
            jsr  ProFormat
 
@@ -819,26 +825,28 @@ PISmartPort:                           ; Standard SmartPort device
 
 ProFormat:
 
-           lda  onlineUnit            ; Compute slot/drive offset by dividing
-           lsr  a                     ; unit number by 16.
-           lsr  a
-           lsr  a
-           tax                        ; Move offset to index.
+;DevAddr     =   $BF10
 
-           lda  DevAddr,x             ; Get low byte of ProDOS driver address
+           lda  onlineUnit              ; Compute slot/drive offset by dividing
+           lsr  a                       ; unit number by 16.
+           lsr  a
+           lsr  a
+           tax                          ; Move offset to index.
+
+           lda  DevAddr,x               ; Get low byte of ProDOS driver address
            sta  Ptr2
            inx
-           lda  DevAddr,x             ; Get high byte of ProDOS driver address
+           lda  DevAddr,x               ; Get high byte of ProDOS driver address
            sta  Ptr2+1
 
-           php                        ; Save status
-           sei                        ; Interrupts off
+           php                          ; Save status
+           sei                          ; Interrupts off
 
            lda  #3
-           sta  $42                   ; Format call
+           sta  $42                     ; Format call
 
            lda  onlineUnit
-           sta  $43                   ; Unit number
+           sta  $43                     ; Unit number
 
            lda  #<Buffer512
            sta  $44
@@ -849,27 +857,27 @@ ProFormat:
            sta  $46
            sta  $47
 
-           lda  $C08B                 ; Read and write enable the language card
-           lda  $C08B                 ;  with bank 1 on.
+           lda  $C08B                   ; Read and write enable the language card
+           lda  $C08B                   ;  with bank 1 on.
 
-           jsr  @CallDriver           ; Call ProDOS driver.
+           jsr  @CallDriver              ; Call ProDOS driver.
 
-           bit  $C082                 ; Put ROM back on-line
+           bit  $C082                   ; Put ROM back on-line
            beq  @OkError
 
-           plp                        ; Restore status
+           plp                          ; Restore status
 
            jsr  WriteError
 
-           lda  #$01                  ; Zero zero bit to indicate error
+           lda  #$01                    ; Zero zero bit to indicate error
 
            rts
 
 @OkError:
 
-           plp                        ; Restore status
+           plp                          ; Restore status
 
-           lda  #$00                  ; Clear A to indicate no error.
+           lda  #$00                    ; Clear A to indicate no error.
 
            rts
 

@@ -4,31 +4,34 @@
 
 Menu2:
 
-           jsr  SetImgType            ; Look at file and set image type
-           jsr  GetImgSize            ; Set an image size based on that type.
 
-           jsr  PaintMenu2            ; Paint basic screen frame
+           ; Expected to scope to Menu2Vars.s
+
+           jsr  SetImgType              ; Look at file and set image type
+           jsr  GetImgSize              ; Set an image size based on that type.
+
+           jsr  PaintMenu2              ; Paint basic screen frame
 
            lda  #1
-           sta  TabIndex_M2          ; Start with "Skip" as default.
+           sta  TabIndex2               ; Start with "Skip" as default.
 
 Menu2_01:
 
-           jsr  LoadDevs              ; Get device info
+           jsr  LoadDevs                ; Get device info
 
-           jsr  Init2                 ; Initialize screen
+           jsr  Init2                   ; Initialize screen
 
 Menu2_02:
 
-           jsr  ListDevs              ; List devices 5 at a time
+           jsr  ListDevs                ; List devices 5 at a time
 
 Menu2_03:
 
-           jsr  Refresh2Btn           ; Refresh command buttons.
+           jsr  Refresh2Btn             ; Refresh command buttons.
 
-           jsr  Menu2UI               ; Menu 2 user interface
+           jsr  Menu2UI                 ; Menu 2 user interface
 
-           lda  RC_M2
+           lda  RC2
            cmp  #Quit2
            beq  Menu2Exit
 
@@ -42,9 +45,9 @@ Menu2_03:
            beq  Menu2_03
 
            jsr  ClearMenu2
-           jsr  ProcessImg            ; He's making a disk!
+           jsr  ProcessImg              ; He's making a disk!
 
-           lda  RC_M2
+           lda  RC2
            cmp  #Quit2
            beq  Menu2Exit
 
@@ -52,7 +55,7 @@ Menu2_03:
 
 Menu2Exit:
 
-           jsr  ClearMenu2            ; Clear screen prior to return
+           jsr  ClearMenu2              ; Clear screen prior to return
 
            rts
 
@@ -64,28 +67,28 @@ Init2:
 
            lda  #<Buffer8K
            sta  Ptr1
-           sta  FstAddr_M2
+           sta  FstAddr
            lda  #>Buffer8K
            sta  Ptr1+1
-           sta  FstAddr_M2+1
+           sta  FstAddr+1
 
-           stz  Above_M2
+           stz  Above
 
            sec
-           lda  DevEntCnt_M2
+           lda  DevEntCnt
            sbc  #5
-           sta  Below_M2
+           sta  Below
            bpl  GT5
 
-           stz  Below_M2
+           stz  Below
 
 GT5:
 
            lda  #1
-           sta  SelLine_M2
+           sta  M2_SelLine
 
            lda  #StdText
-           jsr  cout_mark
+           jsr  cout
 
            rts
 
@@ -93,7 +96,7 @@ GT5:
 ; List devices to screen
 ;
 
-M2LineCount: .byte   $00
+M2_LineCount:  .res 1
 
 ListDevs:
 
@@ -103,61 +106,61 @@ ListDevs:
            sta  VTab
            jsr  SetVTab
 
-           lda  SelLine_M2
-           bne  @NotUp
+           lda  M2_SelLine
+           bne  M2_NotUp
 
-           jsr  M2ScrollUp
-           bra  @NoScrollDn
+           jsr  M2_ScrollUp
+           bra  M2_NoScrollDn
 
-@NotUp:
+M2_NotUp:
 
            cmp  #6
-           bcc  @NoScrollDn
+           bcc  M2_NoScrollDn
 
-           jsr  M2ScrollDown
+           jsr  M2_ScrollDown
 
-@NoScrollDn:
+M2_NoScrollDn:
 
-           lda  FstAddr_M2               ; Setup first line address
+           lda  FstAddr                 ; Setup first line address
            sta  Ptr1
-           lda  FstAddr_M2+1
+           lda  FstAddr+1
            sta  Ptr1+1
 
-           stz  M2LineCount
+           stz  M2_LineCount
 
-           lda  DevEntCnt_M2             ; See if there are any lines to print.
+           lda  DevEntCnt               ; See if there are any lines to print.
            bne  ListDev01
 
-           jmp  ListDev90             ; Nope, so exit.
+           jmp  ListDev90               ; Nope, so exit.
 
 ListDev01:
 
-           inc  M2LineCount
-           lda  M2LineCount
-           cmp  SelLine_M2
+           inc  M2_LineCount
+           lda  M2_LineCount
+           cmp  M2_SelLine
            bne  ListDev02
 
            lda  #Inverse
-           jsr  cout_mark
+           jsr  cout
 
            lda  Ptr1
-           sta  SelAddr_M2
+           sta  SelAddr
            lda  Ptr1+1
-           sta  SelAddr_M2+1
+           sta  SelAddr+1
 
 ListDev02:
 
            ldy  #oSlot
            lda  (Ptr1),y
-           jsr  cout_mark
+           jsr  cout
            lda  #','+$80
-           jsr  cout_mark
+           jsr  cout
            ldy  #oDrive
            lda  (Ptr1),y
-           jsr  cout_mark
+           jsr  cout
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #15
            ldy  #oVolume
@@ -165,13 +168,13 @@ ListDev02:
 ListDev03:
 
            lda  (Ptr1),y
-           jsr  cout_mark
+           jsr  cout
            iny
            dex
            bne  ListDev03
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            ldx  #4
            ldy  #oSize
@@ -179,30 +182,30 @@ ListDev03:
 ListDev04:
 
            lda  (Ptr1),y
-           jsr  cout_mark
+           jsr  cout
            iny
            dex
            bne  ListDev04
 
            lda  #' '+$80
-           jsr  cout_mark
+           jsr  cout
 
            ldy  #oUnit
            lda  (Ptr1),y
-           jsr  cout_mark
+           jsr  cout
 
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
            lda  #19-1
            sta  HTab
            inc  VTab
            jsr  SetVTab
 
-           lda  M2LineCount
-           cmp  #5                    ; 5 lines max per screen
+           lda  M2_LineCount
+           cmp  #5                      ; 5 lines max per screen
            beq  ListDev99
-           cmp  DevEntCnt_M2             ; End of screen with < 5 lines?
+           cmp  DevEntCnt               ; End of screen with < 5 lines?
            beq  ListDev90
 
            clc
@@ -216,29 +219,29 @@ ListDev04:
 
 ListDev90:
 
-           sec                        ; Calculate blank lines required.
+           sec                          ; Calculate blank lines required.
            lda  #5
-           sbc  M2LineCount
+           sbc  M2_LineCount
            tax
-           beq  ListDev99             ; No blank lines required.
+           beq  ListDev99               ; No blank lines required.
 
-ListDev92:                            ; Each line
+ListDev92:                         ; Each line
 
-           lda  #' '+$80              ; Space character
-           ldy  #26                   ; Spaces per line
+           lda  #' '+$80                ; Space character
+           ldy  #26                     ; Spaces per line
 
-ListDev94:                            ; Each character in line
+ListDev94:                         ; Each character in line
 
-           jsr  cout_mark
+           jsr  cout
            dey
            bne  ListDev94
 
-           lda  #19-1                 ; Set back to start of next line
+           lda  #19-1                   ; Set back to start of next line
            sta  HTab
            inc  VTab
            jsr  SetVTab
 
-           dex                        ; More lines to wipe out?
+           dex                          ; More lines to wipt out?
            bne  ListDev92
 
 ListDev99:
@@ -249,21 +252,21 @@ ListDev99:
 ; Move dev pointer to next dev
 ;
 
-M2ScrollDown:
+M2_ScrollDown:
 
            lda  #5
-           sta  SelLine_M2
+           sta  M2_SelLine
 
-           inc  Above_M2
-           dec  Below_M2
+           inc  Above
+           dec  Below
 
            clc
-           lda  FstAddr_M2
+           lda  FstAddr
            adc  #oEntryLen
-           sta  FstAddr_M2
-           lda  FstAddr_M2+1
+           sta  FstAddr
+           lda  FstAddr+1
            adc  #0
-           sta  FstAddr_M2+1
+           sta  FstAddr+1
 
            rts
 
@@ -271,110 +274,110 @@ M2ScrollDown:
 ; Move dev pointer to previous entry
 ;
 
-M2ScrollUp:
+M2_ScrollUp:
 
            lda  #1
-           sta  SelLine_M2
+           sta  M2_SelLine
 
-           dec  Above_M2
-           inc  Below_M2
+           dec  Above
+           inc  Below
 
            sec
-           lda  FstAddr_M2
+           lda  FstAddr
            sbc  #oEntryLen
-           sta  FstAddr_M2
-           lda  FstAddr_M2+1
+           sta  FstAddr
+           lda  FstAddr+1
            sbc  #0
-           sta  FstAddr_M2+1
+           sta  FstAddr+1
 
            rts
 
 ;
-; Refresh command buttons based on TabIndex_M2 setting
+; Refresh command buttons based on TabIndex2 setting
 ;
 
 Refresh2Btn:
 
-           lda  #<M2BtnText           ; Set button text address in Ptr1
+           lda  #<M2BtnText             ; Set button text address in Ptr1
            sta  Ptr1
            lda  #>M2BtnText
            sta  Ptr1+1
 
-           lda  #Normal               ; Make sure inverse is off
-           jsr  cout_mark
-           lda  #StdText              ; Mousetext off
-           jsr  cout_mark
+           lda  #Normal                 ; Make sure inverse is off
+           jsr  cout
+           lda  #StdText                ; Mousetext off
+           jsr  cout
 
-           ldx  #0                    ; Index
+           ldx  #0                      ; Index
 
-@Refresh01:
+M2_Refresh01:
 
-           cpx  TabIndex_M2             ; Is this our active button?
-           bne  @Refresh02             ; No so print it normal
+           cpx  TabIndex2               ; Is this our active button?
+           bne  M2_Refresh02            ; No so print it normal
 
-           lda  #Inverse              ; Inverse button
-           jsr  cout_mark
+           lda  #Inverse                ; Inverse button
+           jsr  cout
 
-@Refresh02:
+M2_Refresh02:
 
-           phx                        ; Save current button
+           phx                          ; Save current button
 
            lda  #51-1
-           sta  HTab                  ; HTab 51
-           lda  (Ptr1)                ; VTab from table
+           sta  HTab                    ; HTab 51
+           lda  (Ptr1)                  ; VTab from table
            sta  VTab
            jsr  SetVTab
 
-           ldy  #1                    ; Starting position index
-           ldx  #11                   ; Text length index
+           ldy  #1                      ; Starting position index
+           ldx  #11                     ; Text length index
 
-@Refresh03:
+M2_Refresh03:
 
-           lda  (Ptr1),y              ; Get character
-           jsr  cout_mark                  ; Print
-           iny                        ; Move to next character
-           dex                        ; Count it as printed
-           bne  @Refresh03             ; More?
+           lda  (Ptr1),y                ; Get character
+           jsr  cout                    ; Print
+           iny                          ; Move to next character
+           dex                          ; Count it as printed
+           bne  M2_Refresh03               ; More?
 
-           lda  #Normal               ; Reset to normal text
-           jsr  cout_mark
+           lda  #Normal                 ; Reset to normal text
+           jsr  cout
 
-           plx                        ; Get index from stack
-           inx                        ; Move to next button
-           cpx  #3                    ; Button 3?  We're done...
-           beq  @Refresh05
+           plx                          ; Get index from stack
+           inx                          ; Move to next button
+           cpx  #3                      ; Button 3?  We're done...
+           beq  M2_Refresh05
 
-           clc                        ; Add 12 to button text pointer
-           lda  Ptr1                  ; to setup next button print.
+           clc                          ; Add 12 to button text pointer
+           lda  Ptr1                    ; to setup next button print.
            adc  #12
            sta  Ptr1
            lda  Ptr1+1
            adc  #0
            sta  Ptr1+1
-           bra  @Refresh01            ; Print next button.
+           bra  M2_Refresh01            ; Print next button.
 
-@Refresh05:
+M2_Refresh05:
 
-           cpx  TabIndex_M2
-           bne  @Refresh06
+           cpx  TabIndex2
+           bne  M2_Refresh06
 
            lda  #Inverse
-           jsr  cout_mark
+           jsr  cout
 
-@Refresh06:
+M2_Refresh06:
 
            lda  #17-1
            sta  VTab
            jsr  SetVTab
            jsr  PrtImgType
            lda  #Normal
-           jsr  cout_mark
+           jsr  cout
 
-@Refresh07:
+M2_Refresh07:
 
            jsr  PrtSameSize
 
-@Refresh99:
+M2_Refresh99:
 
            rts
 
@@ -384,26 +387,26 @@ Refresh2Btn:
 
 GetImgSize:
 
-           stz  ImageSize_M2
-           stz  ImageSize_M2+1
+           stz  ImageSize
+           stz  ImageSize+1
 
-           lda  ImageType_M2
+           lda  ImageType
 
-           cmp  #Type_2IMG            ; 2IMG check.
+           cmp  #Type_2IMG              ; 2IMG check.
            beq  T_2Img
 
-           cmp  #Type_DC              ; Diskcopy 4.2 check.
+           cmp  #Type_DC                ; Diskcopy 4.2 check.
            beq  T_DC
 
-           cmp  #Type_DC6             ; Diskcopy 6 check
+           cmp  #Type_DC6               ; Diskcopy 6 check
            beq  T_DC6
 
-           cmp  #Type_PO              ; ProDOS Order check
+           cmp  #Type_PO                ; ProDOS Order check
            beq  T_PO
 
-           bra  T_DO                  ; Assume DOS Order if it got here.
+           bra  T_DO                    ; Assume DOS Order if it got here.
 
-T_2Img:                               ; 2IMG image
+T_2Img:                         ; 2IMG image
 
 ;          Use header for image size
 
@@ -413,14 +416,14 @@ T_2Img:                               ; 2IMG image
            sta  readRef
            sta  closeRef
 
-           lda  #$14                  ; Image size offset
+           lda  #$14                    ; Image size offset
            sta  setMarkPos
            stz  setMarkPos+1
            stz  setMarkPos+2
 
            jsr  MLISetMark
 
-           lda  #4                    ; Bytes to read
+           lda  #4                      ; Bytes to read
            sta  readRequest
            stz  readRequest+1
 
@@ -429,13 +432,13 @@ T_2Img:                               ; 2IMG image
            jsr  MLIClose
 
            lda  readBuf
-           sta  ImageSize_M2
+           sta  ImageSize
            lda  readBuf+1
-           sta  ImageSize_M2+1
+           sta  ImageSize+1
 
            rts
 
-T_DC:                                 ; Diskcopy 4.2 image
+T_DC:                         ; Diskcopy 4.2 image
 
 ;          Use header for image size
 
@@ -445,14 +448,14 @@ T_DC:                                 ; Diskcopy 4.2 image
            sta  readRef
            sta  closeRef
 
-           lda  #64                   ; Image size offset
+           lda  #64                     ; Image size offset
            sta  setMarkPos
            stz  setMarkPos+1
            stz  setMarkPos+2
 
            jsr  MLISetMark
 
-           lda  #4                    ; Bytes to read
+           lda  #4                      ; Bytes to read
            sta  readRequest
            stz  readRequest+1
 
@@ -463,16 +466,16 @@ T_DC:                                 ; Diskcopy 4.2 image
 ;          Convert from image size in bytes to blocks.
 
            lda  readBuf+2
-           sta  ImageSize_M2
+           sta  ImageSize
            lda  readBuf+1
-           sta  ImageSize_M2+1
+           sta  ImageSize+1
 
-           lsr  ImageSize_M2+1
-           ror  ImageSize_M2
+           lsr  ImageSize+1
+           ror  ImageSize
 
            rts
 
-T_DC6:                                ; Diskcopy 6 image
+T_DC6:                         ; Diskcopy 6 image
 
 ;          Get image size from file size.
 
@@ -480,7 +483,7 @@ T_DC6:                                ; Diskcopy 6 image
 
            rts
 
-T_PO:                                 ; ProDOS Order image
+T_PO:                         ; ProDOS Order image
 
 ;          Get image size from file size.
 
@@ -488,7 +491,7 @@ T_PO:                                 ; ProDOS Order image
 
            rts
 
-T_DO:                                 ; DOS Order image
+T_DO:                         ; DOS Order image
 
 ;          Get image size from file size.
 
@@ -508,11 +511,13 @@ GetFileSize:
            jsr  MLIClose
 
            lda  geteofEOF+1
-           sta  ImageSize_M2
+           sta  ImageSize
            lda  geteofEOF+2
-           sta  ImageSize_M2+1
+           sta  ImageSize+1
 
-           lsr  ImageSize_M2
-           ror  ImageSize_M2+1
+           lsr  ImageSize
+           ror  ImageSize+1
 
            rts
+
+

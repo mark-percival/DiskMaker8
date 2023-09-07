@@ -2,37 +2,37 @@
 
 WriteImage:
 
-           jsr  PaintBox              ; Put "Writing" box on screen.
+           jsr  PaintBox                ; Put "Writing" box on screen.
 
-           jsr  InitProgBar           ; Initialize progressbar variables
+           jsr  InitProgBar             ; Initialize progressbar variables
 
-           stz  CurrBlock_M2          ; Start at writing at block zero.
-           stz  CurrBlock_M2+1
+           stz  CurrBlock               ; Start at writing at block zero.
+           stz  CurrBlock+1
 
            ldx  #$07
 
            jsr  InitMarker
 
-           lda  ImageType_M2
+           lda  ImageType
            cmp  #Type_DO
            bne  StdImage
 
-DOImage:   lda  PDosOrder,x           ; Table to convert DO image to PO
-           sta  SectorTable,x         ;  for block write.
+DOImage:   lda  PDosOrder,x             ; Table to convert DO image to PO
+           sta  SectorTable,x           ;  for block write.
            dex
            bpl  DOImage
            bra  Skip1
 
-StdImage:  lda  StdOrder,x            ; Standard sector order so no conversion
-           sta  SectorTable,x         ;  required.
+StdImage:  lda  StdOrder,x              ; Standard sector order so no conversion
+           sta  SectorTable,x           ;  required.
            dex
            bpl  StdImage
 
-Skip1:     lda  TargetUnit            ; Setup target unit number for write block
+Skip1:     lda  TargetUnit              ; Setup target unit number for write block
            sta  wrblkUnit
 
-           jsr  MLIOpen1              ; Open disk image.
-           lda  openRef1              ; Save file references.
+           jsr  MLIOpen1                ; Open disk image.
+           lda  openRef1                ; Save file references.
            sta  setMarkRef
            sta  readRef
            sta  closeRef
@@ -63,7 +63,7 @@ ShiftRight: lsr  a
 
            ldy  #$00
 
-@Loop1:     lda  (Ptr1),y
+@Loop1:    lda  (Ptr1),y
            sta  Buf512A,y
            iny
            bne  @Loop1
@@ -84,15 +84,15 @@ ShiftRight: lsr  a
            iny
            bne  @Loop2
 
-           lda  CurrBlock_M2
+           lda  CurrBlock
            sta  wrblkBlockNum
-           lda  CurrBlock_M2+1
+           lda  CurrBlock+1
            sta  wrblkBlockNum+1
 
            jsr  MLIWriteBlk
            beq  GoodWrite
            jsr  WriteError
-           jsr  MLIClose              ; Close files after error.
+           jsr  MLIClose                ; Close files after error.
            bra  Done
 
 GoodWrite:
@@ -112,16 +112,16 @@ GoodWrite:
 
 CheckForEnd:
 
-           lda  CurrBlock_M2+1
-           cmp  EndBlock_M2+1
+           lda  CurrBlock+1
+           cmp  EndBlock+1
            bne  NextBlock
-           lda  CurrBlock_M2
-           cmp  EndBlock_M2
+           lda  CurrBlock
+           cmp  EndBlock
            beq  Success
 
-NextBlock: inc  CurrBlock_M2
+NextBlock: inc  CurrBlock
            bne  NB01
-           inc  CurrBlock_M2+1
+           inc  CurrBlock+1
 
 NB01:      inx
            cpx  #$08
@@ -131,11 +131,11 @@ NB02:      jmp  Process4K
 
 Success:
 
-           jsr  MLIClose              ; Close files.
+           jsr  MLIClose                ; Close files.
 
            jsr  SuccessBox
-           lda  #Quit2                ; Allows for exiting back to image
-           sta  RC_M2                ;  selection screen.
+           lda  #Quit2                  ; Allows for exiting back to image
+           sta  RC2                     ;  selection screen.
 
 Done:      jsr  ClearBox
 
@@ -143,11 +143,11 @@ Done:      jsr  ClearBox
 
 WriteError:
 
-           cmp  #$27                  ; IO Error
+           cmp  #$27                    ; IO Error
            beq  IOError
-           cmp  #$28                  ; No device connected
+           cmp  #$28                    ; No device connected
            beq  NoDevice
-           cmp  #$2B                  ; Disk write protected
+           cmp  #$2B                    ; Disk write protected
            beq  WriteProtect
            cmp  #$2F
            beq  DevOffline
@@ -184,12 +184,12 @@ Unknown:   tay
            lsr  a
            lsr  a
            tax
-           lda  AsciiTable,x
+           lda  ASCIITable,x
            sta  PError
            tya
            and  #$0F
            tax
-           lda  AsciiTable,x
+           lda  ASCIITable,x
            sta  PError+1
 
            lda  #<MsgUnk
@@ -198,7 +198,7 @@ Unknown:   tay
            sta  MsgPtr+1
 
 PrintErr:  jsr  Beep
-           jsr  MBMsgOk
+           jsr  MsgOk
            rts
 
 Msg27:     asccr "Error encountered writing image"
@@ -217,7 +217,7 @@ MsgUnk:    asccr "Error encountered writing image"
            asccr "ProDOS error "
 PError:    ascz  "xx Encountered."
 
-Offset:    .byte   $00
+Offset:    .res  1
 
 StdOrder:  .byte $01, $23, $45, $67, $89, $AB, $CD, $EF
 PDosOrder: .byte $0E, $DC, $BA, $98, $76, $54, $32, $1F
@@ -229,9 +229,9 @@ SectorTable: .res 8
 
 InitProgBar:
 
-           lda  EndBlock_M2
+           lda  EndBlock
            sta  acc
-           lda  EndBlock_M2+1
+           lda  EndBlock+1
            sta  acc+1
            lda  #25
            sta  aux
@@ -250,9 +250,9 @@ InitProgBar:
 
            rts
 
-BlkPerInd: .word   $0000
-counter:   .word   $0000
-Indicators: .byte  $00
+BlkPerInd: .res 2
+counter:   .res 2
+Indicators: .res 1
 
 ;
 ; Move progress bar
@@ -273,7 +273,7 @@ MoveProgBar:
            jsr  SetVTab
 
            lda  #' '
-           jsr  cout_mark
+           jsr  cout
 
            lda  BlkPerInd
            sta  counter
@@ -282,23 +282,21 @@ MoveProgBar:
 
            rts
 
-InitMarker:                           ; Initalize beginning of image marker
+InitMarker:                             ; Initalize beginning of image marker
 
            stz  setMarkPos
            stz  setMarkPos+1
            stz  setMarkPos+2
 
-           lda  ImageType_M2
-           cmp  #Type_2IMG            ; 2mg file header offset
+           lda  ImageType
+           cmp  #Type_2IMG              ; 2mg file header offset
            bne  NextCheck1
 
            lda  #64
            sta  setMarkPos
            rts
 
-NextCheck1:
-
-           cmp  #Type_DC              ; DiskCopy 4.2 header offset
+NextCheck1: cmp  #Type_DC               ; DiskCopy 4.2 header offset
            bne  NextCheck2
 
            lda  #84
@@ -309,20 +307,20 @@ NextCheck2:
            rts
 
 
-GetVolNum:                            ; Get DOS 3.3 volume number
+GetVolNum:                              ; Get DOS 3.3 volume number
 
-           stz  Volume                ; Default volume number
+           stz  Volume                  ; Default volume number
 
-           lda  DevType
-           cmp  #DiskIIDev            ; Is this a Disk ][?
+           lda  PI_DevType
+           cmp  #DiskIIDev              ; Is this a Disk ][?
            bne  NotDOS33
 
-           lda  ImageSize_M2+1           ; Image too small?
+           lda  ImageSize+1             ; Image too small?
            beq  NotDOS33
 
            jsr  InitMarker
 
-           lda  #$10                  ; Track $11
+           lda  #$10                    ; Track $11
            sta  setMarkPos+1
 
            lda  #$01
@@ -337,7 +335,7 @@ GetVolNum:                            ; Get DOS 3.3 volume number
 
            jsr  MLISetMark
 
-           lda  #$FF                  ; Get 255 bytes (1 sector)
+           lda  #$FF                    ; Get 255 bytes (1 sector)
            sta  readRequest
            stz  readRequest+1
 
@@ -347,38 +345,38 @@ GetVolNum:                            ; Get DOS 3.3 volume number
 
            ldx  #3
            lda  readBuf,x
-           cmp  #3                    ; DOS release number
+           cmp  #3                      ; DOS release number
            bne  NotDOS33
 
            ldx  #$27
            lda  readBuf,x
-           cmp  #$7A                  ; Max # track sect list pairs
+           cmp  #$7A                    ; Max # track sect list pairs
            bne  NotDOS33
 
            ldx  #$34
            lda  readBuf,x
-           cmp  #$23                  ; Tracks per diskette
+           cmp  #$23                    ; Tracks per diskette
            bne  NotDOS33
 
            ldx  #$35
            lda  readBuf,x
-           cmp  #$10                  ; Sectors per track
+           cmp  #$10                    ; Sectors per track
            bne  NotDOS33
 
            ldx  #$36
            lda  readBuf,x
-           cmp  #$00                  ; Bytes per sector - low
+           cmp  #$00                    ; Bytes per sector - low
            bne  NotDOS33
 
            ldx  #$37
            lda  readBuf,x
-           cmp  #$01                  ; Bytes per sector - high
+           cmp  #$01                    ; Bytes per sector - high
            bne  NotDOS33
 
 ;          Good VTOC
 
            ldx  #$06
-           lda  readBuf,x             ; Volume number
+           lda  readBuf,x               ; Volume number
            sta  Volume
 
 NotDOS33:

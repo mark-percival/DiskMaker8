@@ -4,6 +4,10 @@ MLIError:
 ; Print MLI Error
 ;
 
+;cout        =   $FDED
+;kbd         =   $C000
+;clrkbd      =   $C010
+
            pla
            jsr  GetASCII
            lda  ASCII
@@ -12,7 +16,7 @@ MLIError:
            sta  ErrorRtn+1
 
            pla
-           pha                        ; Save error code
+           pha                          ; Save error code
            jsr  GetASCII
            lda  ASCII
            sta  ErrorCode
@@ -24,17 +28,19 @@ MLIError:
            lda  #>Message
            sta  MsgPtr+1
 
-           jsr  MBMsgOk
+           jsr  MsgOk
 
-           pla                        ; Restore error code
+           pla                          ; Restore error code
 
            rts
 
+;          Msb  On
 Message:   asc "MLI Error $"
-ErrorCode: .res   2
+ErrorCode:  .res 2
            asc " from call $"
-ErrorRtn:  .res   2
+ErrorRtn:   .res 2
            ascz "."
+;          Msb  Off
 
 GetASCII:
 
@@ -60,6 +66,10 @@ GetASCII1:
 
            rts
 
-ASCII:      .res   2
+ASCII:      .res 2
 
-HexTable:  .byte "0123456789ABCDEF"
+;          Msb  On
+HexTable:  asc "0123456789ABCDEF"
+;          Msb  Off
+
+

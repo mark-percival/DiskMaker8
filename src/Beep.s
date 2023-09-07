@@ -4,6 +4,9 @@ Beep:
 ;          Beep speaker
 ;
 
+;Wait        =   $FCA8
+;Speaker     =   $C030
+
            lda  #$20
            sta  Length
 
@@ -18,4 +21,6 @@ B1:        lda  #$02
 
            rts
 
-Length:    .res   1
+Length:     .res 1
+
+

@@ -5,6 +5,8 @@ MLIQuit:
 ;          Usage       : jmp MLIQuit
 ;          Requirements: None
 
+;MLI         =   $BF00
+
            jsr  MLI
            .byte $65
            .addr @Parms
@@ -12,4 +14,6 @@ MLIQuit:
 @Parms:
 
            .byte $04
-           .byte $00,$00,$00,$00,$00,$00
+           .res 6
+
+

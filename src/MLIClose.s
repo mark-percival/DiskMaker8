@@ -6,27 +6,30 @@ MLIClose:
 ;          Requirements: 'closeRef' 1 byte file reference number
 ;          Returns     : None.
 
-ProDOSClose    =  $CC
+MLICode_CC  =   $CC
+;MLI         =   $BF00
 
            lda  closeRef
            sta  @ref_num
 
            jsr  MLI
-           .byte ProDOSClose
+           .byte MLICode_CC
            .addr @Parms
 
-           bne  @CheckError           ; MLI error
+           bne  @CheckError              ; MLI error
 
            rts
 
 @Parms:
 
-@parm_count: .byte  $01
-@ref_num:   .byte   $00
+@parm_count: .byte $01
+@ref_num:    .res 1
 
 @CheckError:
 
-           pha                        ; Save MLI error
-           lda  #ProDOSClose
-           pha                        ; Save calling routine
+           pha                          ; Save MLI error
+           lda  #MLICode_CC
+           pha                          ; Save calling routine
            jmp  MLIError
+
+

@@ -1,26 +1,26 @@
-;                  Printer Off
-;           AbsAddr On
-;           65C02   On
-;           Symbol  Off
-;           InsTime Off
+;         Printer Off
+;          AbsAddr On
+;          65C02   On
+;          Symbol  Off
+;          InsTime Off
 
 ;*********************************************
-;                                            *
-;          Program : DiskMaker 8             *
-;          Author  : Mark Percival           *
-;          Date    : January 2006            *
-;          Version : 1.1                     *
-;                                            *
+;                                       ;      *
+;          Program : DiskMaker 8        ;      *
+;          Author  : Mark Percival      ;      *
+;          Date    : January 2006       ;      *
+;          Version : 1.1                ;      *
+;                                       ;      *
 ;*********************************************
 
-;           Keep  DiskMaker8
+;          Keep  DiskMaker8
 
-;           List Off
+;          List Off
 
-;          Global Constants
+;          Global Variables
 
            .include "ORCA2ca65.s"
-           .include "GlobalConst.s"
+           .include "GlobalVars.s"
 
 ;          Main Line
            .include "Main.s"
@@ -35,9 +35,7 @@
 ;          Menu1
 
            .include "Menu1.s"
-;             .include "Menu1a.s"
-;             .include "Menu1b.s"
-;             .include "Menu1Vars.s"
+           .include "Menu1Vars.s"
            .include "Menu1UI.s"
 
            .include "PaintMenu1.s"
@@ -49,6 +47,7 @@
 ;          Menu2
 
            .include "Menu2.s"
+           .include "Menu2Vars.s"
            .include "SetImageType.s"
            .include "PaintMenu2.s"
            .include "LoadDevs.s"
@@ -60,8 +59,6 @@
 ;          Making the disk image
 
            .include "ProcessImage.s"
-;             .include "ProcessImage1.s"
-;             .include "ProcessImage2.s"
            .include "Hyperformat.s"
 
 ;          Standard MLI Calls
@@ -84,8 +81,6 @@
 ;          .include "Pause.s"
            .include "Beep.s"
            .include "MessageBox.s"
-;             .include "MessageBox1.s"
-;             .include "MessageBox2.s"
            .include "Divide16Bit.s"
            .include "COUT.s"
 
@@ -93,9 +88,3 @@
 
            .include "Mouse.s"
            .include "ProcessMouse.s"
-
-;          Global Variable Data
-
-           .include "GlobalVars.s"
-           .include "Menu1Vars.s"
-           .include "Menu2Vars.s"
