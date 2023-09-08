@@ -152,7 +152,7 @@ M1_Line7TextE:
 
 M1_Line9Text:
 
-           asc "Available disks:      ;  "
+           asc "Available disks:       "
 
 M1_Line9TextE:
 

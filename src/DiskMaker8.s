@@ -5,12 +5,12 @@
 ;          InsTime Off
 
 ;*********************************************
-;                                       ;      *
-;          Program : DiskMaker 8        ;      *
-;          Author  : Mark Percival      ;      *
-;          Date    : January 2006       ;      *
-;          Version : 1.1                ;      *
-;                                       ;      *
+;                                            *
+;          Program : DiskMaker 8             *
+;          Author  : Mark Percival           *
+;          Date    : January 2006            *
+;          Version : 1.1                     *
+;                                            *
 ;*********************************************
 
 ;          Keep  DiskMaker8
