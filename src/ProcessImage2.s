@@ -214,7 +214,7 @@ Msg2F:     asccr "Error encountered writing image"
            ascz "        Device offline"
 
 MsgUnk:    asccr "Error encountered writing image"
-           asccr "ProDOS error "
+           asc   "ProDOS error "
 PError:    ascz  "xx Encountered."
 
 Offset:    .res  1

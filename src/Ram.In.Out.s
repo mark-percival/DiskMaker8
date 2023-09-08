@@ -79,8 +79,8 @@ RO9:       plp                          ; Restore status
 
            rts
 
-Address:   .res 8
-RamUnitId: .res 4
+Address:   .byte $00, $00
+RamUnitId: .byte $00
 
 RamIn:
 

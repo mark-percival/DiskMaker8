@@ -302,14 +302,14 @@ NoMatch:
            lsr  a
            lsr  a
            tax
-           lda  ASCIITable,x
+           lda  LD_ASCIITable,x
            iny
            sta  (Ptr1),y
 
            lda  LD_FileType
            and  #$0F
            tax
-           lda  ASCIITable,x
+           lda  LD_ASCIITable,x
            iny
            sta  (Ptr1),y
 
@@ -344,7 +344,7 @@ DestPage:   .res 1
 LD_FileType: .res 1
 Bottom:     .res 2
 Top:        .res 2
-;ASCIITable: asc "0123456789ABCDEF"   
+LD_ASCIITable: .byte "0123456789ABCDEF"   
 
 ;          No path so get online volumes
 
@@ -424,7 +424,7 @@ SaveName:
            lsr  a
            lsr  a
            tay                          ; Move to index
-           lda  ASCIITable,y            ; Get ASCII character
+           lda  LD_ASCIITable,y            ; Get ASCII character
            ldy  #oFileTypeA             ;  Save Ascii version of slot number.
            sta  (Ptr1),y
 
@@ -439,7 +439,7 @@ SaveName:
            rol  a                       ; rotate carry into bit 0
            ina                          ; Add 1 to bit 0
            tay                          ; Move to index
-           lda  ASCIITable,y            ; Get Ascii character
+           lda  LD_ASCIITable,y            ; Get Ascii character
            ldy  #oFileTypeA+2
            sta  (Ptr1),y                ; Save Ascii version of drive #
 
