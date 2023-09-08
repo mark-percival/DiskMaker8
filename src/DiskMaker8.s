@@ -1,3 +1,4 @@
+.org $2000
 ;         Printer Off
 ;          AbsAddr On
 ;          65C02   On

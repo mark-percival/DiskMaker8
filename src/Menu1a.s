@@ -107,9 +107,9 @@ M1_Initialize:
 
 Init01:
 
-           lda  #<readBuf+4
+           lda  #<(readBuf+4)
            sta  FirstAddr
-           lda  #>readBuf+4
+           lda  #>(readBuf+4)
            sta  FirstAddr+1
 
            lda  Prefix                  ; Don't attempt to move past header
@@ -277,9 +277,9 @@ GetNextBlk:
            lda  M1_EntPerBlk               ; Reinitialize entries remaining
            sta  EntRemain               ; in block.
 
-           lda  #<readBuf+4              ; Put current line pointer back at first
+           lda  #<(readBuf+4)            ; Put current line pointer back at first
            sta  Ptr1                    ; entry in block.
-           lda  #>readBuf+4
+           lda  #>(readBuf+4)
            sta  Ptr1+1
 
 GetBlock:

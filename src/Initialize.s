@@ -94,7 +94,7 @@ NetUnitNo:
 
            lda  #<readBuf               ; Setup pointer to buffer.
            sta  Ptr1
-           lda  #>readBuf+1
+           lda  #>readBuf
            sta  Ptr1+1
 
 @Loop1:    lda  (Ptr1),y

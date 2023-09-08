@@ -673,7 +673,7 @@ MB1_RefreshBtn:
            lda  #StdText
            jsr  cout
 
-           lda  M1_TabIndex
+           lda  MB_TabIndex
            cmp  #Button1
            beq  B1Selected
 
@@ -707,7 +707,7 @@ PrtLoop1:
            sta  HTab
            jsr  SetVTab
 
-           lda  M1_TabIndex
+           lda  MB_TabIndex
            cmp  #Button2
            beq  B2Selected
 

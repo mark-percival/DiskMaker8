@@ -691,7 +691,7 @@ M1_AnimBtn02:
 
            rts
 
-DirError:  asccr "ProDOS 8 path name too long."
-           ascz  "   Path > 63 characters."
+DirError:  .byte "ProDOS 8 path name too long.", $0d
+           .byte  "   Path > 63 characters.", $00
 
 

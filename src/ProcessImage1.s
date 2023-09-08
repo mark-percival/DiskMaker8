@@ -88,7 +88,7 @@ BigBox:
 
            lda  #<MsgBig
            sta  MsgPtr
-           lda  #>MsgBig+1
+           lda  #>MsgBig
            sta  MsgPtr+1
 
            jsr  Beep
@@ -97,8 +97,8 @@ BigBox:
 
            rts
 
-MsgBig:    asccr "The destination disk is bigger than necessary."
-           ascz  "Do you wish to continue anyway?"
+MsgBig:    .byte "The destination disk is bigger than necessary.",$0d
+           .byte "Do you wish to continue anyway?",$00
 
 SmallBox:
 
@@ -109,7 +109,7 @@ SmallBox:
 
            lda  #<MsgSmall
            sta  MsgPtr
-           lda  #>MsgSmall+1
+           lda  #>MsgSmall
            sta  MsgPtr+1
 
            jsr  Beep
@@ -118,8 +118,8 @@ SmallBox:
 
            rts
 
-MsgSmall:  asccr "The destination disk is too small."
-           ascz  "Do you wish to continue anyway?"
+MsgSmall:  .byte "The destination disk is too small.",$0d
+           .byte "Do you wish to continue anyway?",$00
 
 SuccessBox:
 
@@ -210,14 +210,14 @@ WhereDisk:
 
            rts                          ; or cancel.
 
-MsgNoBoot: asccr "Disk created"
-           ascz  "successfully"
+MsgNoBoot: .byte "Disk created",$0d
+           .byte "successfully",$00
 
-MsgBoot:   asccr "  Disk created successfully"
-           ascz  "Do you wish to boot this disk?"
+MsgBoot:   .byte "  Disk created successfully",$0d
+           .byte "Do you wish to boot this disk?",$00
 
-MsgWhere:  asccr "Error atempting to boot disk"
-           ascz  "Please verify disk and retry"
+MsgWhere:  .byte "Error atempting to boot disk",$0d
+           .byte "Please verify disk and retry",$00
 
 PaintBox:
 
@@ -692,7 +692,7 @@ VT02a:
 
            bra  VTExit
 
-MsgMLI:    ascz "MLIError from MLI_ONLINE call."
+MsgMLI:    .byte "MLIError from MLI_ONLINE call.",$00
 
 VT03:
 
@@ -767,10 +767,10 @@ NoPadding:
 
            rts
 
-MsgWipe:   asc "You are about to erase ProDOS volume '"
+MsgWipe:   .byte "You are about to erase ProDOS volume '"
 VolName:   .res 16
            .byte $0D
-           ascz "Do you wish to continue anyway?"
+           .byte "Do you wish to continue anyway?",$00
 
 FormatReq:
 
@@ -784,8 +784,8 @@ FormatReq:
 
            rts
 
-FormatMsg: asccr "The destination disk appears to be unformatted."
-           ascz  "Would you like to format this volume?"
+FormatMsg: .byte "The destination disk appears to be unformatted.",$0d
+           .byte "Would you like to format this volume?",$00
 
 ; Format device
 

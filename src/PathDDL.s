@@ -15,7 +15,7 @@ PathDDL:
 HavePrefix:
 
            lda  #TabOnly
-           sta  DDLRC
+           sta  M1_RC
            stz  NumLevels
            lda  #1
            sta  PD_SelLine
@@ -40,7 +40,7 @@ Loop:
            sta  M1_TabIndex
 
            lda  #DirChange
-           sta  DDLRC
+           sta  M1_RC
 
 NoChange:
 

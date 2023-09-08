@@ -14,7 +14,7 @@ TabKey      =   $89
 ;AppleKey    =   $C061
 ;OptionKey   =   $C062
 
-           stz  M1_RC                   ; Reset return code
+           stz  MB_RC                   ; Reset return code
            stz  ClearKbd                ; Clear keyboard strobe
 
 MB2_PollDev:
@@ -90,27 +90,27 @@ MB2_TabReq:
 
 ;TabDown:
 
-           inc  M1_TabIndex
-           lda  M1_TabIndex
+           inc  MB_TabIndex
+           lda  MB_TabIndex
            cmp  NumButts
            bcc  MB2_TabReq1
 
-           stz  M1_TabIndex
+           stz  MB_TabIndex
            bra  MB2_TabReq1
 
 MB2_TabUp:
 
-           dec  M1_TabIndex
+           dec  MB_TabIndex
            bpl  MB2_TabReq1
 
            lda  NumButts
            dec  a
-           sta  M1_TabIndex
+           sta  MB_TabIndex
 
 MB2_TabReq1:
 
-           lda  #TabOnly
-           sta  M1_RC
+           lda  #MB_TabOnly
+           sta  MB_RC
            jmp  MB2_Exit
 
 MB2_NextKey01:
@@ -127,7 +127,7 @@ MB2_NextKey01:
 
 MB2_EnterReq:
 
-           lda  M1_TabIndex
+           lda  MB_TabIndex
            cmp  #Button1
            bne  @Enter01
            jmp  Button1Req
@@ -145,8 +145,8 @@ MB2_EnterReq:
 Button1Req:
 
            lda  #Button1
-           cmp  M1_TabIndex
-           sta  M1_TabIndex
+           cmp  MB_TabIndex
+           sta  MB_TabIndex
            beq  B1Req01
 
            jsr  MB1_RefreshBtn
@@ -156,14 +156,14 @@ B1Req01:
            jsr  MB2_AnimateBtn
 
            lda  #MB_CROnly
-           sta  M1_RC
+           sta  MB_RC
            jmp  MB2_Exit
 
 Button2Req:
 
            lda  #Button2
-           cmp  M1_TabIndex
-           sta  M1_TabIndex
+           cmp  MB_TabIndex
+           sta  MB_TabIndex
            beq  B2Req01
 
            jsr  MB1_RefreshBtn
@@ -173,7 +173,7 @@ B2Req01:
            jsr  MB2_AnimateBtn
 
            lda  #MB_CROnly
-           sta  M1_RC
+           sta  MB_RC
            jmp  MB2_Exit
 
 InvalidKey:
@@ -198,7 +198,7 @@ MB2_AnimateBtn:
            lda  #StdText
            jsr  cout
 
-           lda  M1_TabIndex
+           lda  MB_TabIndex
            cmp  #Button1
            beq  AnimateB1
 
@@ -316,10 +316,10 @@ RightRow:
 
 ; Button 1 click
 
-           stz  M1_TabIndex
+           stz  MB_TabIndex
 
-           lda  #TabOnly
-           sta  M1_RC
+           lda  #MB_TabOnly
+           sta  MB_RC
            jmp  MB2_Exit
 
 TestForB2:
@@ -340,10 +340,10 @@ CheckForB2:
 ; Button 2 click
 
            lda  #1
-           sta  M1_TabIndex
+           sta  MB_TabIndex
 
-           lda  #TabOnly
-           sta  M1_RC
+           lda  #MB_TabOnly
+           sta  MB_RC
            jmp  MB2_Exit
 
 TestForB3:
@@ -367,7 +367,7 @@ ButtonRelease:
 
 GoodRow:
 
-           lda  M1_TabIndex
+           lda  MB_TabIndex
            bne  B2Release
 
 B1Release:

@@ -289,7 +289,8 @@ LD_Error:
 
 ;          Msb  On
 
-E1:        asccr "ProDOS driver status call"
+E1:        asc   "ProDOS driver status call"
+           .byte $0d
            asc   "error $"
 E1Code:    asc   "00"   
            ascz  " encountered."

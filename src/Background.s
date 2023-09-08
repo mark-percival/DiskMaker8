@@ -103,7 +103,7 @@ PrintNext5:
 
            rts
 
-Header:    asc "DiskMaker 8 v1.1 - Copyright 2006 Mark Percival"
+Header:    .byte "DiskMaker 8 v1.1 - Copyright 2006 Mark Percival"
 HeaderEnd:
 
 

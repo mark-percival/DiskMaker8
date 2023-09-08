@@ -50,7 +50,7 @@ PrByte      =   $FDDA                   ; Print a hexadecimal byte.
 PrHex       =   $FDE3                   ; Print a hexadecimal digit.
 ;SetInv     =   $FE80                   ; Set cout for inverse text
 ;SetNorm    =   $FE84                   ; Set cout for normal text
-;SetVTab    =   $FC22
+setvtab_rom =   $FC22
 Wait        =   $FCA8                   ; Wait entry point.
 
 ;          MLI Vars

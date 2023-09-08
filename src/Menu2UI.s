@@ -231,7 +231,8 @@ AboutReq1:
            jmp  M2_Exit
 
 ;          Msb  On
-AboutMsg:  asccr "       Diskmaker 8"
+AboutMsg:  asc   "       Diskmaker 8"
+           .byte $0d
            ascz  "(c) 2005 by Mark Percival"
 ;          Msb  Off
 

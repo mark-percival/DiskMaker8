@@ -427,7 +427,11 @@ L11C:
 Line2Text: ascz "DiskMaker 8 v1.1"
 Line3Text: ascz "Copyright 2006 by Mark Percival"
 Line5Text: ascz "Converts Universal Disk Image, DiskCopy 4.2, DiskCopy 6,"
-Line6Text: ascz "DOS Order 5.25' and ProDOS Order 5.25' images into"
+Line6Text: asc  "DOS Order 5.25"
+           .byte '"'+$80
+           asc  " and ProDOS Order 5.25"
+           .byte '"'+$80
+           ascz " images into"
 A_Line7Text: ascz "actual disks.  Please support the Apple II by paying"
 Line8Text: ascz "the $5 shareware fee.  See the documentation for details."
 OkText:    ascz "   Ok   "

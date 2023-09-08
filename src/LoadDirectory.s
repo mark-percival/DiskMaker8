@@ -125,9 +125,9 @@ LD_Exit:
            lda  #>LD_FileCount
            sta  A1H
 
-           lda  #<LD_FileCount+1        ; Ending address
+           lda  #<(LD_FileCount+1)      ; Ending address
            sta  A2L
-           lda  #>LD_FileCount+1
+           lda  #>(LD_FileCount+1)
            sta  A2H
 
            lda  #oFileCount             ; Aux memory destination address
@@ -146,9 +146,9 @@ ProcessBlock:
 ; Convert filetypes in block to ASCII
 ;
 
-           lda  #<readBuf+4              ; Set Ptr1 to first file entry
+           lda  #<(readBuf+4)            ; Set Ptr1 to first file entry
            sta  Ptr1
-           lda  #>readBuf+4
+           lda  #>(readBuf+4)
            sta  Ptr1+1
 
            lda  LD_EntPerBlk               ; initialize file counter per block
@@ -366,9 +366,9 @@ ZeroOut2:                         ; Zero out second 256 bytes
            inx
            bne  ZeroOut2
 
-           lda  #<readBuf+4             ; Set Ptr1 to destination for phony read
+           lda  #<(readBuf+4)           ; Set Ptr1 to destination for phony read
            sta  Ptr1                    ; block
-           lda  #>readBuf+4
+           lda  #>(readBuf+4)
            sta  Ptr1+1
 
            lda  #$27                    ; Set Entry Length

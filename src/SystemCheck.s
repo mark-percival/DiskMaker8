@@ -65,7 +65,7 @@ Ptr         =   $06
            lda  #$00
            sta  HTab
 
-           jsr  SetVTab
+           jsr  setvtab_rom
 
            ldx  #$00
 
@@ -84,7 +84,7 @@ Part2:
            lda  #$00
            sta  HTab
 
-           jsr  SetVTab
+           jsr  setvtab_rom
 
            ldy  YSave
 

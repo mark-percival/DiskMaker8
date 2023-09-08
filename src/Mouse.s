@@ -18,13 +18,13 @@ oClampMouse  =  $17
 oHomeMouse   =  $18
 oInitMouse   =  $19
 
-MouseXL     =   $0478 + Slot            ; Low byte of absolute X position
-MouseYL     =   $04F8 + Slot            ; Low byte of absolute Y position
-MouseXH     =   $0578 + Slot            ; High byte of absolute X position
-MouseYH     =   $05F8 + Slot            ; High byte of absolute Y position
+MouseXL     =   $0478 ;+ Slot           ; Low byte of absolute X position
+MouseYL     =   $04F8 ;+ Slot           ; Low byte of absolute Y position
+MouseXH     =   $0578 ;+ Slot           ; High byte of absolute X position
+MouseYH     =   $05F8 ;+ Slot           ; High byte of absolute Y position
 
-MouseStatL  =   $0778 + Slot            ; Button 0/1 interrupt status byte
-MouseModeL  =   $07F8 + Slot            ; Mode byte
+MouseStatL  =   $0778 ;+ Slot           ; Button 0/1 interrupt status byte
+MouseModeL  =   $07F8 ;+ Slot           ; Mode byte
 
 LowClampL   =   $0478                   ; Low byte of low clamp
 HighClampL  =   $04F8                   ; Low byte of high clamp
@@ -147,7 +147,7 @@ SetMousErr:
 SMLoop1:
 
            lda  SetMousMsg,y
-           jsr  cout
+           jsr  cout_rom
            iny
            dex
            bne SMLoop1

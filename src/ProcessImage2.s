@@ -201,21 +201,21 @@ PrintErr:  jsr  Beep
            jsr  MsgOk
            rts
 
-Msg27:     asccr "Error encountered writing image"
-           ascz  "           IO Error"
+Msg27:     .byte "Error encountered writing image",$0d
+           .byte "           IO Error",$00
 
-Msg28:     asccr "Error encountered writing image"
-           ascz  "     Device not connected"
+Msg28:     .byte "Error encountered writing image",$0d
+           .byte "     Device not connected",$00
 
-Msg2B:     asccr "Error encountered writing image"
-           ascz  "      Write protect error"
+Msg2B:     .byte "Error encountered writing image",$0d
+           .byte "      Write protect error",$00
 
-Msg2F:     asccr "Error encountered writing image"
-           ascz "        Device offline"
+Msg2F:     .byte "Error encountered writing image",$0d
+           .byte "        Device offline",$00
 
-MsgUnk:    asccr "Error encountered writing image"
-           asc   "ProDOS error "
-PError:    ascz  "xx Encountered."
+MsgUnk:    .byte "Error encountered writing image",$0d
+           .byte "ProDOS error "
+PError:    .byte "xx Encountered.",$00
 
 Offset:    .res  1
 

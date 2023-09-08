@@ -206,9 +206,9 @@ NextFstEnt:                         ; Move first entry to next entry.
 
 ;  No more entries in this directory block; get next.
 
-           lda  #<readBuf+4
+           lda  #<(readBuf+4)
            sta  FirstAddr
-           lda  #>readBuf+4
+           lda  #>(readBuf+4)
            sta  FirstAddr+1
 
            inc  FirstPage
