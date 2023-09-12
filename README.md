@@ -1,7 +1,7 @@
 DiskMaker 8
 ===========
 
-Formerly shareware, now freeware - DiskMaker 8 creates disks from images and images from disks on Apple II computers with the 65C02 (or greater) CPU.
+Formerly shareware, now freeware - DiskMaker is an 8-bit Apple II utility to convert disk images back to physical media. Requires an Apple II computer with the 65C02 (or greater) CPU.
 
 The original v1.1 can be built using either the [ORCA 4.1 assembler](https://juiced.gs/store/opus-ii-software/) or the
 [ca65 assembler](https://cc65.github.io/) which is part of the cc65 toolchain.
