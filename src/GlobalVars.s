@@ -25,7 +25,7 @@ TextPtr     =   $8A
 Keyboard    =   $C000
 Off80Store  =   $C000
 On80Store   =   $C001
-Read80Store  =  $C018
+Read80Store =   $C018
 ClearKbd    =   $C010
 ReadPage2   =   $C01C
 Speaker     =   $C030
@@ -62,7 +62,7 @@ AuxType     =   $0881 ;- $0882          ; Current file aux type
 NetDevCnt   =   $08DE ;- $08DE          ; Number of Appleshare volumes
 NetDevs     =   $08DF ;- $08EC          ; Unit no's of Appleshare volumes
 wrblkUnit   =   $08ED ;- $08ED          ; MLI write block unit number
-wrblkBlockNum  =   $08EE ;- $08EF       ; MLI write block block number
+wrblkBlockNum = $08EE ;- $08EF          ; MLI write block block number
 setMarkRef  =   $08F0 ;- $08F0          ; Set mark reference number
 setMarkPos  =   $08F1 ;- $08F3          ; 3 byte value of mark position.
 geteofEOF   =   $08F4 ;- $08F6          ; 3 byte value of file size.
@@ -78,7 +78,7 @@ Buffer512   =   $0900 ;- $0AFF          ; 512 byte buffer.
 onlineBuf   =   $0B00 ;- $0BFF          ; 256 byte buffer for OnLine call
 readBuf     =   $1000 ;- $11FF          ; 512 byte read data buffer
 readBufE    =   $1200                   ; Ending address of readBuf
-wrblkDataBuf  =   $1400 ;- $15FF        ; MLI write block 512 byte data buffer
+wrblkDataBuf =  $1400 ;- $15FF          ; MLI write block 512 byte data buffer
 Buf512A     =   $1400 ;- $14FF          ; First 256 bytes
 Buf512B     =   $1500 ;- $15FF          ; Second 256 bytes.
 
@@ -107,11 +107,23 @@ HighClamp   =   $088A ;- $088B          ; High clamping value
 MouseStat   =   $088C ;- $088C          ; Button 0/1 interrupt status byte
 MouseMode   =   $088D ;- $088D          ; Mode Byte
 
-; MouseStat bits
+;          MouseStat bits
 
 MouseMove   =   %00100000               ; X/Y moved since last ReadMouse
 PrevButton  =   %01000000               ; Previously button was up (0) or down (1)
 CurrButton  =   %10000000               ; Currently button was up (0) or down (1)
 
-; ProDOS constants
+;          ProDOS constants
 MLI         =   $BF00
+
+MLI_ATALK_GET_INFO = $42                ; MLI Appletalk GetInfo ($42) Call
+MLI_QUIT           = $65                ; MLI Quit ($65) Call
+MLI_WRITEBLOCK     = $81                ; MLI Write Block ($81) Call
+MLI_ONLINE         = $C5                ; MLI OnLine ($C5) Call
+MLI_SET_PREFIX     = $C6                ; MLI Set Prefix($C6) Call
+MLI_GET_PREFIX     = $C7                ; MLI Get Prefix($C7) Call
+MLI_OPEN           = $C8                ; MLI Open ($C8) Call
+MLI_READ           = $CA                ; MLI Read ($CA) Call
+MLI_CLOSE          = $CC                ; MLI Close ($CC) Call
+MLI_SET_MARK       = $CE                ; MLI SET_MARK ($CE) Call
+MLI_GET_EOF        = $D1                ; MLI GET_EOF ($D1) Call

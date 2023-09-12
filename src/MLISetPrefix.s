@@ -5,11 +5,8 @@ MLISetPrefix:
 ;          Usage       : jsr MLISetPrefix
 ;          Requirements: buffer named 'prefix' 64 bytes long
 
-MLICode_C6  =   $C6
-;MLI         =   $BF00
-
            jsr  MLI
-           .byte MLICode_C6
+           .byte MLI_SET_PREFIX
            .addr @Parms
            bne  @CheckError
            rts
@@ -22,7 +19,7 @@ MLICode_C6  =   $C6
 @CheckError:
 
            pha                          ; Save MLI error
-           lda  #MLICode_C6
+           lda  #MLI_SET_PREFIX
            pha                          ; Save calling routine
            jmp  MLIError
 

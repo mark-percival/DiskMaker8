@@ -8,9 +8,6 @@ MLISetMark:
 ;          Returns     : Nothing
 ;
 
-MLICode_CE  =   $CE
-;MLI         =   $BF00
-
            lda  setMarkRef
            sta  @ref_num
 
@@ -24,7 +21,7 @@ MLICode_CE  =   $CE
            sta  @position+2
 
            jsr  MLI
-           .byte MLICode_CE
+           .byte MLI_SET_MARK
            .addr @Parms
 
            bne  @CheckError             ; MLI error
@@ -40,7 +37,7 @@ MLICode_CE  =   $CE
 @CheckError:
 
            pha                          ; Save MLI error
-           lda  #MLICode_CE
+           lda  #MLI_SET_MARK
            pha                          ; Save calling routine
            jmp  MLIError
 

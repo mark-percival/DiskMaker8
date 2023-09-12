@@ -7,11 +7,8 @@ MLIOpen1:
 ;                        'openBuf1' a 512 byte buffer
 ;          Returns     : 'openRef1' 1 byte file reference number
 
-MLICode_C8  =   $C8
-;MLI         =   $BF00
-
            jsr  MLI
-           .byte MLICode_C8
+           .byte MLI_OPEN
            .addr @Parms
 
            pha                          ; Save possible MLI error code
@@ -32,7 +29,7 @@ MLICode_C8  =   $C8
 @CheckError:
 
            pha                          ; Save MLI error
-           lda  #MLICode_C8
+           lda  #MLI_OPEN
            pha                          ; Save calling routine
            jmp  MLIError
 

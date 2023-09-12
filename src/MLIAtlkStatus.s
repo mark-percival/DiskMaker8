@@ -5,11 +5,8 @@ MLIAtlkInfo:
 ;          Usage       : jsr MLIAtlkInfo
 ;          Requirements: None
 
-MLICode_42  =   $42
-;MLI         =   $BF00
-
            jsr  MLI
-           .byte MLICode_42
+           .byte MLI_ATALK_GET_INFO
            .addr @Parms
 
            rts
