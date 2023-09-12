@@ -605,33 +605,6 @@ AB02:
 
 ; Save / Restore Screen routine.
 
-A_TextLine:                             ; Text screen line starting addresses
-
-A_TextLine00: .addr $0400
-A_TextLine01: .addr $0480
-A_TextLine02: .addr $0500
-A_TextLine03: .addr $0580
-A_TextLine04: .addr $0600
-A_TextLine05: .addr $0680
-A_TextLine06: .addr $0700
-A_TextLine07: .addr $0780
-A_TextLine08: .addr $0428
-A_TextLine09: .addr $04A8
-A_TextLine10: .addr $0528
-A_TextLine11: .addr $05A8
-A_TextLine12: .addr $0628
-A_TextLine13: .addr $06A8
-A_TextLine14: .addr $0728
-A_TextLine15: .addr $07A8
-A_TextLine16: .addr $0450
-A_TextLine17: .addr $04D0
-A_TextLine18: .addr $0550
-A_TextLine19: .addr $05D0
-A_TextLine20: .addr $0650
-A_TextLine21: .addr $06D0
-A_TextLine22: .addr $0750
-A_TextLine23: .addr $07D0
-
 ;On80Store   =   $C001
 ;Page1       =   $C054
 ;Page2       =   $C055
@@ -687,10 +660,10 @@ A_Loop1:
            lda  A_CurrLine
            asl  a
            tay
-           lda  A_TextLine,y
+           lda  TextLine,y
            sta  Ptr1
            iny
-           lda  A_TextLine,y
+           lda  TextLine,y
            sta  Ptr1+1
 
            ldy  A_StartHTab

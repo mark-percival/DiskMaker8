@@ -234,33 +234,6 @@ SB10:
 
 IT_LineCount:  .res 1
 
-IT_TextLine:                            ; Text screen line starting addresses
-
-IT_TextLine00: .addr $0400
-IT_TextLine01: .addr $0480
-IT_TextLine02: .addr $0500
-IT_TextLine03: .addr $0580
-IT_TextLine04: .addr $0600
-IT_TextLine05: .addr $0680
-IT_TextLine06: .addr $0700
-IT_TextLine07: .addr $0780
-IT_TextLine08: .addr $0428
-IT_TextLine09: .addr $04A8
-IT_TextLine10: .addr $0528
-IT_TextLine11: .addr $05A8
-IT_TextLine12: .addr $0628
-IT_TextLine13: .addr $06A8
-IT_TextLine14: .addr $0728
-IT_TextLine15: .addr $07A8
-IT_TextLine16: .addr $0450
-IT_TextLine17: .addr $04D0
-IT_TextLine18: .addr $0550
-IT_TextLine19: .addr $05D0
-IT_TextLine20: .addr $0650
-IT_TextLine21: .addr $06D0
-IT_TextLine22: .addr $0750
-IT_TextLine23: .addr $07D0
-
 ;On80Store   =   $C001
 ;Page1       =   $C054
 ;Page2       =   $C055
@@ -317,10 +290,10 @@ IT_Loop1:
            lda  IT_CurrLine
            asl  a
            tay
-           lda  IT_TextLine,y
+           lda  TextLine,y
            sta  Ptr1
            iny
-           lda  IT_TextLine,y
+           lda  TextLine,y
            sta  Ptr1+1
 
            ldy  IT_StartHTab
