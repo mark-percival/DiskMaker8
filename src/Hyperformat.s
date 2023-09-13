@@ -170,7 +170,7 @@ LWRprot:                                ;Disk is write protected! (Nerd!)
          sec
          rts
 
-.ASSERT (.LOBYTE(* - TRANS) < .LOBYTE(*)), error, "TRANS routine crossed a page boundary"
+.ASSERT (.HIBYTE(*) = .HIBYTE(TRANS)), error, "TRANS routine crossed a page boundary"
 
 ;***********************************
 ;                                  *
