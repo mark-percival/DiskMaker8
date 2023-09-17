@@ -5,10 +5,8 @@ MLIQuit:
 ;          Usage       : jmp MLIQuit
 ;          Requirements: None
 
-;MLI         =   $BF00
-
            jsr  MLI
-           .byte $65
+           .byte MLI_QUIT
            .addr @Parms
 
 @Parms:

@@ -18,10 +18,10 @@
 
 ;          List Off
 
-;          Global Variables
+;          Global Definitions
 
            .include "ORCA2ca65.s"
-           .include "GlobalVars.s"
+           .include "GlobalConst.s"
 
 ;          Main Line
            .include "Main.s"
@@ -60,7 +60,6 @@
 ;          Making the disk image
 
            .include "ProcessImage.s"
-           .include "Hyperformat.s"
 
 ;          Standard MLI Calls
 
@@ -89,3 +88,8 @@
 
            .include "Mouse.s"
            .include "ProcessMouse.s"
+
+;          Global Data
+
+           .include "GlobalVars.s"
+           .include "Hyperformat.s"

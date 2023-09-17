@@ -6,14 +6,11 @@ MLIOnLine:
 ;          Requirements: onlineUnit = 1 byte unit number
 ;                        onlineBuf = 256 byte data buffer
 
-MLICode_C5  =   $C5
-;MLI         =   $BF00
-
            lda  onlineUnit
            sta  @Unit_Num
 
            jsr  MLI
-           .byte MLICode_C5
+           .byte MLI_ONLINE
            .addr @Parms
            bne  @CheckError
 
@@ -38,7 +35,7 @@ MLICode_C5  =   $C5
            cmp  #$52                    ; Not a ProDOS disk
            beq  @OkError
            pha                          ; Save MLI error
-           lda  #MLICode_C5
+           lda  #MLI_ONLINE
            pha                          ; Save calling routine
            jmp  MLIError
 

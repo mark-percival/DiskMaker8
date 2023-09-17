@@ -6,14 +6,11 @@ MLIClose:
 ;          Requirements: 'closeRef' 1 byte file reference number
 ;          Returns     : None.
 
-MLICode_CC  =   $CC
-;MLI         =   $BF00
-
            lda  closeRef
            sta  @ref_num
 
            jsr  MLI
-           .byte MLICode_CC
+           .byte MLI_CLOSE
            .addr @Parms
 
            bne  @CheckError              ; MLI error
@@ -28,7 +25,7 @@ MLICode_CC  =   $CC
 @CheckError:
 
            pha                          ; Save MLI error
-           lda  #MLICode_CC
+           lda  #MLI_CLOSE
            pha                          ; Save calling routine
            jmp  MLIError
 

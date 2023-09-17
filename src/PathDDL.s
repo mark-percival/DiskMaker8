@@ -533,43 +533,16 @@ CR01:
 
 ; Save / Restore Screen routine.
 
-PD_TextLine:                         ; Text screen line starting addresses
-
-PD_TextLine00: .addr $0400
-PD_TextLine01: .addr $0480
-PD_TextLine02: .addr $0500
-PD_TextLine03: .addr $0580
-PD_TextLine04: .addr $0600
-PD_TextLine05: .addr $0680
-PD_TextLine06: .addr $0700
-PD_TextLine07: .addr $0780
-PD_TextLine08: .addr $0428
-PD_TextLine09: .addr $04A8
-PD_TextLine10: .addr $0528
-PD_TextLine11: .addr $05A8
-PD_TextLine12: .addr $0628
-PD_TextLine13: .addr $06A8
-PD_TextLine14: .addr $0728
-PD_TextLine15: .addr $07A8
-PD_TextLine16: .addr $0450
-PD_TextLine17: .addr $04D0
-PD_TextLine18: .addr $0550
-PD_TextLine19: .addr $05D0
-PD_TextLine20: .addr $0650
-PD_TextLine21: .addr $06D0
-PD_TextLine22: .addr $0750
-PD_TextLine23: .addr $07D0
-
 ;On80Store   =   $C001
 ;Page1       =   $C054
 ;Page2       =   $C055
 
-PD_SaveRtn:    .res 1
+PD_SaveRtn:   .res 1
 
 PD_StartHTab: .res 1
 PD_EndHTab:   .res 1
 PD_StartVTab: .res 1
-PD_CurrLine:   .res 1
+PD_CurrLine:  .res 1
 
 ;
 ; PD_SaveScreen - save screen data under list box
@@ -615,10 +588,10 @@ PD_SSLoop1:
            lda  PD_CurrLine
            asl  a
            tay
-           lda  PD_TextLine,y
+           lda  TextLine,y
            sta  Ptr1
            iny
-           lda  PD_TextLine,y
+           lda  TextLine,y
            sta  Ptr1+1
 
            ldy  PD_StartHTab

@@ -7,9 +7,6 @@ MLIWriteBlk:
 ;                        'wrblkDataBuf' 512 byte buffer to be written.
 ;                        'wrblkBlockNum' 2 byte block number to write
 
-MLICode_81  =   $81
-;MLI         =   $BF00
-
            lda  wrblkUnit
            sta  @unit_num
            lda  wrblkBlockNum
@@ -18,7 +15,7 @@ MLICode_81  =   $81
            sta  @block_num+1
 
            jsr  MLI
-           .byte MLICode_81
+           .byte MLI_WRITEBLOCK
            .addr @Parms
 
            bne  @CheckError             ; MLI error
@@ -44,7 +41,7 @@ MLICode_81  =   $81
            beq  @GoodError
 
            pha                          ; Save MLI error
-           lda  #MLICode_81
+           lda  #MLI_WRITEBLOCK
            pha                          ; Save calling routine
            jmp  MLIError
 

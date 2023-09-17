@@ -9,9 +9,6 @@ MLIRead:
 ;          Returns     : 'readTrans' 2 byte number of bytes actually read
 ;                                    0 = EOF
 
-MLICode_CA  =   $CA
-;MLI         =   $BF00
-
            lda  readRef
            sta  @ref_num
            lda  readRequest
@@ -20,7 +17,7 @@ MLICode_CA  =   $CA
            sta  @req_count+1
 
            jsr  MLI
-           .byte MLICode_CA
+           .byte MLI_READ
            .addr @Parms
 
            bne  @CheckError              ; MLI error
@@ -41,7 +38,7 @@ MLICode_CA  =   $CA
            beq  @GoodError
 
            pha                          ; Save MLI error
-           lda  #MLICode_CA
+           lda  #MLI_READ
            pha                          ; Save calling routine
            jmp  MLIError
 

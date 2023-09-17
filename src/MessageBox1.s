@@ -541,16 +541,6 @@ Line16f:
 
            rts
 
-M1_TextLine:                            ; Text screen line starting addresses
-
-M1_TextLine09: .addr $04A8              ; 1st message box line
-M1_TextLine10: .addr $0528              ; 2nd message box line
-M1_TextLine11: .addr $05A8              ; 3rd message box line
-M1_TextLine12: .addr $0628              ; 4th message box line
-M1_TextLine13: .addr $06A8              ; 5th message box line
-M1_TextLine14: .addr $0728              ; 6th message box line
-M1_TextLine15: .addr $07A8              ; 7th message box line
-
 M1_EndHTab:  .res 1
 M1_SaveRtn:  .res 1
 
@@ -598,10 +588,10 @@ M1_SSLoop1:
            dec  a                       ; Subtract one to make it a 0 - 6 number
            asl  a                       ; Multiply by two for address table index
            tay                          ; Move to index
-           lda  M1_TextLine,y              ; Get line number starting address and
+           lda  TextLine09,y            ; Get line number starting address and
            sta  Ptr1                    ; put it in Ptr1.
            iny
-           lda  M1_TextLine,y
+           lda  TextLine09,y
            sta  Ptr1+1
 
            ldy  MB_StartHTab

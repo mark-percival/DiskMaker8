@@ -7,14 +7,11 @@ MLIGetEOF:
 ;          Returns     : 'geteofEOF' 3 byte result containing the maximum number
 ;                                    of bytes that can be read from file
 
-MLICode_D1   =   $D1
-;MLI         =   $BF00
-
            lda  geteofRef
            sta  @ref_num
 
            jsr  MLI
-           .byte MLICode_D1
+           .byte MLI_GET_EOF
            .addr @Parms
 
            bne  @CheckError              ; MLI error
@@ -30,7 +27,7 @@ MLICode_D1   =   $D1
 @CheckError:
 
            pha                          ; Save MLI error
-           lda  #MLICode_D1
+           lda  #MLI_GET_EOF
            pha                          ; Save calling routine
            jmp  MLIError
 

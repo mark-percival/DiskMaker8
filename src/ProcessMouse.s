@@ -19,33 +19,6 @@ SaveChar:   .res 1                      ; Saved character at X, Y
 X_mouse:    .res 1                      ; X position
 Y_mouse:    .res 1                      ; Y position
 
-PM_TextLine:                            ; Text screen line starting addresses
-
-PM_TextLine00: .addr $0400
-PM_TextLine01: .addr $0480
-PM_TextLine02: .addr $0500
-PM_TextLine03: .addr $0580
-PM_TextLine04: .addr $0600
-PM_TextLine05: .addr $0680
-PM_TextLine06: .addr $0700
-PM_TextLine07: .addr $0780
-PM_TextLine08: .addr $0428
-PM_TextLine09: .addr $04A8
-PM_TextLine10: .addr $0528
-PM_TextLine11: .addr $05A8
-PM_TextLine12: .addr $0628
-PM_TextLine13: .addr $06A8
-PM_TextLine14: .addr $0728
-PM_TextLine15: .addr $07A8
-PM_TextLine16: .addr $0450
-PM_TextLine17: .addr $04D0
-PM_TextLine18: .addr $0550
-PM_TextLine19: .addr $05D0
-PM_TextLine20: .addr $0650
-PM_TextLine21: .addr $06D0
-PM_TextLine22: .addr $0750
-PM_TextLine23: .addr $07D0
-
 MouseArrow  =   $42                     ; Mouse arrow screen character
 MouseBusy   =   $43                     ; Mouse hourglass screen character
 
@@ -66,10 +39,10 @@ MoveGo:
            asl  a                       ; Multiply by 2 for address indexing
            tax                          ; Move to index
 
-           lda  PM_TextLine,x           ; Get low byte of line address
+           lda  TextLine,x              ; Get low byte of line address
            sta  Ptr1                    ;  and save in Ptr1
            inx
-           lda  PM_TextLine,x           ; Get high byte of line address
+           lda  TextLine,x              ; Get high byte of line address
            sta  Ptr1+1                  ;  and save in Ptr1+1
 
 ; Set up X position
@@ -119,10 +92,10 @@ PlotGo:
            asl  a                       ; Multiply by 2 for address indexing
            tax                          ; Move to index
 
-           lda  PM_TextLine,x           ; Get low byte of line address
+           lda  TextLine,x              ; Get low byte of line address
            sta  Ptr1                    ;  and save in Ptr1
            inx
-           lda  PM_TextLine,x           ; Get high byte of line address
+           lda  TextLine,x              ; Get high byte of line address
            sta  Ptr1+1                  ;  and save in Ptr1+1
 
 ; Set up X position

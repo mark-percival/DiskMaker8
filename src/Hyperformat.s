@@ -24,7 +24,6 @@
 ;**********************************
 
 ;          Align 256
-.align $100
 
 HyperFormat:
 
@@ -166,10 +165,13 @@ WriteExit: LDA ModeRD,X                 ;Restore Mode softswitch to READ
          LDA   DiskRD,X                 ;Restore Read softswitch to READ
          CLC
          RTS
-LWRprot:                           ;Disk is write protected! (Nerd!)
+LWRprot:                                ;Disk is write protected! (Nerd!)
          lda   #$2B
          sec
          rts
+
+.ASSERT (.HIBYTE(*) = .HIBYTE(TRANS)), error, "TRANS routine crossed a page boundary"
+
 ;***********************************
 ;                                  *
 ; BUILD - Build GAP1 and 16 sector *
